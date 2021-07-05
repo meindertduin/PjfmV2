@@ -1,0 +1,3 @@
+# Ignore to improve performance
+dist/*
+node_modules/*

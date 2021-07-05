@@ -1,0 +1,7 @@
+# Ignore because current JSON files are very readable
+# perhaps we can delete this line if other json files are introduced
+*.json
+
+# Ignore to improve performance
+dist
+node_modules

@@ -1,0 +1,102 @@
+{
+  // This file and the .prettierrc were created thanks to
+  // https://dev.to/gsarciotto/migrating-and-configuring-eslint-with-angular-11-3fg1
+  // and commenters.
+
+  // Any workarounds are (and should be) marked.
+  "root": true,
+  "ignorePatterns": [
+    "projects/**/*"
+  ],
+  "overrides": [
+    {
+      "files": [
+        "*.ts"
+      ],
+      "parserOptions": {
+        "project": [
+          "tsconfig.json",
+          "e2e/tsconfig.json"
+        ],
+        "createDefaultProgram": true
+      },
+      "extends": [
+        "plugin:@angular-eslint/recommended",
+        "plugin:@angular-eslint/template/process-inline-templates",
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:@typescript-eslint/recommended-requiring-type-checking",
+        "plugin:prettier/recommended"
+      ],
+      "rules": {
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "prefix": "pjfm",
+            "style": "kebab-case",
+            "type": "element"
+          }
+        ],
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "prefix": "pfjm",
+            "style": "camelCase",
+            "type": "attribute"
+          }
+        ],
+        // Workaround for files using CRLF and prettier being annoyed by this
+        "prettier/prettier": [
+          "error",
+          {
+            "endOfLine":"auto"
+          }
+        ],
+        // Console methods should not be brought into production!
+        "no-console":"warn"
+      }
+    },
+    {
+      // Some config to make eslint work nicely with jasmine's expect() function
+      // https://dev.to/bzvyagintsev/migrate-angular-app-to-eslint-with-prettier-airbnb-styleguide-husky-and-lint-staged-862
+      "files": "src/**/*.spec.ts",
+      "parserOptions": {
+        "project": [
+          "tsconfig.json",
+          "e2e/tsconfig.json"
+        ],
+        "createDefaultProgram": true
+      },
+      // Jasmine rules
+      "extends": ["plugin:jasmine/recommended"],
+
+      // Plugin to run Jasmine rules
+      "plugins": ["jasmine"],
+
+      "env": { "jasmine": true },
+
+      // Turn off 'unbound-method' rule so expect() calls work
+      "rules": {
+        "@typescript-eslint/unbound-method": "off"
+      }
+    },
+    {
+      "files": [
+        "*.html"
+      ],
+      "extends": [
+        "plugin:@angular-eslint/template/recommended",
+        "plugin:prettier/recommended"
+      ],
+      "rules": {
+        // Workaround for files using CRLF and prettier being annoyed by this
+        "prettier/prettier": [
+          "error",
+          {
+            "endOfLine":"auto"
+          }
+        ]
+      }
+    }
+  ]
+}
