@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Domain\Domain
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pjfm.Common", "src\Pjfm.Common\Pjfm.Common.csproj", "{E29B9158-C33F-4C3C-AA49-25FEFEADFB4C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pjfm.Infrastructure", "src\Pjfm.Infrastructure\Pjfm.Infrastructure.csproj", "{B2EA444B-E615-4409-9304-3579F69FE1BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{E29B9158-C33F-4C3C-AA49-25FEFEADFB4C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E29B9158-C33F-4C3C-AA49-25FEFEADFB4C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E29B9158-C33F-4C3C-AA49-25FEFEADFB4C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2EA444B-E615-4409-9304-3579F69FE1BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2EA444B-E615-4409-9304-3579F69FE1BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2EA444B-E615-4409-9304-3579F69FE1BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2EA444B-E615-4409-9304-3579F69FE1BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
