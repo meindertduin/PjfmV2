@@ -29,6 +29,8 @@ namespace Pjfm.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            InitializeIdentityDatabase(app);
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

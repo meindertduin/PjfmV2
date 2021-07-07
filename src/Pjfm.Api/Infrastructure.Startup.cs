@@ -23,7 +23,7 @@ namespace Pjfm.Api
                 config.UseSqlServer(new SqlConnection(connectionString), builder =>
                 {
                     builder.EnableRetryOnFailure();
-                    builder.MigrationsAssembly("Pjfm.Api");
+                    builder.MigrationsAssembly("Pjfm.Infrastructure");
                 });
             });
         }
