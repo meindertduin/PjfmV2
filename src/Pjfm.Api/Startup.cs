@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -27,6 +23,7 @@ namespace Pjfm.Api
             ConfigureInfrastructure(services);
             ConfigureAuthentication(services);
             services.AddControllers();
+            services.AddRazorPages();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Pjfm.Api", Version = "v1"}); });
         }
 
@@ -45,7 +42,12 @@ namespace Pjfm.Api
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                
+                endpoints.MapRazorPages();
+            });
         }
     }
 }
