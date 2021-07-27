@@ -69,7 +69,6 @@ namespace Pjfm.Bff
                     });
             }
 
-            // Serve the Vue app
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "ClientApp";

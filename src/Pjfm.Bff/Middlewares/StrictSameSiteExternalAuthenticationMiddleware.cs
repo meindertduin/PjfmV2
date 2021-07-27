@@ -44,8 +44,8 @@ namespace Pjfm.Bff.Middlewares
                         </head></html>";
                         await ctx.Response.WriteAsync(html);
                     }
+                    
                     // end same-site cookie special handling
-
                     return;
                 }
             }

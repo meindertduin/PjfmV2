@@ -29,7 +29,10 @@ namespace Pjfm.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            InitializeIdentityDatabase(app);
+            if (env.IsProduction())
+            {
+                InitializeIdentityDatabase(app);
+            }
             
             if (env.IsDevelopment())
             {
@@ -42,6 +45,8 @@ namespace Pjfm.Api
 
             app.UseRouting();
 
+            app.UseAuthentication();
+            app.UseIdentityServer();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

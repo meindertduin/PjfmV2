@@ -11,19 +11,19 @@ namespace Pjfm.Api.Authentication
         {
             return new List<IdentityResource>
             {
-                new IdentityResources.OpenId(), 
-                new IdentityResources.Profile(), 
+                new IdentityResources.OpenId(),
+                new IdentityResources.Profile(),
             };
         }
-        
+
         public static IEnumerable<ApiScope> GetApiScopes()
         {
-            
             return new List<ApiScope>
             {
-                new ApiScope(IdentityServerConstants.LocalApi.ScopeName, new[]
+                new (IdentityServerConstants.LocalApi.ScopeName, new[]
                 {
                     JwtClaimTypes.PreferredUserName,
+                    "Role",
                 })
             };
         }
@@ -36,7 +36,7 @@ namespace Pjfm.Api.Authentication
                 new Client
                 {
                     ClientId = "pjfm_web_client",
-                    ClientSecrets = new List<Secret> {new ("test_secret")},
+                    ClientSecrets = new List<Secret> {new("test_secret")},
                     AllowedGrantTypes = GrantTypes.Code,
 
                     RedirectUris = new[]

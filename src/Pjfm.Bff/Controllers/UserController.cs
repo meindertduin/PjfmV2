@@ -1,10 +1,11 @@
+using System.Net;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 
 namespace Pjfm.Bff.Controllers
 {
-    [Route("user")]
+    [Route("gebruiker")]
     public class UserController : ControllerBase
     {
         private readonly IConfiguration _configuration;
@@ -17,6 +18,7 @@ namespace Pjfm.Bff.Controllers
         [Route("login")]
         public IActionResult Login()
         {
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
             var props = new AuthenticationProperties
             {
                 RedirectUri = _configuration.GetValue<string>("FrontendUrl"),
