@@ -33,7 +33,7 @@ namespace Pjfm.Api.Authentication
         {
             return new List<Client>
             {
-                new Client
+                new()
                 {
                     ClientId = "pjfm_web_client",
                     ClientSecrets = new List<Secret> {new("test_secret")},

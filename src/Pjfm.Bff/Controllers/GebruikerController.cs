@@ -1,4 +1,5 @@
 using System.Net;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -6,11 +7,11 @@ using Microsoft.Extensions.Configuration;
 namespace Pjfm.Bff.Controllers
 {
     [Route("gebruiker")]
-    public class UserController : ControllerBase
+    public class GebruikerController : ControllerBase
     {
         private readonly IConfiguration _configuration;
 
-        public UserController(IConfiguration configuration)
+        public GebruikerController(IConfiguration configuration)
         {
             _configuration = configuration;
         }
@@ -27,9 +28,10 @@ namespace Pjfm.Bff.Controllers
         }
 
         [Route("logout")]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout([FromQuery] string redirectUrl)
         {
-            return SignOut("cookies", "oidc");
+            await Request.HttpContext.SignOutAsync();
+            return Redirect("/");
         }
     }
 }

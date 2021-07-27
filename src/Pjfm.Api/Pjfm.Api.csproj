@@ -20,11 +20,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers" />
+      <ProjectReference Include="..\Pjfm.Infrastructure\Pjfm.Infrastructure.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Pjfm.Infrastructure\Pjfm.Infrastructure.csproj" />
+      <Folder Include="Controllers" />
     </ItemGroup>
 
 </Project>

@@ -38,7 +38,6 @@ namespace Pjfm.Bff
                     options.Scope.Add("openid");
                     options.Scope.Add("profile");
                     options.Scope.Add("IdentityServerApi");
-                    options.Scope.Add("Role");
                     
                     // request refresh token
                     options.Scope.Add("offline_access");
