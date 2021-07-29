@@ -20,6 +20,7 @@ namespace Pjfm.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            ConfigureApplicationServices(services);
             ConfigureInfrastructure(services);
             ConfigureAuthentication(services);
             services.AddControllers();
