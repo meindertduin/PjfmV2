@@ -3,6 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net5.0</TargetFramework>
       <UserSecretsId>ef862ffe-14cd-4153-85b1-405bbfd429ba</UserSecretsId>
+      <Nullable>enable</Nullable>
   </PropertyGroup>
 
     <ItemGroup>
@@ -20,11 +21,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Pjfm.Infrastructure\Pjfm.Infrastructure.csproj" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Controllers\Base" />
+        <ProjectReference Include="..\Pjfm.Infrastructure\Pjfm.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

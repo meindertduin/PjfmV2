@@ -1,6 +1,6 @@
 namespace Pjfm.Api.Authentication
 {
-    public class WellKnownPolicies
+    public static class WellKnownPolicies
     {
         public const string Gebruiker = "Gebruiker";
     }
