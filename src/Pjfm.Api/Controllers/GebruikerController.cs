@@ -19,7 +19,7 @@ namespace Pjfm.Api.Controllers
         {
             var responseModel = new GetCurrentGebruikerResponseModel()
             {
-                GebruikersId = PjfmPrincipal!.Id,
+                GebruikersId = PjfmPrincipal?.Id,
                 Rollen = new List<GebruikerRolModel>
                 {
                     GebruikerRolModel.Gebruiker,

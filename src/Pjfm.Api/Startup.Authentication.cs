@@ -75,7 +75,7 @@ namespace Pjfm.Api
             services.ConfigureApplicationCookie(config =>
             {
                 config.LoginPath = "/gebruiker/login";
-                config.LogoutPath = "/gebruiker/logout";
+                config.LogoutPath = "/authentication/logout";
 
                 // return 401 instead of automatically challenging the user
                 config.Events.OnRedirectToLogin = context =>

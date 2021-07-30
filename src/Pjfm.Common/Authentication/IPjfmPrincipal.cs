@@ -2,7 +2,7 @@ namespace Pjfm.Common.Authentication
 {
     public interface IPjfmPrincipal
     {
-        int? Id { get; }
+        string? Id { get; }
         bool HasRole(GebruikerRol rol);
     }
 }

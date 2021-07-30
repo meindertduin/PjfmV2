@@ -4,7 +4,7 @@ namespace Pjfm.Api.Models.Gebruiker
 {
     public class GetCurrentGebruikerResponseModel
     {
-        public int? GebruikersId { get; set; }
+        public string? GebruikersId { get; set; }
         public string? GebruikersNaam { get; set; }
         public IEnumerable<GebruikerRolModel> Rollen { get; set; } = null!;
     }

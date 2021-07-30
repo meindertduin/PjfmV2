@@ -31,7 +31,7 @@ namespace Pjfm.Bff.Controllers
         public async Task<IActionResult> Logout([FromQuery] string redirectUrl)
         {
             await Request.HttpContext.SignOutAsync();
-            return Redirect("/");
+            return SignOut();
         }
     }
 }

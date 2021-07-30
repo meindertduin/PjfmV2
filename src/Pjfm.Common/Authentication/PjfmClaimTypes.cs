@@ -6,6 +6,6 @@ namespace Pjfm.Common.Authentication
     {
         public const string GebruikerId = "pjfm_gebruiker_id";
         public const string Rol = ClaimTypes.Role;
-        public const string Emailaddres = ClaimTypes.Upn;
+        public const string Name = "name";
     }
 }

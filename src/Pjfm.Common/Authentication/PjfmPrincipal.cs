@@ -4,7 +4,7 @@ namespace Pjfm.Common.Authentication
 {
     public class PjfmPrincipal : IPjfmPrincipal
     {
-        public int? Id { get; }
+        public string? Id { get; }
         public ClaimsPrincipal Principal { get; }
         public PjfmPrincipal(ClaimsPrincipal principal)
         {
@@ -13,15 +13,11 @@ namespace Pjfm.Common.Authentication
             Id = GetGebruikerIdClaimValue(principal);
         }
 
-        private int? GetGebruikerIdClaimValue(ClaimsPrincipal principal)
+        private string? GetGebruikerIdClaimValue(ClaimsPrincipal principal)
         {
-            var idClaim = principal.FindFirst(PjfmClaimTypes.Rol);
-            if (idClaim != null)
-            {
-                return int.Parse(idClaim.Value);
-            }
+            var idClaim = principal.FindFirst(PjfmClaimTypes.GebruikerId);
 
-            return null;
+            return idClaim?.Value;
         }
 
         public bool HasRole(GebruikerRol rol)
