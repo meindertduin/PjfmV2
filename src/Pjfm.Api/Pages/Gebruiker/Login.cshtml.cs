@@ -9,7 +9,7 @@ namespace Pjfm.Api.Pages.Gebruiker
 {
     public class Login : PageModel
     {
-        [BindProperty] public LoginForm Form { get; set; }
+        [BindProperty] public LoginForm Form { get; set; } = null!;
 
         public void OnGet(string returnUrl)
         {
@@ -36,14 +36,14 @@ namespace Pjfm.Api.Pages.Gebruiker
 
     public class LoginForm
     {
-        public string ReturnUrl { get; set; }
+        public string ReturnUrl { get; set; } = null!;
 
         [Required(ErrorMessage = "Verplicht veld")]
         [DataType(DataType.EmailAddress, ErrorMessage = "Voer een geldig email in")]
-        public string EmailAddress { get; set; }
+        public string EmailAddress { get; set; } = null!;
 
         [Required(ErrorMessage = "Verplicht veld")]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string Password { get; set; } = null!;
     }
 }

@@ -11,7 +11,7 @@ namespace Pjfm.Api.Pages.Gebruiker
 {
     public class Registreer : PageModel
     {
-        [BindProperty] public RegisterForm Form { get; set; }
+        [BindProperty] public RegisterForm Form { get; set; } = null!;
 
         public void OnGet([FromServices] IConfiguration configuration)
         {
