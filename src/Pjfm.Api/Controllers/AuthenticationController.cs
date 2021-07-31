@@ -21,6 +21,8 @@ namespace Pjfm.Api.Controllers
         [HttpGet("logout")]
         public async Task<IActionResult> Logout()
         {
+            // TODO: get redirectUrl from logoutId
+            
             await _signInManager.SignOutAsync();
             var redirectUrl = _configuration.GetValue<string>("ClientUrl");
 
