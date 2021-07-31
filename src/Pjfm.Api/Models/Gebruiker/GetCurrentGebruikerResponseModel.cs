@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Pjfm.Common.Authentication;
 
 namespace Pjfm.Api.Models.Gebruiker
 {
@@ -6,12 +7,6 @@ namespace Pjfm.Api.Models.Gebruiker
     {
         public string? GebruikersId { get; set; }
         public string? GebruikersNaam { get; set; }
-        public IEnumerable<GebruikerRolModel> Rollen { get; set; } = null!;
-    }
-
-    public enum GebruikerRolModel
-    {
-        Gebruiker,
-        Dj,
+        public IEnumerable<GebruikerRol>? Rollen { get; set; } = null!;
     }
 }

@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 
 namespace Pjfm.Common.Authentication
@@ -5,12 +8,18 @@ namespace Pjfm.Common.Authentication
     public class PjfmPrincipal : IPjfmPrincipal
     {
         public string? Id { get; }
-        private ClaimsPrincipal Principal { get; }
+        public IEnumerable<GebruikerRol> Rollen { get; }
+        public string? GebruikersNaam { get; }
         public PjfmPrincipal(ClaimsPrincipal principal)
         {
-            Principal = principal;
-
             Id = GetGebruikerIdClaimValue(principal);
+            Rollen = GetGebruikerRollenValue(principal);
+            GebruikersNaam = GetGebruikerGebruikersNaamValue(principal);
+        }
+
+        private string? GetGebruikerGebruikersNaamValue(ClaimsPrincipal principal)
+        {
+            return principal.FindFirst(PjfmClaimTypes.Name)?.Value;
         }
 
         private string? GetGebruikerIdClaimValue(ClaimsPrincipal principal)
@@ -20,9 +29,22 @@ namespace Pjfm.Common.Authentication
             return idClaim?.Value;
         }
 
-        public bool HasRole(GebruikerRol rol)
+        private IEnumerable<GebruikerRol> GetGebruikerRollenValue(ClaimsPrincipal principal)
         {
-            return Principal.IsInRole(rol.ToString());
+            var gebruikerRollen = new List<GebruikerRol>();
+            foreach (var rol in principal.FindAll(PjfmClaimTypes.Rol))
+            {
+                var parseSucceeded = Enum.TryParse(rol.Value, out GebruikerRol castedRol);
+                if (parseSucceeded)
+                {
+                    if (Enum.GetValues<GebruikerRol>().Contains(castedRol))
+                    {
+                        gebruikerRollen.Add(castedRol);
+                    }
+                }
+            }
+
+            return gebruikerRollen;
         }
     }
 }

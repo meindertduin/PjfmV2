@@ -1,8 +1,12 @@
+using System.Collections.Generic;
+
 namespace Pjfm.Common.Authentication
 {
     public interface IPjfmPrincipal
     {
         string? Id { get; }
-        bool HasRole(GebruikerRol rol);
+        public IEnumerable<GebruikerRol> Rollen { get; }
+        string? GebruikersNaam { get; }
+        
     }
 }
