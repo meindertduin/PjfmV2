@@ -17,14 +17,15 @@ namespace Pjfm.Api.Pages.Gebruiker
         }
 
         public async Task<IActionResult> OnPost([FromServices] IConfiguration configuration,
-            [FromServices] SignInManager<IdentityUser> signInManager)
+            [FromServices] SignInManager<IdentityUser> signInManager, [FromServices] UserManager<IdentityUser> userManager)
         {
             if (ModelState.IsValid == false)
             {
                 return Page();
             }
 
-            var signInResult = await signInManager.PasswordSignInAsync(Form.EmailAddress, Form.Password, true, false);
+            var user = await userManager.FindByEmailAsync(Form.EmailAddress);
+            var signInResult = await signInManager.PasswordSignInAsync(user.UserName, Form.Password, true, false);
             if (signInResult.Succeeded)
             {
                 return Redirect(Form.ReturnUrl);

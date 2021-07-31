@@ -5,7 +5,7 @@ namespace Pjfm.Common.Authentication
     public class PjfmPrincipal : IPjfmPrincipal
     {
         public string? Id { get; }
-        public ClaimsPrincipal Principal { get; }
+        private ClaimsPrincipal Principal { get; }
         public PjfmPrincipal(ClaimsPrincipal principal)
         {
             Principal = principal;

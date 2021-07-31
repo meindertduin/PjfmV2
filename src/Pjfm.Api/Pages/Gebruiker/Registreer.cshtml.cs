@@ -32,13 +32,13 @@ namespace Pjfm.Api.Pages.Gebruiker
 
             if (userCreateRequest.Succeeded)
             {
-                var claimsResult = await userManager.AddClaimsAsync(newUser, new[]
+                var claimsAddResult = await userManager.AddClaimsAsync(newUser, new[]
                 {
                     new Claim(PjfmClaimTypes.Rol, GebruikerRol.Gebruiker.ToString()),
                     new Claim(PjfmClaimTypes.GebruikerId, newUser.Id),
                 });
 
-                if (claimsResult.Succeeded)
+                if (claimsAddResult.Succeeded)
                 {
                     var redirectUrl = configuration.GetValue<string>("ClientUrl"); 
                     return Redirect(redirectUrl);
