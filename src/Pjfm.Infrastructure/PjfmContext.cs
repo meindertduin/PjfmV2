@@ -1,4 +1,4 @@
-using Domain.Gebruiker;
+using Domain.SpotifyTrack;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Pjfm.Infrastructure.TableMappings;
@@ -7,7 +7,7 @@ namespace Pjfm.Infrastructure
 {
     public class PjfmContext : IdentityDbContext
     {
-        public DbSet<Gebruiker> Gebruikers { get; private set; }
+        public DbSet<SpotifyNummer> SpotifyNummers { get; private set; } = null!;
         
         public PjfmContext(DbContextOptions<PjfmContext> options) : base(options)
         {
@@ -16,7 +16,7 @@ namespace Pjfm.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.ApplyConfiguration(new GebruikerMap());
+            builder.ApplyConfiguration(new SpotifyNummerMap());
             
             base.OnModelCreating(builder);
         }
