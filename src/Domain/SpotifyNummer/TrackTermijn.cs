@@ -1,4 +1,4 @@
-namespace Domain.SpotifyTrack
+namespace Domain.SpotifyNummer
 {
     public enum TrackTermijn
     {

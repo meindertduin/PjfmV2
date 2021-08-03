@@ -28,6 +28,5 @@ namespace Pjfm.Api.Controllers
 
             return Redirect(redirectUrl);
         }
-        
     }
 }

@@ -1,4 +1,5 @@
 using System.Data;
+using Domain.SpotifyNummer;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +12,8 @@ namespace Pjfm.Api
     {
         private void ConfigureInfrastructure(IServiceCollection services)
         {
+            services.AddTransient<ISpotifyNummerRepository, ISpotifyNummerRepository>();
+            
             var connectionString = Configuration.GetValue<string>("ConnectionStrings:ApplicationDb");
 
             if (string.IsNullOrEmpty(connectionString))
