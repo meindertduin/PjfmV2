@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Infrastructure;
+using Pjfm.Infrastructure.Repositories;
 
 namespace Pjfm.Api
 {
@@ -12,7 +13,7 @@ namespace Pjfm.Api
     {
         private void ConfigureInfrastructure(IServiceCollection services)
         {
-            services.AddTransient<ISpotifyNummerRepository, ISpotifyNummerRepository>();
+            services.AddTransient<ISpotifyNummerRepository, SpotifyNummerRepository>();
             
             var connectionString = Configuration.GetValue<string>("ConnectionStrings:ApplicationDb");
 

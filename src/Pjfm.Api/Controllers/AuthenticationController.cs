@@ -6,7 +6,7 @@ using Pjfm.Api.Controllers.Base;
 
 namespace Pjfm.Api.Controllers
 {
-    [Route("authentication")]
+    [Route("api/authentication")]
     public class AuthenticationController : PjfmController
     {
         private readonly SignInManager<IdentityUser> _signInManager;

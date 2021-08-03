@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Api.Controllers.Base;
 
 namespace Pjfm.Api.Controllers
 {
     [Authorize]
-    [Route("spotify/nummers")]
+    [Route("api/spotify/nummers")]
     public class SpotifyNummersController : PjfmController
     {
 

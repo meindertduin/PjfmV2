@@ -10,7 +10,7 @@ namespace Pjfm.Infrastructure.Repositories
     {
         private readonly IPjfmContext _pjfmContext;
 
-        public SpotifyNummerRepository(IPjfmContext pjfmContext)
+        public SpotifyNummerRepository(PjfmContext pjfmContext)
         {
             _pjfmContext = pjfmContext;
         }

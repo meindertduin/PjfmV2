@@ -1,6 +1,6 @@
 namespace Domain.SpotifyNummer
 {
-    public interface ISpotifyNummerExternalResourceService
+    public interface ISpotifyNummerService
     {
         void GetGebruikerMeestGeluisterdeSpotifyNummers();
     }
