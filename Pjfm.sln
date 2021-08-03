@@ -10,7 +10,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pjfm.Common", "src\Pjfm.Com
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pjfm.Infrastructure", "src\Pjfm.Infrastructure\Pjfm.Infrastructure.csproj", "{B2EA444B-E615-4409-9304-3579F69FE1BA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pjfm.Appliaction", "Pjfm.Appliaction\Pjfm.Appliaction.csproj", "{0DFAAEE7-7241-4A9A-8069-1FBC742F852D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pjfm.Application", "src\Pjfm.Application\Pjfm.Application.csproj", "{501C80F9-324A-48EB-9CF0-A5A57628B760}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -38,9 +38,9 @@ Global
 		{B2EA444B-E615-4409-9304-3579F69FE1BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B2EA444B-E615-4409-9304-3579F69FE1BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B2EA444B-E615-4409-9304-3579F69FE1BA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0DFAAEE7-7241-4A9A-8069-1FBC742F852D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0DFAAEE7-7241-4A9A-8069-1FBC742F852D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0DFAAEE7-7241-4A9A-8069-1FBC742F852D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0DFAAEE7-7241-4A9A-8069-1FBC742F852D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{501C80F9-324A-48EB-9CF0-A5A57628B760}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{501C80F9-324A-48EB-9CF0-A5A57628B760}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{501C80F9-324A-48EB-9CF0-A5A57628B760}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{501C80F9-324A-48EB-9CF0-A5A57628B760}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

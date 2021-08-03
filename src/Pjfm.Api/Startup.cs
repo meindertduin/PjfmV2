@@ -23,6 +23,7 @@ namespace Pjfm.Api
             ConfigureApplicationServices(services);
             ConfigureInfrastructure(services);
             ConfigureAuthentication(services);
+            
             services.AddControllers();
             services.AddRazorPages();
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Pjfm.Api", Version = "v1"}); });

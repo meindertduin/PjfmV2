@@ -21,8 +21,14 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\..\Pjfm.Appliaction\Pjfm.Appliaction.csproj" />
+        <ProjectReference Include="..\Pjfm.Application\Pjfm.Application.csproj" />
         <ProjectReference Include="..\Pjfm.Infrastructure\Pjfm.Infrastructure.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Reference Include="Pjfm.Appliaction, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
+        <HintPath>bin\Debug\net5.0\Pjfm.Appliaction.dll</HintPath>
+      </Reference>
     </ItemGroup>
 
 </Project>
