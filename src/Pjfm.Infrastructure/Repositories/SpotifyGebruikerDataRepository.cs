@@ -25,6 +25,15 @@ namespace Pjfm.Infrastructure.Repositories
             return GetSpotifyGebruikersDataQuery(gebruikerId).AsNoTracking().FirstOrDefaultAsync();
         }
 
+        public Task<string> GetGebruikerRefreshToken(string gebruikerId)
+        {
+            return _pjfmContext.SpotifyGebruikerData
+                .Where(s => s.GebruikerId == gebruikerId)
+                .Select(s => s.GebruikerId)
+                .AsNoTracking()
+                .FirstOrDefaultAsync();
+        }
+
         public async Task SetGebruikerRefreshToken(string gebruikerId, string refreshToken)
         {
             var spotifyGebruikerData = await GetSpotifyGebruikerData(gebruikerId);

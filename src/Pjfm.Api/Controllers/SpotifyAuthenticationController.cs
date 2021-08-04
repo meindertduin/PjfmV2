@@ -4,6 +4,7 @@ using Domain.SpotifyGebruikerData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Pjfm.Api.Authentication;
 using Pjfm.Api.Controllers.Base;
 using Pjfm.Application.Spotify;
 using Pjfm.Common.Extensions;
@@ -16,13 +17,16 @@ namespace Pjfm.Api.Controllers
     {
         private readonly ISpotifyAuthenticationService _spotifyAuthenticationService;
         private readonly ISpotifyGebruikersDataRepository _spotifyGebruikersDataRepository;
+        private readonly IGebruikerTokenService _gebruikerTokenService;
 
         public SpotifyAuthenticationController(IPjfmControllerContext pjfmContext,
             ISpotifyAuthenticationService spotifyAuthenticationService,
-            ISpotifyGebruikersDataRepository spotifyGebruikersDataRepository) : base(pjfmContext)
+            ISpotifyGebruikersDataRepository spotifyGebruikersDataRepository,
+            IGebruikerTokenService gebruikerTokenService) : base(pjfmContext)
         {
             _spotifyAuthenticationService = spotifyAuthenticationService;
             _spotifyGebruikersDataRepository = spotifyGebruikersDataRepository;
+            _gebruikerTokenService = gebruikerTokenService;
         }
 
         [HttpGet]
@@ -49,6 +53,9 @@ namespace Pjfm.Api.Controllers
             if (requestResult.IsSuccessful)
             {
                 await _spotifyGebruikersDataRepository.SetGebruikerRefreshToken(PjfmPrincipal.Id ,requestResult.Result.RefreshToken);
+                _gebruikerTokenService.StoreGebruikerSpotifyAccessToken(PjfmPrincipal.Id, requestResult.Result.AccessToken, requestResult.Result.ExpiresIn);
+                // TODO: remove this, this was as test
+                await _spotifyAuthenticationService.RefreshAccessToken(PjfmPrincipal.Id);
             }
 
             return Ok(code);

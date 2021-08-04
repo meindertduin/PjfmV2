@@ -4,10 +4,9 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using IdentityServer4.Stores.Serialization;
+using Domain.SpotifyGebruikerData;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using Pjfm.Application.Common;
 
 namespace Pjfm.Application.Spotify
@@ -15,34 +14,29 @@ namespace Pjfm.Application.Spotify
     public interface ISpotifyAuthenticationService
     {
         Task<ServiceRequestResult<SpotifyAccessTokenRequestResult>> RequestAccessToken(string code);
+        Task<ServiceRequestResult<SpotifyAccessTokenRefreshRequestResult>> RefreshAccessToken(string gebruikerId);
     }
 
     public class SpotifyAuthService : ISpotifyAuthenticationService
     {
         private readonly IConfiguration _configuration;
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ISpotifyGebruikersDataRepository _spotifyGebruikersDataRepository;
 
-        public SpotifyAuthService(IConfiguration configuration, IHttpClientFactory httpClientFactory)
+        public SpotifyAuthService(IConfiguration configuration, IHttpClientFactory httpClientFactory,
+            ISpotifyGebruikersDataRepository spotifyGebruikersDataRepository)
         {
             _configuration = configuration;
             _httpClientFactory = httpClientFactory;
+            _spotifyGebruikersDataRepository = spotifyGebruikersDataRepository;
         }
 
         public async Task<ServiceRequestResult<SpotifyAccessTokenRequestResult>> RequestAccessToken(string code)
         {
-            var httpClient = _httpClientFactory.CreateClient();
+            using var httpClient = _httpClientFactory.CreateClient();
 
-            var clientId = _configuration["Spotify:ClientId"];
-            var clientSecret = _configuration["Spotify:ClientSecret"];
             var redirectUrl = _configuration["Spotify:RedirectUrl"];
-
-            var clientCredentials = Encoding.ASCII.GetBytes($"{clientId}:{clientSecret}");
-
-            var requestMessage =
-                new HttpRequestMessage(HttpMethod.Post, new Uri(_configuration["Spotify:TokenEndpoint"]));
-
-            requestMessage.Headers.Authorization =
-                new AuthenticationHeaderValue("Basic", Convert.ToBase64String(clientCredentials));
+            var requestMessage = GetBaseTokenRequestMessage();
 
             requestMessage.Content = new FormUrlEncodedContent(new[]
             {
@@ -55,27 +49,74 @@ namespace Pjfm.Application.Spotify
             if (response.IsSuccessStatusCode)
             {
                 var resultContent = JsonConvert.DeserializeObject<SpotifyAccessTokenRequestResult>(
-                    await response.Content.ReadAsStringAsync(), new JsonSerializerSettings()
-                    {
-                        ContractResolver = new CustomContractResolver()
-                        {
-                            NamingStrategy = new SnakeCaseNamingStrategy()
-                        }
-                    });
+                    await response.Content.ReadAsStringAsync(), SpotifyApiHelpers.GetSpotifySerializerSettings());
 
-                return ServiceRequestResult<SpotifyAccessTokenRequestResult>.Success(resultContent, response.StatusCode);
+                return ServiceRequestResult<SpotifyAccessTokenRequestResult>.Success(resultContent,
+                    response.StatusCode);
             }
-            
+
             return ServiceRequestResult<SpotifyAccessTokenRequestResult>.Fail(null, response.StatusCode);
+        }
+
+        public async Task<ServiceRequestResult<SpotifyAccessTokenRefreshRequestResult>> RefreshAccessToken(
+            string gebruikerId)
+        {
+            using var client = _httpClientFactory.CreateClient();
+
+            var requestMessage = GetBaseTokenRequestMessage();
+            var gebruikerRefreshToken = await _spotifyGebruikersDataRepository.GetGebruikerRefreshToken(gebruikerId);
+
+            requestMessage.Content = new FormUrlEncodedContent(new[]
+            {
+                new KeyValuePair<string, string>("grant_type", "refresh_token"),
+                new KeyValuePair<string, string>("refresh_token", gebruikerRefreshToken)
+            });
+
+            var response = await client.SendAsync(requestMessage);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var resultContent = JsonConvert.DeserializeObject<SpotifyAccessTokenRefreshRequestResult>(
+                    await response.Content.ReadAsStringAsync(),
+                    SpotifyApiHelpers.GetSpotifySerializerSettings());
+                
+                return ServiceRequestResult<SpotifyAccessTokenRefreshRequestResult>.Success(resultContent, response.StatusCode);
+            }
+
+            return ServiceRequestResult<SpotifyAccessTokenRefreshRequestResult>.Fail(null, response.StatusCode);
+        }
+
+        private HttpRequestMessage GetBaseTokenRequestMessage()
+        {
+            var clientId = _configuration["Spotify:ClientId"];
+            var clientSecret = _configuration["Spotify:ClientSecret"];
+
+            var clientCredentials = Encoding.ASCII.GetBytes($"{clientId}:{clientSecret}");
+
+            var requestMessage =
+                new HttpRequestMessage(HttpMethod.Post, new Uri(_configuration["Spotify:TokenEndpoint"]));
+
+            requestMessage.Headers.Authorization =
+                new AuthenticationHeaderValue("Basic", Convert.ToBase64String(clientCredentials));
+
+            return requestMessage;
         }
     }
 
-    public class SpotifyAccessTokenRequestResult
+    public abstract class AccessTokenRequestResult
     {
         public string AccessToken { get; set; }
         public string TokenType { get; set; }
-        public string ExpiresIn { get; set; }
-        public string RefreshToken { get; set; }
+        public int ExpiresIn { get; set; }
         public string Score { get; set; }
+    }
+
+    public class SpotifyAccessTokenRequestResult : AccessTokenRequestResult
+    {
+        public string RefreshToken { get; set; }
+    }
+
+    public class SpotifyAccessTokenRefreshRequestResult : AccessTokenRequestResult
+    {
     }
 }
