@@ -9,7 +9,7 @@ namespace Pjfm.Api.Controllers.Base
     {
         protected IPjfmControllerContext PjfmContext { get; }
         
-        protected IPjfmPrincipal? PjfmPrincipal => PjfmContext.PjfmPrincipal;
+        protected IPjfmPrincipal PjfmPrincipal => PjfmContext.PjfmPrincipal;
         protected IConfiguration Configuration => PjfmContext.Configuration;
 
         public PjfmController(IPjfmControllerContext pjfmContext)

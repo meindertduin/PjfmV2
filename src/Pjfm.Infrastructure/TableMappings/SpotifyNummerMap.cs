@@ -15,13 +15,15 @@ namespace Pjfm.Infrastructure.TableMappings
             builder.ToTable("SpotifyNummer");
             builder.HasKey(s => s.Id);
 
+            builder.HasIndex(s => s.GebruikerId);
+
             builder.Property(s => s.SpotifyNummerId).HasMaxLength(50).IsRequired();
             builder.Property(s => s.GebruikerId).HasMaxLength(50);
             builder.Property(s => s.Artists).HasConversion(
                 v => string.Join(',', v),
                 v => v.Split(',', StringSplitOptions.RemoveEmptyEntries))
                 .HasMaxLength(255)
-                .IsRequired(true);
+                .IsRequired();
 
             var artistsValueComparer = new ValueComparer<IEnumerable<string>>(
                 (c1, c2) => c1.SequenceEqual(c2),
@@ -31,7 +33,7 @@ namespace Pjfm.Infrastructure.TableMappings
             
             builder.Property(s => s.Artists).Metadata.SetValueComparer(artistsValueComparer);
             
-            builder.Property(s => s.Titel).HasMaxLength(255).IsRequired(true);
+            builder.Property(s => s.Titel).HasMaxLength(255).IsRequired();
         }
     }
 }

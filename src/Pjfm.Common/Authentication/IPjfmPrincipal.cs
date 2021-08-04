@@ -4,9 +4,9 @@ namespace Pjfm.Common.Authentication
 {
     public interface IPjfmPrincipal
     {
-        string? Id { get; }
+        string Id { get; }
         public IEnumerable<GebruikerRol> Rollen { get; }
-        string? GebruikersNaam { get; }
+        string GebruikersNaam { get; }
         
     }
 }

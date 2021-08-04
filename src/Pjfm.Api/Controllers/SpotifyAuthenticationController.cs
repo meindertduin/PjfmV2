@@ -1,5 +1,6 @@
 using System.Text;
 using System.Threading.Tasks;
+using Domain.SpotifyGebruikerData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -14,12 +15,16 @@ namespace Pjfm.Api.Controllers
     public class SpotifyAuthenticationController : PjfmController
     {
         private readonly ISpotifyAuthenticationService _spotifyAuthenticationService;
+        private readonly ISpotifyGebruikersDataRepository _spotifyGebruikersDataRepository;
 
-        public SpotifyAuthenticationController(IPjfmControllerContext pjfmContext, ISpotifyAuthenticationService spotifyAuthenticationService) : base(pjfmContext)
+        public SpotifyAuthenticationController(IPjfmControllerContext pjfmContext,
+            ISpotifyAuthenticationService spotifyAuthenticationService,
+            ISpotifyGebruikersDataRepository spotifyGebruikersDataRepository) : base(pjfmContext)
         {
             _spotifyAuthenticationService = spotifyAuthenticationService;
+            _spotifyGebruikersDataRepository = spotifyGebruikersDataRepository;
         }
-        
+
         [HttpGet]
         public IActionResult Authenticate()
         {
@@ -28,23 +33,24 @@ namespace Pjfm.Api.Controllers
                 .Append("&response_type=code")
                 .Append($"&state={Helpers.RandomString(30)}")
                 .Append($@"&redirect_uri={Configuration.GetValue<string>("Spotify:RedirectUrl")}")
-                .Append("&scope=user-top-read user-read-private streaming user-read-playback-state playlist-read-private playlist-read-collaborative")
+                .Append(
+                    "&scope=user-top-read user-read-private streaming user-read-playback-state playlist-read-private playlist-read-collaborative")
                 .ToString();
-            
+
             return Redirect(authorizationUrl);
         }
-        
+
         [HttpGet("callback")]
         public async Task<IActionResult> Callback([FromQuery] string state, [FromQuery] string code)
         {
             // TODO: add validation for the code
-            
+
             var requestResult = await _spotifyAuthenticationService.RequestAccessToken(code);
             if (requestResult.IsSuccessful)
             {
-                Response.Cookies.Append();       
+                await _spotifyGebruikersDataRepository.SetGebruikerRefreshToken(PjfmPrincipal.Id ,requestResult.Result.RefreshToken);
             }
-            
+
             return Ok(code);
         }
     }
