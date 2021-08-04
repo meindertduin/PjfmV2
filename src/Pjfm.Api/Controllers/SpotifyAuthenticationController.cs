@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -40,7 +39,12 @@ namespace Pjfm.Api.Controllers
         {
             // TODO: add validation for the code
             
-            await _spotifyAuthenticationService.RequestAccessToken(code);    
+            var requestResult = await _spotifyAuthenticationService.RequestAccessToken(code);
+            if (requestResult.IsSuccessful)
+            {
+                Response.Cookies.Append();       
+            }
+            
             return Ok(code);
         }
     }
