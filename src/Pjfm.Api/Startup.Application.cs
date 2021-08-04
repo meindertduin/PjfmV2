@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Pjfm.Api.Authentication;
 using Pjfm.Api.Controllers.Base;
 using Pjfm.Application.Spotify;
 using Pjfm.Common.Authentication;
@@ -12,6 +13,8 @@ namespace Pjfm.Api
         {
             serviceCollection.AddTransient<ISpotifyAuthenticationService, SpotifyAuthService>();
             serviceCollection.AddTransient<IPjfmControllerContext, PjfmControllerContext>();
+
+            serviceCollection.AddSingleton<IGebruikerTokenService, GebruikerTokenService>();
 
             serviceCollection.AddScoped(x =>
                 x.GetRequiredService<IHttpContextAccessor>().HttpContext!.User.GetPjfmPrincipal());
