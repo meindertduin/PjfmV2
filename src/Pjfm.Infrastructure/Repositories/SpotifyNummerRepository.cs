@@ -19,5 +19,20 @@ namespace Pjfm.Infrastructure.Repositories
         {
             return _pjfmContext.SpotifyNummers.Where(x => x.GebruikerId == gebruikersId).ToListAsync();
         }
+
+        public async Task SetGebruikerSpotifyNummers(IEnumerable<SpotifyNummer> spotifyNummers ,string gebruikerId)
+        {
+            var alreadyAvailableSpotifyNummers = await _pjfmContext.SpotifyNummers
+                .Where(s => s.GebruikerId == gebruikerId)
+                .AsNoTracking()
+                .ToArrayAsync();
+
+            if (alreadyAvailableSpotifyNummers.Length > 0)
+            {
+                _pjfmContext.SpotifyNummers.RemoveRange(alreadyAvailableSpotifyNummers);
+            }
+
+            await _pjfmContext.SpotifyNummers.AddRangeAsync(spotifyNummers);
+        }
     }
 }
