@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Pjfm.Api.Authentication;
 using Pjfm.Api.Controllers.Base;
+using Pjfm.Application.Authentication;
 using Pjfm.Application.Spotify;
 using Pjfm.Common.Extensions;
 

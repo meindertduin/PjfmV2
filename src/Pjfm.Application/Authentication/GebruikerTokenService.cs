@@ -2,7 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Pjfm.Api.Authentication
+namespace Pjfm.Application.Authentication
 {
     public class GebruikerTokenService : IGebruikerTokenService
     {
