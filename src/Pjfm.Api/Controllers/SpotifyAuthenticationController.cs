@@ -54,8 +54,6 @@ namespace Pjfm.Api.Controllers
             {
                 await _spotifyGebruikersDataRepository.SetGebruikerRefreshToken(PjfmPrincipal.Id ,requestResult.Result.RefreshToken);
                 _gebruikerTokenService.StoreGebruikerSpotifyAccessToken(PjfmPrincipal.Id, requestResult.Result.AccessToken, requestResult.Result.ExpiresIn);
-                // TODO: remove this, this was as test
-                await _spotifyAuthenticationService.RefreshAccessToken(PjfmPrincipal.Id);
             }
 
             return Ok(code);

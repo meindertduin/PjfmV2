@@ -29,7 +29,7 @@ namespace Pjfm.Infrastructure.Repositories
         {
             return _pjfmContext.SpotifyGebruikerData
                 .Where(s => s.GebruikerId == gebruikerId)
-                .Select(s => s.GebruikerId)
+                .Select(s => s.RefreshToken)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
         }
