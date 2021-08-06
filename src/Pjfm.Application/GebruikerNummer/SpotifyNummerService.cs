@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.SpotifyNummer;
@@ -24,24 +27,26 @@ namespace Pjfm.Application.GebruikerNummer
         public async Task UpdateGebruikerSpotifyNummers(string gebruikerId)
         {
             var accessTokenResult = await _spotifyTokenService.GetGebruikerSpotifyAccessToken(gebruikerId);
+            var spotifyClient = new SpotifyClient(accessTokenResult.AccessToken);
 
             if (!accessTokenResult.IsSuccessful)
             {
                 return;
             }
 
-            var spotifyTracks = await GetAllTermsSpotifyTracks(accessTokenResult.AccessToken);
-
             var spotifyNummers = new List<SpotifyNummer>(150);
-            foreach (var spotifyTrackPageResult in spotifyTracks)
+
+            foreach (var trackTermijn in Enum.GetValues<TrackTermijn>())
             {
-                spotifyNummers.AddRange(spotifyTrackPageResult.Items?.Select(s => new SpotifyNummer()
+                var nummers = await GetTermTracks(ref spotifyClient, trackTermijn);
+                
+                spotifyNummers.AddRange(nummers.Items?.Select(s => new SpotifyNummer()
                 {
                     Titel = s.Name,
                     SpotifyNummerId = s.Id,
                     AangemaaktOp = DateTime.Now,
                     Artists = s.Artists.Select(a => a.Name),
-                    TrackTermijn = TrackTermijn.Kort,
+                    TrackTermijn = trackTermijn,
                     NummerDuurMs = s.DurationMs,
                     GebruikerId = gebruikerId,
                 }) ?? Array.Empty<SpotifyNummer>());   
@@ -53,23 +58,27 @@ namespace Pjfm.Application.GebruikerNummer
             }
         }
 
-        private async Task<Paging<FullTrack>[]> GetAllTermsSpotifyTracks(string accessToken)
+        private Task<Paging<FullTrack>> GetTermTracks(ref SpotifyClient spotifyClient, TrackTermijn termijn)
         {
-            var spotifyClient = new SpotifyClient(accessToken);
-
-            var retrieveTrackTasks = new Task<Paging<FullTrack>>[3];
-            var enumValues = Enum.GetValues<PersonalizationTopRequest.TimeRange>();
-            for (int i = 0; i < enumValues.Length; i++)
+            return spotifyClient.Personalization.GetTopTracks(new PersonalizationTopRequest()
             {
-                var retrieveTracksTask = spotifyClient.Personalization.GetTopTracks(new PersonalizationTopRequest()
-                {
-                    TimeRangeParam = enumValues[i],
-                    Limit = TermijnSpotifyNummersAmount,
-                });
-                retrieveTrackTasks[i] = retrieveTracksTask;
+                TimeRangeParam = ConvertTermijnToTimeRange(termijn),
+                Limit = TermijnSpotifyNummersAmount,
+            });
+        }
+        private PersonalizationTopRequest.TimeRange ConvertTermijnToTimeRange(TrackTermijn termijn)
+        {
+            switch (termijn)
+            {
+                case TrackTermijn.Kort:
+                    return PersonalizationTopRequest.TimeRange.ShortTerm;
+                case TrackTermijn.Middelmatig:
+                    return PersonalizationTopRequest.TimeRange.MediumTerm;
+                case TrackTermijn.Lang:
+                    return PersonalizationTopRequest.TimeRange.LongTerm;
+                default:
+                    throw new InvalidEnumArgumentException();
             }
-
-            return await Task.WhenAll(retrieveTrackTasks);
         }
     }
 
