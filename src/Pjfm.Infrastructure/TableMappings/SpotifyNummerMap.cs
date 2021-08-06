@@ -25,10 +25,11 @@ namespace Pjfm.Infrastructure.TableMappings
                 .HasMaxLength(255)
                 .IsRequired();
 
+            // TODO: fix the valueComparer issue
             // var artistsValueComparer = new ValueComparer<IEnumerable<string>>(
             //     (c1, c2) => c1.SequenceEqual(c2),
             //     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-            //     c => c.ToArray()
+            //     c => c.ToList()
             // );
             //
             // builder.Property(s => s.Artists).Metadata.SetValueComparer(artistsValueComparer);
