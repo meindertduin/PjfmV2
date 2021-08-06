@@ -1,23 +1,13 @@
 using System;
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Pjfm.Application.Spotify;
-using Pjfm.Common;
 
 namespace Pjfm.Application.Authentication
 {
     public class GebruikerTokenService : IGebruikerTokenService
     {
-        private readonly ISpotifyAuthenticationService _spotifyAuthenticationService;
         private ConcurrentDictionary<string, GebruikerTokensData> _gebruikerTokensData = new();
 
-        public GebruikerTokenService(ISpotifyAuthenticationService spotifyAuthenticationService)
-        {
-            _spotifyAuthenticationService = spotifyAuthenticationService;
-        }
-        
         public void StoreGebruikerSpotifyAccessToken(string gebruikerId, string accessToken, int expiresIn)
         {
             if (_gebruikerTokensData.ContainsKey(gebruikerId))
@@ -37,35 +27,6 @@ namespace Pjfm.Application.Authentication
                     SpotifyAccessTokenValidUntil = DateTime.Now + new TimeSpan(0, 0, expiresIn),
                 });
             }
-        }
-
-        public async Task<GetAccessTokenResult> GetGebruikerSpotifyAccessToken(string gebruikerId)
-        {
-            Guard.NotNullOrEmpty(gebruikerId, nameof(gebruikerId));
-            var gotAccessToken = GetGebruikerSpotifyAccessToken(gebruikerId, out var spotifyAccessToken);
-
-            if (!gotAccessToken)
-            {
-                var refreshResponse = await _spotifyAuthenticationService.RefreshAccessToken(gebruikerId);
-                if (refreshResponse.IsSuccessful)
-                {
-                    StoreGebruikerSpotifyAccessToken(gebruikerId, refreshResponse.Result.AccessToken, refreshResponse.Result.ExpiresIn);
-                }
-                else
-                {
-                    return new()
-                    {
-                        IsSuccessful = false,
-                        AccessToken = string.Empty,
-                    };
-                }
-            }
-
-            return new ()
-            {
-                IsSuccessful = true,
-                AccessToken = spotifyAccessToken,
-            };
         }
         
         public bool GetGebruikerSpotifyAccessToken(string gebruikerId, [MaybeNullWhen(false)] out string accessToken)
@@ -93,7 +54,6 @@ namespace Pjfm.Application.Authentication
     {
         void StoreGebruikerSpotifyAccessToken(string gebruikerId, string accessToken, int expiresIn);
         bool GetGebruikerSpotifyAccessToken(string gebruikerId, [MaybeNullWhen(false)] out string accessToken);
-        Task<GetAccessTokenResult> GetGebruikerSpotifyAccessToken(string gebruikerId);
     }
 
     internal class GebruikerTokensData
@@ -103,9 +63,4 @@ namespace Pjfm.Application.Authentication
         public DateTime SpotifyAccessTokenValidUntil { get; set; }
     }
 
-    public class GetAccessTokenResult
-    {
-        public bool IsSuccessful { get; set; }
-        public string AccessToken { get; set; }
-    }
 }

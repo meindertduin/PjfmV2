@@ -1,12 +1,14 @@
 using System.Text;
 using System.Threading.Tasks;
 using Domain.SpotifyGebruikerData;
+using Domain.SpotifyNummer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Pjfm.Api.Authentication;
 using Pjfm.Api.Controllers.Base;
 using Pjfm.Application.Authentication;
+using Pjfm.Application.GebruikerNummer;
 using Pjfm.Application.Spotify;
 using Pjfm.Common.Extensions;
 
@@ -19,15 +21,18 @@ namespace Pjfm.Api.Controllers
         private readonly ISpotifyAuthenticationService _spotifyAuthenticationService;
         private readonly ISpotifyGebruikersDataRepository _spotifyGebruikersDataRepository;
         private readonly IGebruikerTokenService _gebruikerTokenService;
+        private readonly ISpotifyNummerService _spotifyNummerService;
 
         public SpotifyAuthenticationController(IPjfmControllerContext pjfmContext,
             ISpotifyAuthenticationService spotifyAuthenticationService,
             ISpotifyGebruikersDataRepository spotifyGebruikersDataRepository,
-            IGebruikerTokenService gebruikerTokenService) : base(pjfmContext)
+            IGebruikerTokenService gebruikerTokenService,
+            ISpotifyNummerService spotifyNummerService) : base(pjfmContext)
         {
             _spotifyAuthenticationService = spotifyAuthenticationService;
             _spotifyGebruikersDataRepository = spotifyGebruikersDataRepository;
             _gebruikerTokenService = gebruikerTokenService;
+            _spotifyNummerService = spotifyNummerService;
         }
 
         [HttpGet]
@@ -55,6 +60,8 @@ namespace Pjfm.Api.Controllers
             {
                 await _spotifyGebruikersDataRepository.SetGebruikerRefreshToken(PjfmPrincipal.Id ,requestResult.Result.RefreshToken);
                 _gebruikerTokenService.StoreGebruikerSpotifyAccessToken(PjfmPrincipal.Id, requestResult.Result.AccessToken, requestResult.Result.ExpiresIn);
+
+                await _spotifyNummerService.UpdateGebruikerSpotifyNummers(PjfmPrincipal.Id);
             }
 
             return Ok(code);

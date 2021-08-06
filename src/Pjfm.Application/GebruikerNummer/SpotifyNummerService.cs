@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.SpotifyNummer;
+using Pjfm.Application.Authentication;
 using SpotifyAPI.Web;
 
 namespace Pjfm.Application.GebruikerNummer
@@ -9,17 +10,26 @@ namespace Pjfm.Application.GebruikerNummer
     public class SpotifyNummerService : ISpotifyNummerService
     {
         private readonly ISpotifyNummerRepository _spotifyNummerRepository;
+        private readonly ISpotifyTokenService _spotifyTokenService;
 
         private const int MaxSpotifyNummersPerUser = 150;
 
-        public SpotifyNummerService(ISpotifyNummerRepository spotifyNummerRepository)
+        public SpotifyNummerService(ISpotifyNummerRepository spotifyNummerRepository, ISpotifyTokenService spotifyTokenService)
         {
             _spotifyNummerRepository = spotifyNummerRepository;
+            _spotifyTokenService = spotifyTokenService;
         }
 
-        public async Task UpdateGebruikerSpotifyNummers(string gebruikerId, string spotifyAccessToken)
+        public async Task UpdateGebruikerSpotifyNummers(string gebruikerId)
         {
-            var spotifyClient = new SpotifyClient(spotifyAccessToken);
+            var accessTokenResult = await _spotifyTokenService.GetGebruikerSpotifyAccessToken(gebruikerId);
+
+            if (!accessTokenResult.IsSuccessful)
+            {
+                return;
+            }
+            
+            var spotifyClient = new SpotifyClient(accessTokenResult.AccessToken);
 
             var shortTermTracks = await spotifyClient.Personalization.GetTopTracks(new PersonalizationTopRequest()
             {
@@ -33,13 +43,13 @@ namespace Pjfm.Application.GebruikerNummer
                 await _spotifyNummerRepository.SetGebruikerSpotifyNummers(shortTermTracks.Items?.Select(x =>
                     new SpotifyNummer()
                     {
-                        GebruikerId = gebruikerId,
+                        Titel = x.Name,
+                        SpotifyNummerId = x.Id,
                         AangemaaktOp = DateTime.Now,
                         Artists = x.Artists.Select(s => s.Name),
                         TrackTermijn = TrackTermijn.Kort,
                         NummerDuurMs = x.DurationMs,
-                        SpotifyNummerId = x.Id,
-                        Titel = x.Name,
+                        GebruikerId = gebruikerId,
                     }) ?? Enumerable.Empty<SpotifyNummer>(), gebruikerId);
             }
         }
@@ -47,5 +57,6 @@ namespace Pjfm.Application.GebruikerNummer
 
     public interface ISpotifyNummerService
     {
+        Task UpdateGebruikerSpotifyNummers(string gebruikerId);
     }
 }
