@@ -33,6 +33,7 @@ namespace Pjfm.Infrastructure.Repositories
             }
 
             await _pjfmContext.SpotifyNummers.AddRangeAsync(spotifyNummers);
+            await _pjfmContext.SaveChangesAsync();
         }
     }
 }

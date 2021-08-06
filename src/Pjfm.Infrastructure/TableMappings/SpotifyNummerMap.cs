@@ -25,13 +25,13 @@ namespace Pjfm.Infrastructure.TableMappings
                 .HasMaxLength(255)
                 .IsRequired();
 
-            var artistsValueComparer = new ValueComparer<IEnumerable<string>>(
-                (c1, c2) => c1.SequenceEqual(c2),
-                c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
-                c => c.ToArray()
-            );
-            
-            builder.Property(s => s.Artists).Metadata.SetValueComparer(artistsValueComparer);
+            // var artistsValueComparer = new ValueComparer<IEnumerable<string>>(
+            //     (c1, c2) => c1.SequenceEqual(c2),
+            //     c => c.Aggregate(0, (a, v) => HashCode.Combine(a, v.GetHashCode())),
+            //     c => c.ToArray()
+            // );
+            //
+            // builder.Property(s => s.Artists).Metadata.SetValueComparer(artistsValueComparer);
             
             builder.Property(s => s.Titel).HasMaxLength(255).IsRequired();
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.SpotifyNummer;
@@ -12,7 +13,7 @@ namespace Pjfm.Application.GebruikerNummer
         private readonly ISpotifyNummerRepository _spotifyNummerRepository;
         private readonly ISpotifyTokenService _spotifyTokenService;
 
-        private const int MaxSpotifyNummersPerUser = 150;
+        private const int TermijnSpotifyNummersAmount = 50;
 
         public SpotifyNummerService(ISpotifyNummerRepository spotifyNummerRepository, ISpotifyTokenService spotifyTokenService)
         {
@@ -28,30 +29,47 @@ namespace Pjfm.Application.GebruikerNummer
             {
                 return;
             }
-            
-            var spotifyClient = new SpotifyClient(accessTokenResult.AccessToken);
 
-            var shortTermTracks = await spotifyClient.Personalization.GetTopTracks(new PersonalizationTopRequest()
-            {
-                TimeRangeParam = PersonalizationTopRequest.TimeRange.ShortTerm,
-                Limit = 50,
-            });
-            var gebruikerNummers = await _spotifyNummerRepository.GetGebruikerSpotifyNummersByGebruikersId(gebruikerId);
+            var spotifyTracks = await GetAllTermsSpotifyTracks(accessTokenResult.AccessToken);
 
-            if (gebruikerNummers.Count != MaxSpotifyNummersPerUser)
+            var spotifyNummers = new List<SpotifyNummer>(150);
+            foreach (var spotifyTrackPageResult in spotifyTracks)
             {
-                await _spotifyNummerRepository.SetGebruikerSpotifyNummers(shortTermTracks.Items?.Select(x =>
-                    new SpotifyNummer()
-                    {
-                        Titel = x.Name,
-                        SpotifyNummerId = x.Id,
-                        AangemaaktOp = DateTime.Now,
-                        Artists = x.Artists.Select(s => s.Name),
-                        TrackTermijn = TrackTermijn.Kort,
-                        NummerDuurMs = x.DurationMs,
-                        GebruikerId = gebruikerId,
-                    }) ?? Enumerable.Empty<SpotifyNummer>(), gebruikerId);
+                spotifyNummers.AddRange(spotifyTrackPageResult.Items?.Select(s => new SpotifyNummer()
+                {
+                    Titel = s.Name,
+                    SpotifyNummerId = s.Id,
+                    AangemaaktOp = DateTime.Now,
+                    Artists = s.Artists.Select(a => a.Name),
+                    TrackTermijn = TrackTermijn.Kort,
+                    NummerDuurMs = s.DurationMs,
+                    GebruikerId = gebruikerId,
+                }) ?? Array.Empty<SpotifyNummer>());   
             }
+
+            if (spotifyNummers.Count > 0)
+            {
+                await _spotifyNummerRepository.SetGebruikerSpotifyNummers(spotifyNummers, gebruikerId);
+            }
+        }
+
+        private async Task<Paging<FullTrack>[]> GetAllTermsSpotifyTracks(string accessToken)
+        {
+            var spotifyClient = new SpotifyClient(accessToken);
+
+            var retrieveTrackTasks = new Task<Paging<FullTrack>>[3];
+            var enumValues = Enum.GetValues<PersonalizationTopRequest.TimeRange>();
+            for (int i = 0; i < enumValues.Length; i++)
+            {
+                var retrieveTracksTask = spotifyClient.Personalization.GetTopTracks(new PersonalizationTopRequest()
+                {
+                    TimeRangeParam = enumValues[i],
+                    Limit = TermijnSpotifyNummersAmount,
+                });
+                retrieveTrackTasks[i] = retrieveTracksTask;
+            }
+
+            return await Task.WhenAll(retrieveTrackTasks);
         }
     }
 
