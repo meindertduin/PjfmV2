@@ -20,21 +20,19 @@ namespace Pjfm.Application.Spotify
     public class SpotifyAuthService : ISpotifyAuthenticationService
     {
         private readonly IConfiguration _configuration;
-        private readonly IHttpClientFactory _httpClientFactory;
+        private static HttpClient _httpClient;
         private readonly ISpotifyGebruikersDataRepository _spotifyGebruikersDataRepository;
 
-        public SpotifyAuthService(IConfiguration configuration, IHttpClientFactory httpClientFactory,
+        public SpotifyAuthService(IConfiguration configuration, HttpClient httpClient,
             ISpotifyGebruikersDataRepository spotifyGebruikersDataRepository)
         {
             _configuration = configuration;
-            _httpClientFactory = httpClientFactory;
+            _httpClient = httpClient;
             _spotifyGebruikersDataRepository = spotifyGebruikersDataRepository;
         }
 
         public async Task<ServiceRequestResult<SpotifyAccessTokenRequestResult>> RequestAccessToken(string code)
         {
-            using var httpClient = _httpClientFactory.CreateClient();
-
             var redirectUrl = _configuration["Spotify:RedirectUrl"];
             var requestMessage = GetBaseTokenRequestMessage();
 
@@ -45,7 +43,7 @@ namespace Pjfm.Application.Spotify
                 new KeyValuePair<string, string>("redirect_uri", redirectUrl),
             });
 
-            var response = await httpClient.SendAsync(requestMessage);
+            var response = await _httpClient.SendAsync(requestMessage);
             if (response.IsSuccessStatusCode)
             {
                 var resultContent = JsonConvert.DeserializeObject<SpotifyAccessTokenRequestResult>(
