@@ -59,8 +59,6 @@ namespace Pjfm.Application.Spotify
         public async Task<ServiceRequestResult<SpotifyAccessTokenRefreshRequestResult>> RefreshAccessToken(
             string gebruikerId)
         {
-            using var client = _httpClientFactory.CreateClient();
-
             var requestMessage = GetBaseTokenRequestMessage();
             var gebruikerRefreshToken = await _spotifyGebruikersDataRepository.GetGebruikerRefreshToken(gebruikerId);
 
@@ -70,7 +68,7 @@ namespace Pjfm.Application.Spotify
                 new KeyValuePair<string, string>("refresh_token", gebruikerRefreshToken)
             });
 
-            var response = await client.SendAsync(requestMessage);
+            var response = await _httpClient.SendAsync(requestMessage);
 
             if (response.IsSuccessStatusCode)
             {
