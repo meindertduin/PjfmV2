@@ -55,5 +55,6 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: 'pjfm'
+          slot-name: production
           publish-profile: ${{ secrets.AZURE_BACKEND_PUBLISH_SETTINGS }}
           package: .
