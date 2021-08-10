@@ -1,9 +1,13 @@
+using System;
+using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Pjfm.Common.Authentication;
+using SpotifyAPI.Web;
 
 namespace Pjfm.Api
 {
@@ -46,6 +50,11 @@ namespace Pjfm.Api
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            
+            app.UseWebSockets(new WebSocketOptions()
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(60),
+            });
 
             app.UseAuthentication();
             app.UseIdentityServer();
