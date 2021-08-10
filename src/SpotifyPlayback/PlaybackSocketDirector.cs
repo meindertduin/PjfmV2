@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.WebSockets;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using SpotifyPlayback.Interfaces;
@@ -18,9 +19,12 @@ namespace SpotifyPlayback
             var socketConnection = new SocketConnection(socket, context);
             if (Connections.TryAdd(Guid.NewGuid().ToString(), socketConnection))
             {
-                await socketConnection.PollConnection((result, buffer) =>
+                await socketConnection.PollConnection(async (result, buffer) =>
                 {
-                    
+                    if (result.MessageType == WebSocketMessageType.Text)
+                    {
+                        var jsonString = Encoding.UTF8.GetString(buffer);
+                    }
                 });
             }
         }
