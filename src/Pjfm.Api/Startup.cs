@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Pjfm.Common.Authentication;
 using SpotifyAPI.Web;
+using SpotifyPlayback;
 
 namespace Pjfm.Api
 {
@@ -27,6 +28,7 @@ namespace Pjfm.Api
             ConfigureApplicationServices(services);
             ConfigureInfrastructure(services);
             ConfigureAuthentication(services);
+            ConfigurePlayback(services);
             
             services.AddControllers();
             services.AddRazorPages();
@@ -66,6 +68,8 @@ namespace Pjfm.Api
                 
                 endpoints.MapRazorPages();
             });
+
+            app.UseMiddleware<PlaybackWebsocketMiddleware>();
         }
     }
 }

@@ -23,6 +23,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Pjfm.Application\Pjfm.Application.csproj" />
         <ProjectReference Include="..\Pjfm.Infrastructure\Pjfm.Infrastructure.csproj" />
+        <ProjectReference Include="..\SpotifyPlayback\SpotifyPlayback.csproj" />
     </ItemGroup>
 
     <ItemGroup>

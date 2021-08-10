@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.WebSockets;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
@@ -11,10 +13,16 @@ namespace SpotifyPlayback
     {
         private static readonly ConcurrentDictionary<string, SocketConnection> Connections = new();
         
-        public bool AddSocket(WebSocket socket, HttpContext context, string gebruikerId)
+        public async Task HandleSocketConnection(WebSocket socket, HttpContext context)
         {
             var socketConnection = new SocketConnection(socket, context);
-            return Connections.TryAdd(gebruikerId, socketConnection);
+            if (Connections.TryAdd(Guid.NewGuid().ToString(), socketConnection))
+            {
+                await socketConnection.PollConnection((result, buffer) =>
+                {
+                    
+                });
+            }
         }
 
         public bool RemoveSocket(string gebruikerId)
