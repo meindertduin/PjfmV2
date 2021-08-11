@@ -1,25 +1,43 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SpotifyPlayback.Interfaces;
+using SpotifyPlayback.Models;
 
 namespace SpotifyPlayback
 {
-    public class SpotifyPlaybackHostedService : IHostedService, IDisposable
+    public class SpotifyPlaybackHostedService : BackgroundService
     {
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
+        private readonly IServiceProvider _services;
 
-        public Task StopAsync(CancellationToken cancellationToken)
+        public SpotifyPlaybackHostedService(IServiceProvider services)
         {
-            throw new NotImplementedException();
+            _services = services;
         }
-
-        public void Dispose()
+        
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            throw new NotImplementedException();
+            using var scope = _services.CreateScope();
+            var socketDirector = scope.ServiceProvider.GetRequiredService<ISocketDirector>();
+            while (stoppingToken.IsCancellationRequested == false)
+            {
+                await Task.Delay(1000, stoppingToken);
+                var sockets = socketDirector.GetSocketConnections();
+
+                foreach (var socket in sockets)
+                {
+                    var message = new PlaybackSocketMessage<string>()
+                    {
+                        Body = "Ok",
+                        ContentType = PlaybackMessageContentType.PlaybackUpdate,
+                        MessageType = MessageType.Playback,
+                    };
+
+                    await socket.SendMessage(message.GetBytes());
+                }
+            }
         }
     }
 }

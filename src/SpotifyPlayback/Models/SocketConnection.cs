@@ -40,5 +40,11 @@ namespace SpotifyPlayback.Models
                 await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "closing", CancellationToken.None);
             }
         }
+
+        public Task SendMessage(byte[] message)
+        {
+            return _webSocket.SendAsync(new ArraySegment<byte>(message), WebSocketMessageType.Text, true,
+                CancellationToken.None);
+        }
     }
 }

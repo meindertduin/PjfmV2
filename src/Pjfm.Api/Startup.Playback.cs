@@ -9,6 +9,8 @@ namespace Pjfm.Api
         private void ConfigurePlayback(IServiceCollection services)
         {
             services.AddSingleton<ISocketDirector, PlaybackSocketDirector>();
+
+            services.AddHostedService<SpotifyPlaybackHostedService>();
         }
     }
 }
