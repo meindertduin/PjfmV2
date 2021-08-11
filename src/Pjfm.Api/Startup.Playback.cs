@@ -2,7 +2,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Api.Extensions;
 using SpotifyPlayback;
 using SpotifyPlayback.Interfaces;
-using SpotifyPlayback.SocketRequests;
+using SpotifyPlayback.Requests;
 
 namespace Pjfm.Api
 {

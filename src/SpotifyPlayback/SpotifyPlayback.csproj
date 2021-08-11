@@ -14,4 +14,8 @@
       <ProjectReference Include="..\Pjfm.Common\Pjfm.Common.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Services" />
+    </ItemGroup>
+
 </Project>

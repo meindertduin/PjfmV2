@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using SpotifyPlayback.Interfaces;
 
-namespace SpotifyPlayback.SocketRequests
+namespace SpotifyPlayback.Requests
 {
     public class PlaybackRequestDispatcher : IPlaybackRequestDispatcher
     {
