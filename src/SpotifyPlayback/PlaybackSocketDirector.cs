@@ -24,16 +24,7 @@ namespace SpotifyPlayback
                 {
                     if (result.MessageType == WebSocketMessageType.Text)
                     {
-                        var jsonString = Encoding.UTF8.GetString(buffer);
-
-                        var response = new PlaybackSocketMessage<string>()
-                        {
-                            MessageType = MessageType.Playback,
-                            Body = "ok",
-                            ContentType = PlaybackMessageContentType.PlaybackUpdate,
-                        };
-                        await socket.SendAsync(new ArraySegment<byte>(response.GetBytes()), WebSocketMessageType.Text, true,
-                            CancellationToken.None);
+                        // TODO: handle message or maybe delete receiving messages in the future
                     }
                 });
             }
