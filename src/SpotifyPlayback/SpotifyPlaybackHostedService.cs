@@ -26,16 +26,17 @@ namespace SpotifyPlayback
             
             while (stoppingToken.IsCancellationRequested == false)
             {
-                // request a track
-                
-                // schedule the track
                 
             }
         }
 
-        private async Task AddNewGroupToScheduler(object sender, PlaybackGroupCreatedEventArgs eventArgs)
+        private void AddNewGroupToScheduler(object sender, PlaybackGroupCreatedEventArgs eventArgs)
         {
-            var newTrack = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
+            Task.Run(async () =>
+            {
+                var newNummer = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
+                
+            });
         }
     }
 }
