@@ -1,11 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
 
 namespace SpotifyPlayback
 {
-    public class PlaybackScheduledTaskQueue
+    public class PlaybackScheduledTaskQueue : IPlaybackScheduledTaskQueue
     {
         private const int DefaultCapacity = 5;
 
@@ -42,9 +43,10 @@ namespace SpotifyPlayback
             return false;
         }
 
-        public void NextTick()
+        public IEnumerable<PlaybackScheduledNummer> GetDueNummers()
         {
             var time = DateTime.Now;
+            var dueScheduledPlaybackNummers = new List<PlaybackScheduledNummer>();
 
             lock (_queueLock)
             {
@@ -53,11 +55,12 @@ namespace SpotifyPlayback
                     if (playbackScheduledNummer.DueTime <= time)
                     {
                         _playbackScheduledNummers.Remove(playbackScheduledNummer);
-                        
-                        // TODO: handle the scheduledNummers
+                        dueScheduledPlaybackNummers.Add(playbackScheduledNummer);
                     }
                 }
             }
+
+            return dueScheduledPlaybackNummers;
         }
     }
 }
