@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.SpotifyNummer;
 using SpotifyPlayback.Interfaces;
@@ -8,6 +10,7 @@ namespace SpotifyPlayback.Services
     {
         private readonly IPlaybackQueue _playbackQueue;
         private SpotifyNummer? _currentlyPlayingNumber = null;
+        private ConcurrentBag<string> _gebruikerIds = new();
 
         public PlaybackGroup(IPlaybackQueue playbackQueue)
         {
@@ -20,6 +23,11 @@ namespace SpotifyPlayback.Services
             _currentlyPlayingNumber = newNummer;
 
             return newNummer;
+        }
+
+        public IEnumerable<string> GetGroupListenerIds()
+        {
+            return _gebruikerIds.ToArray();
         }
     }
 }

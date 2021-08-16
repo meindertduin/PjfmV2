@@ -4,13 +4,14 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SpotifyPlayback.Interfaces;
-using SpotifyPlayback.Models;
+using SpotifyPlayback.Services;
 
 namespace SpotifyPlayback
 {
     public class SpotifyPlaybackHostedService : BackgroundService
     {
         private readonly IServiceProvider _services;
+        private IPlaybackGroupCollection _playbackGroupCollection;
 
         public SpotifyPlaybackHostedService(IServiceProvider services)
         {
@@ -20,24 +21,21 @@ namespace SpotifyPlayback
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             using var scope = _services.CreateScope();
-            var socketDirector = scope.ServiceProvider.GetRequiredService<ISocketDirector>();
+            _playbackGroupCollection = scope.ServiceProvider.GetRequiredService<IPlaybackGroupCollection>();
+            _playbackGroupCollection.playbackgroupCreatedEvent += AddNewGroupToScheduler;
+            
             while (stoppingToken.IsCancellationRequested == false)
             {
-                await Task.Delay(1000, stoppingToken);
-                var sockets = socketDirector.GetSocketConnections();
-
-                foreach (var socket in sockets)
-                {
-                    var message = new PlaybackSocketMessage<string>()
-                    {
-                        Body = "Ok",
-                        ContentType = PlaybackMessageContentType.PlaybackUpdate,
-                        MessageType = MessageType.Playback,
-                    };
-
-                    await socket.SendMessage(message.GetBytes());
-                }
+                // request a track
+                
+                // schedule the track
+                
             }
+        }
+
+        private async Task AddNewGroupToScheduler(object sender, PlaybackGroupCreatedEventArgs eventArgs)
+        {
+            var newTrack = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
         }
     }
 }

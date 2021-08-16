@@ -7,5 +7,6 @@ namespace SpotifyPlayback.Models
     {
         public Guid GroupId { get; set; }
         public SpotifyNummer SpotifyNummer { get; set; } = null!;
+        public DateTime DueTime { get; set; }
     }
 }
