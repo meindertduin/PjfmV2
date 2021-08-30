@@ -12,10 +12,10 @@ namespace SpotifyPlayback
 {
     public class PlaybackSocketDirector : ISocketDirector
     {
-        private readonly IPlaybackRequestHandler<GetPlaybackInfoRequest, GetPlaybackRequestResult> _playbackInfoRequestHandler;
+        private readonly IPlaybackRequestHandler<GetPlaybackInfoRequest, GetPlaybackInfoRequestResult> _playbackInfoRequestHandler;
         private static readonly ConcurrentDictionary<string, SocketConnection> Connections = new();
 
-        public PlaybackSocketDirector(IPlaybackRequestHandler<GetPlaybackInfoRequest, GetPlaybackRequestResult> playbackInfoRequestHandler)
+        public PlaybackSocketDirector(IPlaybackRequestHandler<GetPlaybackInfoRequest, GetPlaybackInfoRequestResult> playbackInfoRequestHandler)
         {
             _playbackInfoRequestHandler = playbackInfoRequestHandler;
         }
@@ -26,9 +26,9 @@ namespace SpotifyPlayback
             if (Connections.TryAdd(Guid.NewGuid().ToString(), socketConnection))
             {
                 var playbackInfo = await _playbackInfoRequestHandler.HandleAsync(new GetPlaybackInfoRequest());
-                var response = new PlaybackSocketMessage<string>()
+                var response = new PlaybackSocketMessage<GetPlaybackInfoRequestResult>()
                 {
-                    Body = playbackInfo.Message,
+                    Body = playbackInfo,
                     MessageType = MessageType.Playback,
                     ContentType = PlaybackMessageContentType.PlaybackUpdate,
                 };

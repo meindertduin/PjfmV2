@@ -28,6 +28,9 @@ namespace SpotifyPlayback
             _playbackScheduledTaskQueue = scope.ServiceProvider.GetRequiredService<IPlaybackScheduledTaskQueue>();
             
             _playbackGroupCollection.playbackgroupCreatedEvent += AddNewGroupToScheduler;
+            
+            // TODO: For now we create one at the start. In later versions more groups should be able to be created
+            _playbackGroupCollection.CreateNewPlaybackGroup("Pjfm");
 
             _timer = new Timer(ExecuteAsync, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
 

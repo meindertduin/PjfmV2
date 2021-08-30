@@ -1,27 +1,35 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using SpotifyPlayback.Interfaces;
+using SpotifyPlayback.Models.DataTransferObjects;
 
 namespace SpotifyPlayback.Requests.Handlers
 {
-    public class GetPlaybackInfoRequestHandler : IPlaybackRequestHandler<GetPlaybackInfoRequest, GetPlaybackRequestResult>
+    public class GetPlaybackInfoRequestHandler : IPlaybackRequestHandler<GetPlaybackInfoRequest, GetPlaybackInfoRequestResult>
     {
-        public Task<GetPlaybackRequestResult> HandleAsync(GetPlaybackInfoRequest request)
+        private readonly IPlaybackGroupCollection _playbackGroupCollection;
+
+        public GetPlaybackInfoRequestHandler(IPlaybackGroupCollection playbackGroupCollection)
         {
-            // TODO: data is rubbish for testing purpose
-            return Task.FromResult(new GetPlaybackRequestResult()
+            _playbackGroupCollection = playbackGroupCollection;
+        }
+        public Task<GetPlaybackInfoRequestResult> HandleAsync(GetPlaybackInfoRequest request)
+        {
+            return Task.FromResult(new GetPlaybackInfoRequestResult()
             {
-                Message = "Dit werkt dus..."
+                PlaybackGroups = _playbackGroupCollection.getPlaybackGroupsInfo(),
             });
         }
     }
 
-    public class GetPlaybackInfoRequest : IPlaybackRequest<GetPlaybackRequestResult>
+    public class GetPlaybackInfoRequest : IPlaybackRequest<GetPlaybackInfoRequestResult>
     {
         
     }
 
-    public class GetPlaybackRequestResult
+    public class GetPlaybackInfoRequestResult
     {
-        public string Message { get; set; }
+        public IEnumerable<PlaybackGroupDto> PlaybackGroups { get; set; }
     }
 }

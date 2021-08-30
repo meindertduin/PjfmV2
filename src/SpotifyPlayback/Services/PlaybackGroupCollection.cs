@@ -5,28 +5,29 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
+using SpotifyPlayback.Models.DataTransferObjects;
 
 namespace SpotifyPlayback.Services
 {
-    public class PlaybackGroupGroupCollection : IPlaybackGroupCollection
+    public class PlaybackGroupCollection : IPlaybackGroupCollection
     {
         private readonly IServiceProvider _serviceProvider;
         private ConcurrentDictionary<Guid, IPlaybackGroup> _playbackGroups = new();
 
-        public event PlaybackGroupCreatedEvent playbackgroupCreatedEvent;
+        public event PlaybackGroupCreatedEvent playbackgroupCreatedEvent = null!;
 
-        public PlaybackGroupGroupCollection(IServiceProvider serviceProvider)
+        public PlaybackGroupCollection(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
 
-        public Guid CreateNewPlaybackGroup()
+        public Guid CreateNewPlaybackGroup(string groupName)
         {
             using var scope = _serviceProvider.CreateScope();
             var playbackQueue = scope.ServiceProvider.GetRequiredService<IPlaybackQueue>();
-
-            var playbackGroup = new PlaybackGroup(playbackQueue);
             var groupId = Guid.NewGuid();
+
+            var playbackGroup = new PlaybackGroup(playbackQueue, groupId, groupName);
 
             _playbackGroups.TryAdd(groupId, playbackGroup);
 
@@ -49,6 +50,22 @@ namespace SpotifyPlayback.Services
         {
             var playbackGroup = GetPlaybackGroup(groupId);
             return playbackGroup.GetGroupListenerIds();
+        }
+
+        public IEnumerable<PlaybackGroupDto> getPlaybackGroupsInfo()
+        {
+            var groupsData = new List<PlaybackGroupDto>();
+            
+            foreach (var playbackGroup in _playbackGroups.Values)
+            {
+                groupsData.Add(new PlaybackGroupDto()
+                {
+                    GroupId = playbackGroup.GroupId,
+                    GroupName = playbackGroup.GroupName,
+                });
+            }
+
+            return groupsData;
         }
 
         private IPlaybackGroup GetPlaybackGroup(Guid groupId)
