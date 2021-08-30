@@ -1,10 +1,10 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.SpotifyNummer;
 using SpotifyPlayback.Interfaces;
+using SpotifyPlayback.Models.DataTransferObjects;
 
 namespace SpotifyPlayback.Services
 {
@@ -12,8 +12,10 @@ namespace SpotifyPlayback.Services
     {
         private readonly IPlaybackQueue _playbackQueue;
         private SpotifyNummer? _currentlyPlayingNumber = null;
-        private ConcurrentBag<string> _gebruikerIds = new();
-        
+        private List<LuisteraarDto> _luisteraars = new();
+
+        private readonly object luisteraarsLock = new();
+
         public Guid GroupId { get; private set; }
         public string GroupName { get; private set; } 
 
@@ -35,22 +37,39 @@ namespace SpotifyPlayback.Services
 
         public IEnumerable<string> GetGroupListenerIds()
         {
-            return _gebruikerIds.ToArray();
+            return _luisteraars.Select(x => x.GebruikerId);
         }
 
-        public bool AddLuisteraar(string gebruikerId)
+        public bool AddLuisteraar(LuisteraarDto luisteraar)
         {
-            if (!_gebruikerIds.Contains(gebruikerId))
+            if (!_luisteraars.Contains(luisteraar))
             {
-                _gebruikerIds.Add(gebruikerId);
+                lock (luisteraarsLock)
+                {
+                    _luisteraars.Add(luisteraar);
+                }
                 return true;
             }
 
             return false;
         }
+
+        public bool RemoveLuisteraar(LuisteraarDto luisteraar)
+        {
+            lock (luisteraarsLock)
+            {
+                return _luisteraars.Remove(luisteraar);
+            }
+        }
+
+        public bool ContainsLuisteraar(LuisteraarDto luisteraar)
+        {
+            return _luisteraars.Contains(luisteraar);
+        }
+
         public bool HasLuisteraars()
         {
-            return !_gebruikerIds.IsEmpty;
+            return !_luisteraars.Any();
         }
     }
 }

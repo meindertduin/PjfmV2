@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using SpotifyPlayback.Interfaces;
+using SpotifyPlayback.Models.DataTransferObjects;
 
 namespace SpotifyPlayback.Requests.Handlers
 {
@@ -14,7 +15,9 @@ namespace SpotifyPlayback.Requests.Handlers
         }
         public Task<JoinPlaybackGroupResult> HandleAsync(JoinPlaybackGroupRequest request)
         {
-            var hasJoined = _playbackGroupCollection.JoinGroup(request.GroupId, request.GebruikerId);
+            var luistenaar = new LuisteraarDto(request.GebruikerId, request.ConnectionId);
+            var hasJoined = _playbackGroupCollection.JoinGroup(request.GroupId, luistenaar);
+            
             return Task.FromResult(new JoinPlaybackGroupResult()
             {
                 Success = hasJoined,
@@ -26,6 +29,7 @@ namespace SpotifyPlayback.Requests.Handlers
     {
         public Guid GroupId { get; set; }
         public string GebruikerId { get; set; }
+        public Guid ConnectionId { get; set; }
     }
 
     public class JoinPlaybackGroupResult

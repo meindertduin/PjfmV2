@@ -1,10 +1,10 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Pjfm.Common.Authentication;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
 using SpotifyPlayback.Requests.Handlers;
@@ -13,20 +13,20 @@ namespace SpotifyPlayback
 {
     public class PlaybackSocketDirector : ISocketDirector
     {
-        private readonly IPlaybackRequestHandler<GetPlaybackInfoRequest, GetPlaybackInfoRequestResult> _playbackInfoRequestHandler;
-        private static readonly ConcurrentDictionary<string, SocketConnection> Connections = new();
+        private readonly IPlaybackRequestDispatcher _playbackRequestDispatcher;
+        private static readonly ConcurrentDictionary<Guid, SocketConnection> Connections = new();
 
-        public PlaybackSocketDirector(IPlaybackRequestHandler<GetPlaybackInfoRequest, GetPlaybackInfoRequestResult> playbackInfoRequestHandler)
+        public PlaybackSocketDirector(IPlaybackRequestDispatcher playbackRequestDispatcher)
         {
-            _playbackInfoRequestHandler = playbackInfoRequestHandler;
+            _playbackRequestDispatcher = playbackRequestDispatcher;
         }
         
         public async Task HandleSocketConnection(WebSocket socket, HttpContext context)
         {
-            var socketConnection = new SocketConnection(socket, context);
-            if (Connections.TryAdd(context.User.GetPjfmPrincipal().Id, socketConnection))
+            var socketConnection = new SocketConnection(socket, context, Guid.NewGuid());
+            if (Connections.TryAdd(socketConnection.ConnectionId, socketConnection))
             {
-                var playbackInfo = await _playbackInfoRequestHandler.HandleAsync(new GetPlaybackInfoRequest());
+                var playbackInfo = await _playbackRequestDispatcher.HandlePlaybackRequest(new GetPlaybackInfoRequest());
                 var response = new PlaybackSocketMessage<GetPlaybackInfoRequestResult>()
                 {
                     Body = playbackInfo,
@@ -41,12 +41,24 @@ namespace SpotifyPlayback
                         // TODO: handle message or maybe delete receiving messages in the future
                     }
                 });
+
+                if (!socketConnection.IsConnected)
+                {
+                    if (socketConnection.Principal.IsAuthenticated())
+                    {
+                        await _playbackRequestDispatcher.HandlePlaybackRequest(new DisconnectPlaybackGroupRequest()
+                        {
+                            GebruikerId = socketConnection.Principal.Id,
+                        });
+                    }
+                    
+                    RemoveSocket(socketConnection.ConnectionId);
+                }
             }
         }
-
-        public bool RemoveSocket(string gebruikerId)
+        public bool RemoveSocket(Guid connectionId)
         {
-            return Connections.Remove(gebruikerId, out _);
+            return Connections.Remove(connectionId, out _);
         }
 
         public IEnumerable<SocketConnection> GetSocketConnections()
@@ -59,10 +71,10 @@ namespace SpotifyPlayback
             await SendMessageToConnections(message, Connections.Values);
         }
 
-        public async Task BroadCastMessageOverUsers<T>(SocketMessage<T> message, IEnumerable<string> gebruikerIds)
+        public async Task BroadCastMessageOverConnections<T>(SocketMessage<T> message, IEnumerable<Guid> connectionIds)
         {
             var connections = Connections
-                .Where(c => gebruikerIds.Contains(c.Key))
+                .Where(c => connectionIds.Contains(c.Key))
                 .Select(c => c.Value);
             
             await SendMessageToConnections(message, connections);

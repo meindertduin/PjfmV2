@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
@@ -9,9 +10,9 @@ namespace SpotifyPlayback.Interfaces
     public interface ISocketDirector
     {
         Task HandleSocketConnection(WebSocket socket, HttpContext context);
-        bool RemoveSocket(string gebruikerId);
+        bool RemoveSocket(Guid connectionId);
         IEnumerable<SocketConnection> GetSocketConnections();
         Task BroadCastMessage<T>(SocketMessage<T> message);
-        Task BroadCastMessageOverUsers<T>(SocketMessage<T> message, IEnumerable<string> gebruikerIds);
+        Task BroadCastMessageOverConnections<T>(SocketMessage<T> message, IEnumerable<Guid> connectionIds);
     }
 }

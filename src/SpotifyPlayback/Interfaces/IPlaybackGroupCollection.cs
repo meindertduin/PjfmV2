@@ -14,6 +14,7 @@ namespace SpotifyPlayback.Interfaces
         Task<PlaybackScheduledNummer> GetGroupNewTrack(Guid groupId);
         IEnumerable<string> GetGroupGebruikerIds(Guid groupId);
         IEnumerable<PlaybackGroupDto> GetPlaybackGroupsInfo();
-        bool JoinGroup(Guid groupId, string gebruikerId);
+        bool JoinGroup(Guid groupId, LuisteraarDto luisteraar);
+        bool RemoveGebruikerFromGroup(LuisteraarDto luisteraar);
     }
 }

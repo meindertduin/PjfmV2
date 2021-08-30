@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,19 +12,23 @@ namespace SpotifyPlayback.Models
     {
         private WebSocket _webSocket;
         private HttpContext _context;
-        private IPjfmPrincipal _principal;
+        public Guid ConnectionId { get; init; }
+        public IPjfmPrincipal Principal { get; init; }
+        public bool IsConnected { get; private set; }
 
-        public SocketConnection(WebSocket webSocket, HttpContext context)
+        public SocketConnection(WebSocket webSocket, HttpContext context, Guid connectionId)
         {
             _webSocket = webSocket;
             _context = context;
-            _principal = context.User.GetPjfmPrincipal();
+            ConnectionId = connectionId;
+            Principal = context.User.GetPjfmPrincipal();
         }
 
         public async Task PollConnection(Action<WebSocketReceiveResult, byte[]> onMessageReceive)
         {
             var buffer = new byte[1024];
 
+            IsConnected = true;
             while (_webSocket.State == WebSocketState.Open)
             {
                 var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
@@ -38,13 +43,19 @@ namespace SpotifyPlayback.Models
             if (_webSocket.State is WebSocketState.Open or WebSocketState.CloseReceived or WebSocketState.CloseSent)
             {
                 await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "closing", CancellationToken.None);
+                IsConnected = false;
             }
         }
 
         public Task SendMessage(byte[] message)
         {
-            return _webSocket.SendAsync(new ArraySegment<byte>(message), WebSocketMessageType.Text, true,
-                CancellationToken.None);
+            if (IsConnected)
+            {
+                return _webSocket.SendAsync(new ArraySegment<byte>(message), WebSocketMessageType.Text, true,
+                    CancellationToken.None);
+            }
+            
+            return Task.CompletedTask;
         }
     }
 }
