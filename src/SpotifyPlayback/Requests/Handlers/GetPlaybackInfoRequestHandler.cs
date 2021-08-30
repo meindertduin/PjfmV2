@@ -18,7 +18,7 @@ namespace SpotifyPlayback.Requests.Handlers
         {
             return Task.FromResult(new GetPlaybackInfoRequestResult()
             {
-                PlaybackGroups = _playbackGroupCollection.getPlaybackGroupsInfo(),
+                PlaybackGroups = _playbackGroupCollection.GetPlaybackGroupsInfo(),
             });
         }
     }

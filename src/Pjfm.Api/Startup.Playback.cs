@@ -3,6 +3,7 @@ using Pjfm.Api.Extensions;
 using SpotifyPlayback;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Requests;
+using SpotifyPlayback.Services;
 
 namespace Pjfm.Api
 {
@@ -11,7 +12,12 @@ namespace Pjfm.Api
         private void ConfigurePlayback(IServiceCollection services)
         {
             services.AddTransient<IPlaybackRequestDispatcher, PlaybackRequestDispatcher>();
+            services.AddTransient<IPlaybackScheduledTaskQueue, PlaybackScheduledTaskQueue>();
+            services.AddTransient<IPlaybackQueue, PlaybackQueue>();
+            
             services.AddSingleton<ISocketDirector, PlaybackSocketDirector>();
+            services.AddSingleton<IPlaybackGroupCollection, PlaybackGroupCollection>();
+            
             services.AddHostedService<SpotifyPlaybackHostedService>();
 
             services.Scan(a =>

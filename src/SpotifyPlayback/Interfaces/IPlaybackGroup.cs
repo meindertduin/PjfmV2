@@ -11,6 +11,7 @@ namespace SpotifyPlayback.Interfaces
         string GroupName { get; }
         Task<SpotifyNummer> GetNextNummer();
         IEnumerable<string> GetGroupListenerIds();
+        bool AddLuisteraar(string gebruikerId);
         bool HasLuisteraars();
     }
 }

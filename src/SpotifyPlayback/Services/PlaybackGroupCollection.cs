@@ -52,7 +52,7 @@ namespace SpotifyPlayback.Services
             return playbackGroup.GetGroupListenerIds();
         }
 
-        public IEnumerable<PlaybackGroupDto> getPlaybackGroupsInfo()
+        public IEnumerable<PlaybackGroupDto> GetPlaybackGroupsInfo()
         {
             var groupsData = new List<PlaybackGroupDto>();
             
@@ -66,6 +66,17 @@ namespace SpotifyPlayback.Services
             }
 
             return groupsData;
+        }
+
+        public bool JoinGroup(Guid groupId, string gebruikerId)
+        {
+            var retrievedGroup = _playbackGroups.TryGetValue(groupId, out var playbackGroup);
+            if (retrievedGroup)
+            {
+                return playbackGroup!.AddLuisteraar(gebruikerId);
+            }
+
+            return false;
         }
 
         private IPlaybackGroup GetPlaybackGroup(Guid groupId)
