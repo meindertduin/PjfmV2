@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models.DataTransferObjects;
@@ -30,6 +29,6 @@ namespace SpotifyPlayback.Requests.Handlers
 
     public class GetPlaybackInfoRequestResult
     {
-        public IEnumerable<PlaybackGroupDto> PlaybackGroups { get; set; }
+        public IEnumerable<PlaybackGroupDto> PlaybackGroups { get; set; } = null!;
     }
 }

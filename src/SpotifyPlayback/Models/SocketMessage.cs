@@ -7,7 +7,7 @@ namespace SpotifyPlayback.Models
     public class SocketMessage<T>
     {
         public MessageType MessageType { get; set; }
-        public T Body { get; set; }
+        public T? Body { get; set; }
 
         public byte[] GetBytes()
         {

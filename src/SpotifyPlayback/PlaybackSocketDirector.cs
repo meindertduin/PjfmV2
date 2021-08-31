@@ -34,7 +34,7 @@ namespace SpotifyPlayback
                     ContentType = PlaybackMessageContentType.PlaybackUpdate,
                 };
                 await socketConnection.SendMessage(response.GetBytes());
-                await socketConnection.PollConnection(async (result, buffer) =>
+                await socketConnection.PollConnection((result, buffer) =>
                 {
                     if (result.MessageType == WebSocketMessageType.Text)
                     {

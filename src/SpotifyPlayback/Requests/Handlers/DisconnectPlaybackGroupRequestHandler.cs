@@ -15,13 +15,18 @@ namespace SpotifyPlayback.Requests.Handlers
         }
         public Task HandleAsync(DisconnectPlaybackGroupRequest request)
         {
-            return Task.FromResult(_playbackGroupCollection.RemoveGebruikerFromGroup(new LuisteraarDto(request.GebruikerId, request.ConnectionId)));
+            _playbackGroupCollection.RemoveGebruikerFromGroup(new LuisteraarDto(request.GebruikerId,
+                request.ConnectionId));
+
+            // TODO: pause spotify player for user once it's implemented
+            
+            return Task.CompletedTask;
         }
     }
 
     public class DisconnectPlaybackGroupRequest : IPlaybackRequest
     {
-        public string GebruikerId { get; set; }
+        public string GebruikerId { get; set; } = null!;
         public Guid ConnectionId { get; set; }
     }
 }

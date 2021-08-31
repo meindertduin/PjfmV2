@@ -28,7 +28,7 @@ namespace SpotifyPlayback.Requests.Handlers
     public class JoinPlaybackGroupRequest : IPlaybackRequest<JoinPlaybackGroupResult>
     {
         public Guid GroupId { get; set; }
-        public string GebruikerId { get; set; }
+        public string GebruikerId { get; set; } = null!;
         public Guid ConnectionId { get; set; }
     }
 
