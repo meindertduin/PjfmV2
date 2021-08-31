@@ -10,6 +10,7 @@ namespace Pjfm.Common.Authentication
         public string? Id { get; }
         public IEnumerable<GebruikerRol> Rollen { get; }
         public string? GebruikersNaam { get; }
+
         public PjfmPrincipal(ClaimsPrincipal principal)
         {
             Id = GetGebruikerIdClaimValue(principal);
@@ -45,6 +46,11 @@ namespace Pjfm.Common.Authentication
             }
 
             return gebruikerRollen;
+        }
+        
+        public bool IsAuthenticated()
+        {
+            return Rollen.Contains(GebruikerRol.Gebruiker);
         }
     }
 }

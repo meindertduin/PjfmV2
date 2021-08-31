@@ -7,6 +7,7 @@ namespace Pjfm.Common.Authentication
         string Id { get; }
         public IEnumerable<GebruikerRol> Rollen { get; }
         string GebruikersNaam { get; }
-        
+        bool IsAuthenticated();
+
     }
 }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -34,6 +35,17 @@ namespace Pjfm.Infrastructure.Repositories
 
             await _pjfmContext.SpotifyNummers.AddRangeAsync(spotifyNummers);
             await _pjfmContext.SaveChangesAsync();
+        }
+
+        public Task<List<SpotifyNummer>> GetRandomGebruikersSpotifyNummers(IEnumerable<string> gebruikerIds, IEnumerable<TrackTermijn> termijnen, int amount)
+        {
+            return _pjfmContext.SpotifyNummers
+                .Where(s => gebruikerIds.Contains(s.GebruikerId))
+                .Where(s => termijnen.Contains(s.TrackTermijn))
+                .OrderBy(s => Guid.NewGuid())
+                .Take(amount)
+                .AsNoTracking()
+                .ToListAsync();
         }
     }
 }
