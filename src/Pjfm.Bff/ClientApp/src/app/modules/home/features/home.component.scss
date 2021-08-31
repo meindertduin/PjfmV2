@@ -1,0 +1,9 @@
+
+.playgroup-container {
+  display: flex;
+  flex-direction: column;
+
+  pjfm-playbackgroup {
+    margin: 10px;
+  }
+}

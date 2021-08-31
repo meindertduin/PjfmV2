@@ -1,0 +1,20 @@
+@import "variables";
+
+
+.toolbar {
+  height: 70px;
+  background: $color-primary;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .title {
+    color: $white;
+    font-size: 30px;
+  }
+}
+.view-container {
+  margin: 10px 5px;
+}
