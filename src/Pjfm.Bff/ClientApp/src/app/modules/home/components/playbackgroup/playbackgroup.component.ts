@@ -5,4 +5,6 @@ import { Component } from '@angular/core';
   templateUrl: './playbackgroup.component.html',
   styleUrls: ['./playbackgroup.component.scss'],
 })
-export class PlaybackgroupComponent {}
+export class PlaybackgroupComponent {
+  clickRoute = '/session/1';
+}

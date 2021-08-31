@@ -11,6 +11,10 @@ const routes: Routes = [
         path: '',
         loadChildren: () => import('./modules/home/home.module').then((m) => m.HomeModule),
       },
+      {
+        path: 'session',
+        loadChildren: () => import('./modules/session/session.module').then((m) => m.SessionModule),
+      },
     ],
   },
 ];
