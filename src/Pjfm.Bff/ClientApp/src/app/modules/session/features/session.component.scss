@@ -1,0 +1,40 @@
+@import "variables";
+
+.container {
+  margin: 20px;
+
+  .playback {
+    .playback-info {
+      display: flex;
+
+      .image-container {
+        margin-right: 20px;
+        img {
+          width: 80px;
+          height: 80px;
+        }
+      }
+
+      .track-info-container {
+        display: flex;
+        flex-direction: column;
+
+        .currently-playing-title {
+          font-size: 20px;
+          margin-bottom: 10px;
+          text-decoration: underline;
+        }
+
+        .track-title {
+          margin-bottom: 5px;
+          color: $color-yellow;
+        }
+
+        .artist-title {
+          font-size: 14px;
+          color: $color-red;
+        }
+      }
+    }
+  }
+}
