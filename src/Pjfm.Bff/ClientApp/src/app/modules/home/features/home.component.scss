@@ -1,9 +1,31 @@
+@import "variables";
 
-.playgroup-container {
+.container {
+  justify-content: center;
   display: flex;
-  flex-direction: column;
 
-  pjfm-playbackgroup {
-    margin: 10px;
+  .playgroup-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 95%;
+
+    pjfm-playbackgroup {
+      margin: 10px;
+      flex: 1 0 90%;
+    }
+
+    @media screen and (min-width: $breakpoint-m) {
+      pjfm-playbackgroup {
+        flex: 1 0 40%;
+      }
+    }
+
+    @media screen and (min-width: $breakpoint-xl) {
+      pjfm-playbackgroup {
+        flex: 1 0 30%;
+      }
+    }
   }
 }
+
