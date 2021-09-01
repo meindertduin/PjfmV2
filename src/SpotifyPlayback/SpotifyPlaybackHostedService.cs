@@ -23,9 +23,8 @@ namespace SpotifyPlayback
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            using var scope = _services.CreateScope();
-            _playbackGroupCollection = scope.ServiceProvider.GetRequiredService<IPlaybackGroupCollection>();
-            _playbackScheduledTaskQueue = scope.ServiceProvider.GetRequiredService<IPlaybackScheduledTaskQueue>();
+            _playbackGroupCollection = _services.GetRequiredService<IPlaybackGroupCollection>();
+            _playbackScheduledTaskQueue = _services.GetRequiredService<IPlaybackScheduledTaskQueue>();
             
             _playbackGroupCollection.playbackgroupCreatedEvent += AddNewGroupToScheduler;
             

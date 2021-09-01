@@ -40,7 +40,8 @@ namespace Pjfm.Infrastructure.Repositories
         public Task<List<SpotifyNummer>> GetRandomGebruikersSpotifyNummers(IEnumerable<string> gebruikerIds, IEnumerable<TrackTermijn> termijnen, int amount)
         {
             return _pjfmContext.SpotifyNummers
-                .Where(s => gebruikerIds.Contains(s.GebruikerId))
+                // TODO: add gebruikerIds
+                // .Where(s => gebruikerIds.Contains(s.GebruikerId))
                 .Where(s => termijnen.Contains(s.TrackTermijn))
                 .OrderBy(s => Guid.NewGuid())
                 .Take(amount)
