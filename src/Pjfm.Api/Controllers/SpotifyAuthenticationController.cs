@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Domain.SpotifyGebruikerData;
 using Domain.SpotifyNummer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Pjfm.Api.Authentication;
@@ -36,6 +37,7 @@ namespace Pjfm.Api.Controllers
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status302Found)]
         public IActionResult Authenticate()
         {
             var authorizationUrl = new StringBuilder("https://accounts.spotify.com/authorize")
@@ -51,6 +53,7 @@ namespace Pjfm.Api.Controllers
         }
 
         [HttpGet("callback")]
+        [ProducesResponseType(typeof(string),StatusCodes.Status200OK)]
         public async Task<IActionResult> Callback([FromQuery] string state, [FromQuery] string code)
         {
             // TODO: add validation for the code

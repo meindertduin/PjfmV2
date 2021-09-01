@@ -21,7 +21,7 @@ namespace SpotifyPlayback.Requests.Handlers
             return Task.FromResult(new GetPlaybackGroupsRequestResult()
 
             {
-                PlaybackGroup = _playbackGroupCollection.GetPlaybackGroupsInfo(),
+                PlaybackGroups = _playbackGroupCollection.GetPlaybackGroupsInfo(),
             });
         }
     }
@@ -32,6 +32,6 @@ namespace SpotifyPlayback.Requests.Handlers
 
     public class GetPlaybackGroupsRequestResult
     {
-        public IEnumerable<PlaybackGroupDto> PlaybackGroup { get; set; }
+        public IEnumerable<PlaybackGroupDto> PlaybackGroups { get; set; }
     }
 }

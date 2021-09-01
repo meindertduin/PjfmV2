@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,7 @@ namespace Pjfm.Api.Controllers
         }
 
         [HttpGet("logout")]
+        [ProducesResponseType(StatusCodes.Status302Found)]
         public async Task<IActionResult> Logout()
         {
             // TODO: get redirectUrl from logoutId
