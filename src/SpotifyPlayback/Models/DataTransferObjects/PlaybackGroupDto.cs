@@ -8,5 +8,6 @@ namespace SpotifyPlayback.Models.DataTransferObjects
         public Guid GroupId { get; set; } 
         public string GroupName { get; set; } = null!;
         public SpotifyNummer? CurrentlyPlayingNummer { get; set; }
+        public int ListenersCount { get; set; }
     }
 }

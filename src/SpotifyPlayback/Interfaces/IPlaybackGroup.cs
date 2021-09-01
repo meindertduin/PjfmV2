@@ -16,5 +16,6 @@ namespace SpotifyPlayback.Interfaces
         bool RemoveLuisteraar(LuisteraarDto luisteraar);
         bool ContainsLuisteraar(LuisteraarDto luisteraar);
         bool HasLuisteraars();
+        PlaybackGroupDto GetPlaybackGroupInfo();
     }
 }

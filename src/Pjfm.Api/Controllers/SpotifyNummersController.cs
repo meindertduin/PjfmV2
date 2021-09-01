@@ -9,7 +9,6 @@ namespace Pjfm.Api.Controllers
     [Route("api/spotify/nummers")]
     public class SpotifyNummersController : PjfmController
     {
-
         public SpotifyNummersController(IPjfmControllerContext pjfmContext) : base(pjfmContext)
         {
         }

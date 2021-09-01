@@ -71,5 +71,17 @@ namespace SpotifyPlayback.Services
         {
             return !_luisteraars.Any();
         }
+
+        public PlaybackGroupDto GetPlaybackGroupInfo()
+        {
+            return new()
+            {
+                GroupId = GroupId,
+                GroupName = GroupName,
+                ListenersCount = _luisteraars.Count,
+                CurrentlyPlayingNummer = _currentlyPlayingNumber,
+            };
+        }
+
     }
 }

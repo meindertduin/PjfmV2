@@ -58,11 +58,7 @@ namespace SpotifyPlayback.Services
             
             foreach (var playbackGroup in _playbackGroups.Values)
             {
-                groupsData.Add(new PlaybackGroupDto()
-                {
-                    GroupId = playbackGroup.GroupId,
-                    GroupName = playbackGroup.GroupName,
-                });
+                groupsData.Add(playbackGroup.GetPlaybackGroupInfo());
             }
 
             return groupsData;
