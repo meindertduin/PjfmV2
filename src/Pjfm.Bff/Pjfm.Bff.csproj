@@ -25,7 +25,7 @@
       <Folder Include="ClientApp\src\app\modules" />
       <Folder Include="ClientApp\src\app\modules\home\pipes" />
       <Folder Include="ClientApp\src\app\modules\session\components" />
-      <Folder Include="ClientApp\src\app\shared" />
+      <Folder Include="ClientApp\src\app\shared\components" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
