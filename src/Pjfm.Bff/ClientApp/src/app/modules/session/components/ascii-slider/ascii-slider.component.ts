@@ -1,12 +1,13 @@
 import {
   AfterViewInit,
+  ChangeDetectorRef,
   Component,
   ElementRef,
   HostListener,
   Input,
   OnChanges,
   SimpleChanges,
-  ViewChild
+  ViewChild,
 } from '@angular/core';
 
 @Component({
@@ -15,17 +16,21 @@ import {
   styleUrls: ['./ascii-slider.component.scss'],
 })
 export class AsciiSliderComponent implements AfterViewInit, OnChanges {
-  loadingBar!: string;
-  @Input() percentage = 0.0;
+  loadingBar = '';
+  @Input() percentage = 0;
 
   private componentHasLoaded = false;
 
   @ViewChild('container')
   container!: ElementRef;
 
+  constructor(private changeDetectorRef: ChangeDetectorRef) {}
+
   @HostListener('window:resize')
   onResize(): void {
     this.setLoadingBar();
+    console.log(this.loadingBar.length);
+    console.log(this.container.nativeElement.offsetWidth);
   }
 
   ngAfterViewInit(): void {
@@ -34,7 +39,7 @@ export class AsciiSliderComponent implements AfterViewInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.percentage != null) {
+    if (changes.percentage != null && !changes.percentage.isFirstChange()) {
       this.setLoadingBar();
     }
   }
@@ -44,10 +49,15 @@ export class AsciiSliderComponent implements AfterViewInit, OnChanges {
       return;
     }
 
-    const charactersAmount = this.container.nativeElement.offsetWidth / 10;
+    if (this.percentage > 100) {
+      this.percentage = 100;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+    const charactersAmount = Math.floor(this.container.nativeElement.offsetWidth / 9.7);
 
     let loadingBar = '[';
-    let xAmount = (charactersAmount - 2) * this.percentage;
+    let xAmount = (charactersAmount - 2) * (this.percentage / 100.0);
     for (let i = 1; i < charactersAmount - 1; i++) {
       if (xAmount > 0) {
         loadingBar += 'x';
@@ -59,5 +69,6 @@ export class AsciiSliderComponent implements AfterViewInit, OnChanges {
     loadingBar += ']';
 
     this.loadingBar = loadingBar;
+    this.changeDetectorRef.detectChanges();
   }
 }

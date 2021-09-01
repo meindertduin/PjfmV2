@@ -1,0 +1,15 @@
+@import "variables";
+
+.container {
+  .time-labels-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    position: relative;
+    top: -10px;
+
+    .time-label {
+      color: $color-light-blue;
+    }
+  }
+}
