@@ -1,13 +1,9 @@
 using System;
-using System.Net;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
-using Pjfm.Common.Authentication;
-using SpotifyAPI.Web;
 using SpotifyPlayback;
 
 namespace Pjfm.Api
@@ -29,10 +25,18 @@ namespace Pjfm.Api
             ConfigureInfrastructure(services);
             ConfigureAuthentication(services);
             ConfigurePlayback(services);
+
+            services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
+                });
+            });
             
             services.AddControllers();
             services.AddRazorPages();
-            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo {Title = "Pjfm.Api", Version = "v1"}); });
+            services.AddSwaggerDocument(options => options.Title = "Pjfm.Api");
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -41,18 +45,20 @@ namespace Pjfm.Api
             {
                 InitializeIdentityDatabase(app);
             }
-            
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Pjfm.Api v1"));
+                app.UseSwaggerUi3();
             }
 
             app.UseHttpsRedirection();
+            
+            app.UseOpenApi();
 
             app.UseRouting();
-            
+            app.UseCors();
+
             app.UseWebSockets(new WebSocketOptions()
             {
                 KeepAliveInterval = TimeSpan.FromSeconds(60),
@@ -65,7 +71,7 @@ namespace Pjfm.Api
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                
+
                 endpoints.MapRazorPages();
             });
 

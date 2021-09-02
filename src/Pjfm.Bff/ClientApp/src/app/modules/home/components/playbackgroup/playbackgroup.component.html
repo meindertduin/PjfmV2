@@ -1,17 +1,16 @@
 <div class="container" [routerLink]="['session', '1']">
   <div class="title-container">
-    <h3 class="title">PJFM</h3>
-    <span class="listeners-text">3 listeners</span>
+    <h3 class="title">{{playbackGroup.groupName}}</h3>
+    <span class="listeners-text">{{playbackGroup.listenersCount}} {{playbackGroup.listenersCount > 1 ? 'listeners' : 'listener'}}</span>
   </div>
   <div class="content">
     <div class="image-container">
       <img src="/assets/images/album-cover.jpg" alt="album cover" />
     </div>
-    <div class="group-info-container">
+    <div class="group-info-container" *ngIf="playbackGroup.currentlyPlayingNummer != null">
       <div class="currently-playing-title">Now playing:</div>
-      <a class="track-title">[ Book of spells ]</a>
-      <a class="artist-title">[ Ian taylor ]</a>
+      <a class="track-title">[ {{playbackGroup.currentlyPlayingNummer.titel}} ]</a>
+      <a class="artist-title">[ {{playbackGroup.currentlyPlayingNummer.artists | artistsPipe}} ]</a>
     </div>
   </div>
-  <div class="footer"></div>
 </div>
