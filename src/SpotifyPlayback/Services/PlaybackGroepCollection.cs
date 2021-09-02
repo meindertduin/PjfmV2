@@ -35,14 +35,14 @@ namespace SpotifyPlayback.Services
             return groupId;
         }
 
-        public async Task<PlaybackScheduledNummer> GetGroupNewTrack(Guid groupId)
+        public async Task<PlaybackScheduledTracks> GetGroupNewTrack(Guid groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);
-            var groupNummer = await playbackGroup.GetNextTrack();
+            var groupTrack = await playbackGroup.GetNextTrack();
             
-            return new PlaybackScheduledNummer()
+            return new PlaybackScheduledTracks()
             {
-                SpotifyTrack = groupNummer,
+                SpotifyTrack = groupTrack,
                 GroupId = groupId,
             };
         }

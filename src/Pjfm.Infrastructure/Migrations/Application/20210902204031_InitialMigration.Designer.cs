@@ -10,8 +10,8 @@ using Pjfm.Infrastructure;
 namespace Pjfm.Infrastructure.Migrations.Application
 {
     [DbContext(typeof(PjfmContext))]
-    [Migration("20210804185027_AddSpotifyGebruikersData")]
-    partial class AddSpotifyGebruikersData
+    [Migration("20210902204031_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -21,70 +21,70 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 .HasAnnotation("ProductVersion", "5.0.7")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Domain.SpotifyGebruikerData.SpotifyGebruikerData", b =>
+            modelBuilder.Entity("Domain.SpotifyTrack.SpotifyTrack", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("GebruikerId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("RefreshToken")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("GebruikerId");
-
-                    b.ToTable("SpotifyGebruikersData");
-                });
-
-            modelBuilder.Entity("Domain.SpotifyNummer.SpotifyNummer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("AangemaaktOp")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("Artists")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<string>("GebruikerId")
+                    b.Property<DateTime>("CreationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SpotifyTrackId")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("NummerDuurMs")
-                        .HasColumnType("int");
-
-                    b.Property<string>("SpotifyNummerId")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("Titel")
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("TrackTermijn")
+                    b.Property<int>("TrackDurationMs")
                         .HasColumnType("int");
+
+                    b.Property<int>("TrackTerm")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GebruikerId");
+                    b.HasIndex("UserId");
 
-                    b.ToTable("SpotifyNummer");
+                    b.ToTable("SpotifyTrack");
+                });
+
+            modelBuilder.Entity("Domain.SpotifyUserData.SpotifyUserData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("RefreshToken")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("SpotifyUserData");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

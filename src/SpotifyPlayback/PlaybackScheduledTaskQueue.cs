@@ -11,19 +11,19 @@ namespace SpotifyPlayback
         private const int DefaultCapacity = 5;
 
         private object _queueLock = new ();
-        private List<PlaybackScheduledNummer> _playbackScheduledNummers = new();
-        public int Count => _playbackScheduledNummers.Count;
+        private List<PlaybackScheduledTracks> _playbackScheduledTracks = new();
+        public int Count => _playbackScheduledTracks.Count;
 
-        public void AddPlaybackScheduledNummer(PlaybackScheduledNummer playbackScheduledNummer)
+        public void AddPlaybackScheduledTrack(PlaybackScheduledTracks playbackScheduledTrack)
         {
             var hasInserted = false;
             lock (_queueLock)
             {
-                for (int i = 0; i < _playbackScheduledNummers.Count; i++)
+                for (int i = 0; i < _playbackScheduledTracks.Count; i++)
                 {
-                    if (_playbackScheduledNummers[i].DueTime > playbackScheduledNummer.DueTime)
+                    if (_playbackScheduledTracks[i].DueTime > playbackScheduledTrack.DueTime)
                     {
-                        _playbackScheduledNummers.Insert(i, playbackScheduledNummer);
+                        _playbackScheduledTracks.Insert(i, playbackScheduledTrack);
                         hasInserted = true;
                         break;
                     }
@@ -31,19 +31,19 @@ namespace SpotifyPlayback
 
                 if (!hasInserted)
                 {
-                    _playbackScheduledNummers.Add(playbackScheduledNummer);
+                    _playbackScheduledTracks.Add(playbackScheduledTrack);
                 }
             }
         }
 
-        public bool RemovePlaybackScheduledNummer(Guid groupId)
+        public bool RemovePlaybackScheduledTrack(Guid groupId)
         {
             lock (_queueLock)
             {
-                var scheduledNummer = _playbackScheduledNummers.FirstOrDefault(p => p.GroupId == groupId);
-                if (scheduledNummer != null)
+                var scheduledTrack = _playbackScheduledTracks.FirstOrDefault(p => p.GroupId == groupId);
+                if (scheduledTrack != null)
                 {
-                    _playbackScheduledNummers.Remove(scheduledNummer);
+                    _playbackScheduledTracks.Remove(scheduledTrack);
                     return true;
                 }
             }
@@ -51,34 +51,34 @@ namespace SpotifyPlayback
             return false;
         }
 
-        public IEnumerable<PlaybackScheduledNummer> GetDueNummers()
+        public IEnumerable<PlaybackScheduledTracks> GetDueTracks()
         {
             var time = DateTime.Now;
-            var dueScheduledPlaybackNummers = new List<PlaybackScheduledNummer>();
+            var dueScheduledPlaybackTracks = new List<PlaybackScheduledTracks>();
 
             lock (_queueLock)
             {
-                foreach (var playbackScheduledNummer in _playbackScheduledNummers)
+                foreach (var playbackScheduledTrack in _playbackScheduledTracks)
                 {
-                    if (playbackScheduledNummer.DueTime <= time)
+                    if (playbackScheduledTrack.DueTime <= time)
                     {
-                        dueScheduledPlaybackNummers.Add(playbackScheduledNummer);
+                        dueScheduledPlaybackTracks.Add(playbackScheduledTrack);
                     }
                 }
             }
 
-            if (dueScheduledPlaybackNummers.Count > 0)
+            if (dueScheduledPlaybackTracks.Count > 0)
             {
                 lock (_queueLock)
                 {
-                    foreach (var dueScheduledPlaybackNummer in dueScheduledPlaybackNummers)
+                    foreach (var dueScheduledPlaybackTrack in dueScheduledPlaybackTracks)
                     {
-                        _playbackScheduledNummers.Remove(dueScheduledPlaybackNummer);
+                        _playbackScheduledTracks.Remove(dueScheduledPlaybackTrack);
                     }
                 }
             }
 
-            return dueScheduledPlaybackNummers;
+            return dueScheduledPlaybackTracks;
         }
     }
 }

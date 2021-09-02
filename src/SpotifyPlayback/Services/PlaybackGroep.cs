@@ -29,23 +29,23 @@ namespace SpotifyPlayback.Services
 
         public async Task<SpotifyTrack> GetNextTrack()
         {
-            var newNummer = await _playbackQueue.GetNextSpotifyNummer();
+            var newTrack = await _playbackQueue.GetNextSpotifyTrack();
             
             if (_currentlyPlayingTrack == null)
             {
-                _currentlyPlayingTrack = newNummer;
+                _currentlyPlayingTrack = newTrack;
             }
             else if (_nextTrack == null)
             {
-                _nextTrack = newNummer;
+                _nextTrack = newTrack;
             }
             else
             {
                 _currentlyPlayingTrack = _nextTrack;
-                _nextTrack = newNummer;
+                _nextTrack = newTrack;
             }
 
-            return newNummer;
+            return newTrack;
         }
         public IEnumerable<string> GetGroupListenerIds()
         {
@@ -92,7 +92,7 @@ namespace SpotifyPlayback.Services
                 GroupId = GroupId,
                 GroupName = GroupName,
                 ListenersCount = _luisteraars.Count,
-                CurrentlyPlayingNummer = _currentlyPlayingTrack,
+                CurrentlyPlayingTrack = _currentlyPlayingTrack,
             };
         }
     }

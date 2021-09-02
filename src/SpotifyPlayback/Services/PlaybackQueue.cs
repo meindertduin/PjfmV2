@@ -12,7 +12,7 @@ namespace SpotifyPlayback.Services
     {
         private readonly ISpotifyTrackRepository _spotifyTrackRepository;
         private readonly IConfiguration _configuration;
-        private Queue<SpotifyTrack> _spotifyNummers = new();
+        private Queue<SpotifyTrack> _spotifyTracks = new();
         private IEnumerable<string> _userIds = new List<string>();
         
         private TrackTerm _term = TrackTerm.Long;
@@ -22,31 +22,31 @@ namespace SpotifyPlayback.Services
             _spotifyTrackRepository = spotifyTrackRepository;
             _configuration = configuration;
         }
-        public async Task<SpotifyTrack> GetNextSpotifyNummer()
+        public async Task<SpotifyTrack> GetNextSpotifyTrack()
         {
-            int getSpotifyNummersAmount = 1;
-            if (_spotifyNummers.Count == 0)
+            int getSpotifyTracksAmount = 1;
+            if (_spotifyTracks.Count == 0)
             {
-                getSpotifyNummersAmount = 20;
+                getSpotifyTracksAmount = 20;
             }
 
             var connectionString = _configuration.GetValue<string>("ConnectionStrings:ApplicationDb");
-            var spotifyNummerRepository = new SpotifyTrackRepository(PjfmContextFactory.Create(connectionString));
+            var spotifyTrackRepository = new SpotifyTrackRepository(PjfmContextFactory.Create(connectionString));
             
-            var spotifyNummers =
-                await spotifyNummerRepository.GetRandomUserSpotifyTracks(_userIds, new []{ _term }, getSpotifyNummersAmount);
+            var spotifyTracks =
+                await spotifyTrackRepository.GetRandomUserSpotifyTracks(_userIds, new []{ _term }, getSpotifyTracksAmount);
             
-            foreach (var spotifyNummer in spotifyNummers)
+            foreach (var spotifyTrack in spotifyTracks)
             {
-                _spotifyNummers.Enqueue(spotifyNummer);
+                _spotifyTracks.Enqueue(spotifyTrack);
             }
 
-            return _spotifyNummers.Dequeue();
+            return _spotifyTracks.Dequeue();
         }
 
         public void ResetQueue()
         {
-            _spotifyNummers.Clear();
+            _spotifyTracks.Clear();
         }
 
         public void SetTermijn(TrackTerm term)

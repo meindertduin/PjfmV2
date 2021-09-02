@@ -13,7 +13,7 @@ namespace Pjfm.Api.Controllers
         }
 
         [HttpGet("update")]
-        public IActionResult UpdateUserSpotifyNummers()
+        public IActionResult UpdateUserSpotifyTracks()
         {
             return Ok();
         }

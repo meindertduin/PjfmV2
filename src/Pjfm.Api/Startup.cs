@@ -43,7 +43,7 @@ namespace Pjfm.Api
         {
             if (env.IsProduction())
             {
-                InitializeIdentityDatabase(app);
+                InitializeDatabase(app);
             }
 
             if (env.IsDevelopment())

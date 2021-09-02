@@ -47,10 +47,10 @@ namespace SpotifyPlayback
         {
             Task.Run(async () =>
             {
-                var dueNummers = _playbackScheduledTaskQueue.GetDueNummers();
-                foreach (var dueNummer in dueNummers)
+                var dueTracks = _playbackScheduledTaskQueue.GetDueTracks();
+                foreach (var dueTrack in dueTracks)
                 {
-                    await PlayScheduledNummer(dueNummer);
+                    await PlayScheduledTrack(dueTrack);
                 }
             });
         }
@@ -59,20 +59,20 @@ namespace SpotifyPlayback
         {
             Task.Run(async () =>
             {
-                var newNummer = await _playbackGroepCollection.GetGroupNewTrack(eventArgs.GroupId);
-                var nextNewNummer = await _playbackGroepCollection.GetGroupNewTrack(eventArgs.GroupId);
+                var newTrack = await _playbackGroepCollection.GetGroupNewTrack(eventArgs.GroupId);
+                var nextNewTrack = await _playbackGroepCollection.GetGroupNewTrack(eventArgs.GroupId);
                 
-                nextNewNummer.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(nextNewNummer.SpotifyTrack.TrackDurationMs);
+                nextNewTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(nextNewTrack.SpotifyTrack.TrackDurationMs);
                 
-                await PlayScheduledNummer(newNummer);
+                await PlayScheduledTrack(newTrack);
             });
         }
 
-        private async Task PlayScheduledNummer(PlaybackScheduledNummer playbackScheduledNummer)
+        private async Task PlayScheduledTrack(PlaybackScheduledTracks playbackScheduledTracks)
         {
-            var groupNewTrack = await _playbackGroepCollection.GetGroupNewTrack(playbackScheduledNummer.GroupId);
+            var groupNewTrack = await _playbackGroepCollection.GetGroupNewTrack(playbackScheduledTracks.GroupId);
             groupNewTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(groupNewTrack.SpotifyTrack.TrackDurationMs);
-            _playbackScheduledTaskQueue.AddPlaybackScheduledNummer(groupNewTrack);
+            _playbackScheduledTaskQueue.AddPlaybackScheduledTrack(groupNewTrack);
         }
 
         public void Dispose()

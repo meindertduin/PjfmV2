@@ -14,7 +14,7 @@ namespace Pjfm.Application.GebruikerNummer
         private readonly ISpotifyTrackRepository _spotifyTrackRepository;
         private readonly ISpotifyTokenService _spotifyTokenService;
 
-        private const int TermijnSpotifyNummersAmount = 50;
+        private const int TermijnSpotifyTracksAmount = 50;
 
         public SpotifyTrackService(ISpotifyTrackRepository spotifyTrackRepository, ISpotifyTokenService spotifyTokenService)
         {
@@ -32,13 +32,13 @@ namespace Pjfm.Application.GebruikerNummer
                 return;
             }
 
-            var spotifyNummers = new List<SpotifyTrack>(150);
+            var spotifyTracks = new List<SpotifyTrack>(150);
 
             foreach (var trackTermijn in Enum.GetValues<TrackTerm>())
             {
-                var nummers = await GetTermTracks(ref spotifyClient, trackTermijn);
+                var tracks = await GetTermTracks(ref spotifyClient, trackTermijn);
                 
-                spotifyNummers.AddRange(nummers.Items?.Select(s => new SpotifyTrack()
+                spotifyTracks.AddRange(tracks.Items?.Select(s => new SpotifyTrack()
                 {
                     Title = s.Name,
                     SpotifyTrackId = s.Id,
@@ -50,9 +50,9 @@ namespace Pjfm.Application.GebruikerNummer
                 }) ?? Array.Empty<SpotifyTrack>());   
             }
 
-            if (spotifyNummers.Count > 0)
+            if (spotifyTracks.Count > 0)
             {
-                await _spotifyTrackRepository.SetUserSpotifyTracks(spotifyNummers, userId);
+                await _spotifyTrackRepository.SetUserSpotifyTracks(spotifyTracks, userId);
             }
         }
 
@@ -61,7 +61,7 @@ namespace Pjfm.Application.GebruikerNummer
             return spotifyClient.Personalization.GetTopTracks(new PersonalizationTopRequest()
             {
                 TimeRangeParam = ConvertTermToTimeRange(term),
-                Limit = TermijnSpotifyNummersAmount,
+                Limit = TermijnSpotifyTracksAmount,
             });
         }
         private PersonalizationTopRequest.TimeRange ConvertTermToTimeRange(TrackTerm term)

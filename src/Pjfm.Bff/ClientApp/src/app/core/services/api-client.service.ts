@@ -71,66 +71,6 @@ export class AuthenticationClient {
 }
 
 @Injectable()
-export class GebruikerClient {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "https://localhost:5004";
-    }
-
-    me(): Observable<GetCurrentGebruikerResponseModel> {
-        let url_ = this.baseUrl + "/api/gebruikers/me";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processMe(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processMe(<any>response_);
-                } catch (e) {
-                    return <Observable<GetCurrentGebruikerResponseModel>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GetCurrentGebruikerResponseModel>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processMe(response: HttpResponseBase): Observable<GetCurrentGebruikerResponseModel> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = GetCurrentGebruikerResponseModel.fromJS(resultData200);
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GetCurrentGebruikerResponseModel>(<any>null);
-    }
-}
-
-@Injectable()
 export class PlaybackClient {
     private http: HttpClient;
     private baseUrl: string;
@@ -306,7 +246,7 @@ export class SpotifyAuthenticationClient {
 }
 
 @Injectable()
-export class SpotifyNummersClient {
+export class SpotifyTracksClient {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -317,7 +257,7 @@ export class SpotifyNummersClient {
     }
 
     update(): Observable<FileResponse | null> {
-        let url_ = this.baseUrl + "/api/spotify/nummers/update";
+        let url_ = this.baseUrl + "/api/spotify/tracks/update";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -363,70 +303,70 @@ export class SpotifyNummersClient {
     }
 }
 
-export class GetCurrentGebruikerResponseModel implements IGetCurrentGebruikerResponseModel {
-    gebruikersId?: string | null;
-    gebruikersNaam?: string | null;
-    rollen?: GebruikerRol[] | null;
+@Injectable()
+export class UserClient {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
-    constructor(data?: IGetCurrentGebruikerResponseModel) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "https://localhost:5004";
+    }
+
+    me(): Observable<GetCurrentUserResponseModel> {
+        let url_ = this.baseUrl + "/api/users/me";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMe(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMe(<any>response_);
+                } catch (e) {
+                    return <Observable<GetCurrentUserResponseModel>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetCurrentUserResponseModel>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMe(response: HttpResponseBase): Observable<GetCurrentUserResponseModel> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GetCurrentUserResponseModel.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
         }
+        return _observableOf<GetCurrentUserResponseModel>(<any>null);
     }
-
-    init(_data?: any) {
-        if (_data) {
-            this.gebruikersId = _data["gebruikersId"] !== undefined ? _data["gebruikersId"] : <any>null;
-            this.gebruikersNaam = _data["gebruikersNaam"] !== undefined ? _data["gebruikersNaam"] : <any>null;
-            if (Array.isArray(_data["rollen"])) {
-                this.rollen = [] as any;
-                for (let item of _data["rollen"])
-                    this.rollen!.push(item);
-            }
-            else {
-                this.rollen = <any>null;
-            }
-        }
-    }
-
-    static fromJS(data: any): GetCurrentGebruikerResponseModel {
-        data = typeof data === 'object' ? data : {};
-        let result = new GetCurrentGebruikerResponseModel();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["gebruikersId"] = this.gebruikersId !== undefined ? this.gebruikersId : <any>null;
-        data["gebruikersNaam"] = this.gebruikersNaam !== undefined ? this.gebruikersNaam : <any>null;
-        if (Array.isArray(this.rollen)) {
-            data["rollen"] = [];
-            for (let item of this.rollen)
-                data["rollen"].push(item);
-        }
-        return data; 
-    }
-}
-
-export interface IGetCurrentGebruikerResponseModel {
-    gebruikersId?: string | null;
-    gebruikersNaam?: string | null;
-    rollen?: GebruikerRol[] | null;
-}
-
-export enum GebruikerRol {
-    Gebruiker = 0,
-    Dj = 1,
 }
 
 export class PlaybackGroupDto implements IPlaybackGroupDto {
     groupId!: string;
     groupName!: string;
-    currentlyPlayingNummer?: SpotifyNummer | null;
+    currentlyPlayingTrack?: SpotifyTrack | null;
     listenersCount!: number;
 
     constructor(data?: IPlaybackGroupDto) {
@@ -442,7 +382,7 @@ export class PlaybackGroupDto implements IPlaybackGroupDto {
         if (_data) {
             this.groupId = _data["groupId"] !== undefined ? _data["groupId"] : <any>null;
             this.groupName = _data["groupName"] !== undefined ? _data["groupName"] : <any>null;
-            this.currentlyPlayingNummer = _data["currentlyPlayingNummer"] ? SpotifyNummer.fromJS(_data["currentlyPlayingNummer"]) : <any>null;
+            this.currentlyPlayingTrack = _data["currentlyPlayingTrack"] ? SpotifyTrack.fromJS(_data["currentlyPlayingTrack"]) : <any>null;
             this.listenersCount = _data["listenersCount"] !== undefined ? _data["listenersCount"] : <any>null;
         }
     }
@@ -458,7 +398,7 @@ export class PlaybackGroupDto implements IPlaybackGroupDto {
         data = typeof data === 'object' ? data : {};
         data["groupId"] = this.groupId !== undefined ? this.groupId : <any>null;
         data["groupName"] = this.groupName !== undefined ? this.groupName : <any>null;
-        data["currentlyPlayingNummer"] = this.currentlyPlayingNummer ? this.currentlyPlayingNummer.toJSON() : <any>null;
+        data["currentlyPlayingTrack"] = this.currentlyPlayingTrack ? this.currentlyPlayingTrack.toJSON() : <any>null;
         data["listenersCount"] = this.listenersCount !== undefined ? this.listenersCount : <any>null;
         return data; 
     }
@@ -467,7 +407,7 @@ export class PlaybackGroupDto implements IPlaybackGroupDto {
 export interface IPlaybackGroupDto {
     groupId: string;
     groupName: string;
-    currentlyPlayingNummer?: SpotifyNummer | null;
+    currentlyPlayingTrack?: SpotifyTrack | null;
     listenersCount: number;
 }
 
@@ -501,17 +441,17 @@ export class Entity implements IEntity {
 export interface IEntity {
 }
 
-export class SpotifyNummer extends Entity implements ISpotifyNummer {
+export class SpotifyTrack extends Entity implements ISpotifyTrack {
     id!: number;
-    titel!: string;
-    gebruikerId!: string;
-    spotifyNummerId!: string;
+    title!: string;
+    userId!: string;
+    spotifyTrackId!: string;
     artists!: string[];
-    trackTermijn!: TrackTermijn;
-    nummerDuurMs!: number;
-    aangemaaktOp!: Date;
+    trackTerm!: TrackTerm;
+    trackDurationMs!: number;
+    creationDate!: Date;
 
-    constructor(data?: ISpotifyNummer) {
+    constructor(data?: ISpotifyTrack) {
         super(data);
         if (!data) {
             this.artists = [];
@@ -522,9 +462,9 @@ export class SpotifyNummer extends Entity implements ISpotifyNummer {
         super.init(_data);
         if (_data) {
             this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
-            this.titel = _data["titel"] !== undefined ? _data["titel"] : <any>null;
-            this.gebruikerId = _data["gebruikerId"] !== undefined ? _data["gebruikerId"] : <any>null;
-            this.spotifyNummerId = _data["spotifyNummerId"] !== undefined ? _data["spotifyNummerId"] : <any>null;
+            this.title = _data["title"] !== undefined ? _data["title"] : <any>null;
+            this.userId = _data["userId"] !== undefined ? _data["userId"] : <any>null;
+            this.spotifyTrackId = _data["spotifyTrackId"] !== undefined ? _data["spotifyTrackId"] : <any>null;
             if (Array.isArray(_data["artists"])) {
                 this.artists = [] as any;
                 for (let item of _data["artists"])
@@ -533,15 +473,15 @@ export class SpotifyNummer extends Entity implements ISpotifyNummer {
             else {
                 this.artists = <any>null;
             }
-            this.trackTermijn = _data["trackTermijn"] !== undefined ? _data["trackTermijn"] : <any>null;
-            this.nummerDuurMs = _data["nummerDuurMs"] !== undefined ? _data["nummerDuurMs"] : <any>null;
-            this.aangemaaktOp = _data["aangemaaktOp"] ? new Date(_data["aangemaaktOp"].toString()) : <any>null;
+            this.trackTerm = _data["trackTerm"] !== undefined ? _data["trackTerm"] : <any>null;
+            this.trackDurationMs = _data["trackDurationMs"] !== undefined ? _data["trackDurationMs"] : <any>null;
+            this.creationDate = _data["creationDate"] ? new Date(_data["creationDate"].toString()) : <any>null;
         }
     }
 
-    static fromJS(data: any): SpotifyNummer {
+    static fromJS(data: any): SpotifyTrack {
         data = typeof data === 'object' ? data : {};
-        let result = new SpotifyNummer();
+        let result = new SpotifyTrack();
         result.init(data);
         return result;
     }
@@ -549,37 +489,97 @@ export class SpotifyNummer extends Entity implements ISpotifyNummer {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id !== undefined ? this.id : <any>null;
-        data["titel"] = this.titel !== undefined ? this.titel : <any>null;
-        data["gebruikerId"] = this.gebruikerId !== undefined ? this.gebruikerId : <any>null;
-        data["spotifyNummerId"] = this.spotifyNummerId !== undefined ? this.spotifyNummerId : <any>null;
+        data["title"] = this.title !== undefined ? this.title : <any>null;
+        data["userId"] = this.userId !== undefined ? this.userId : <any>null;
+        data["spotifyTrackId"] = this.spotifyTrackId !== undefined ? this.spotifyTrackId : <any>null;
         if (Array.isArray(this.artists)) {
             data["artists"] = [];
             for (let item of this.artists)
                 data["artists"].push(item);
         }
-        data["trackTermijn"] = this.trackTermijn !== undefined ? this.trackTermijn : <any>null;
-        data["nummerDuurMs"] = this.nummerDuurMs !== undefined ? this.nummerDuurMs : <any>null;
-        data["aangemaaktOp"] = this.aangemaaktOp ? this.aangemaaktOp.toISOString() : <any>null;
+        data["trackTerm"] = this.trackTerm !== undefined ? this.trackTerm : <any>null;
+        data["trackDurationMs"] = this.trackDurationMs !== undefined ? this.trackDurationMs : <any>null;
+        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>null;
         super.toJSON(data);
         return data; 
     }
 }
 
-export interface ISpotifyNummer extends IEntity {
+export interface ISpotifyTrack extends IEntity {
     id: number;
-    titel: string;
-    gebruikerId: string;
-    spotifyNummerId: string;
+    title: string;
+    userId: string;
+    spotifyTrackId: string;
     artists: string[];
-    trackTermijn: TrackTermijn;
-    nummerDuurMs: number;
-    aangemaaktOp: Date;
+    trackTerm: TrackTerm;
+    trackDurationMs: number;
+    creationDate: Date;
 }
 
-export enum TrackTermijn {
-    Kort = 0,
-    Middelmatig = 1,
-    Lang = 2,
+export enum TrackTerm {
+    Short = 0,
+    Medium = 1,
+    Long = 2,
+}
+
+export class GetCurrentUserResponseModel implements IGetCurrentUserResponseModel {
+    userId?: string | null;
+    userName?: string | null;
+    roles?: UserRole[] | null;
+
+    constructor(data?: IGetCurrentUserResponseModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userId = _data["userId"] !== undefined ? _data["userId"] : <any>null;
+            this.userName = _data["userName"] !== undefined ? _data["userName"] : <any>null;
+            if (Array.isArray(_data["roles"])) {
+                this.roles = [] as any;
+                for (let item of _data["roles"])
+                    this.roles!.push(item);
+            }
+            else {
+                this.roles = <any>null;
+            }
+        }
+    }
+
+    static fromJS(data: any): GetCurrentUserResponseModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetCurrentUserResponseModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId !== undefined ? this.userId : <any>null;
+        data["userName"] = this.userName !== undefined ? this.userName : <any>null;
+        if (Array.isArray(this.roles)) {
+            data["roles"] = [];
+            for (let item of this.roles)
+                data["roles"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IGetCurrentUserResponseModel {
+    userId?: string | null;
+    userName?: string | null;
+    roles?: UserRole[] | null;
+}
+
+export enum UserRole {
+    User = 0,
+    Dj = 1,
 }
 
 export interface FileResponse {

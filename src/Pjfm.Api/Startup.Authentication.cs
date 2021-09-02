@@ -91,7 +91,7 @@ namespace Pjfm.Api
             });
         }
 
-        private void InitializeIdentityDatabase(IApplicationBuilder app)
+        private void InitializeDatabase(IApplicationBuilder app)
         {
             using var serviceScore = app.ApplicationServices.GetService<IServiceScopeFactory>()?.CreateScope();
 
@@ -100,36 +100,40 @@ namespace Pjfm.Api
                 return;
             }
             
-            var context = serviceScore.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-            context.Database.Migrate();
-            if (!context.Clients.Any())
+            var identityContext = serviceScore.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
+            identityContext.Database.Migrate();
+
+            var pjfmContext = serviceScore.ServiceProvider.GetRequiredService<PjfmContext>();
+            pjfmContext.Database.Migrate();
+            
+            if (!identityContext.Clients.Any())
             {
                 foreach (var client in ApiIdentityConfiguration.GetClients())
                 {
-                    context.Clients.Add(client.ToEntity());
+                    identityContext.Clients.Add(client.ToEntity());
                 }
 
-                context.SaveChanges();
+                identityContext.SaveChanges();
             }
 
-            if (!context.IdentityResources.Any())
+            if (!identityContext.IdentityResources.Any())
             {
                 foreach (var resource in ApiIdentityConfiguration.GetIdentityResources())
                 {
-                    context.IdentityResources.Add(resource.ToEntity());
+                    identityContext.IdentityResources.Add(resource.ToEntity());
                 }
 
-                context.SaveChanges();
+                identityContext.SaveChanges();
             }
 
-            if (!context.ApiScopes.Any())
+            if (!identityContext.ApiScopes.Any())
             {
                 foreach (var resource in ApiIdentityConfiguration.GetApiScopes())
                 {
-                    context.ApiScopes.Add(resource.ToEntity());
+                    identityContext.ApiScopes.Add(resource.ToEntity());
                 }
 
-                context.SaveChanges();
+                identityContext.SaveChanges();
             }
         }
     }

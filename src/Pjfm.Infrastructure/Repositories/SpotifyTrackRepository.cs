@@ -23,14 +23,14 @@ namespace Pjfm.Infrastructure.Repositories
 
         public async Task SetUserSpotifyTracks(IEnumerable<SpotifyTrack> spotifyTracks ,string userId)
         {
-            var alreadyAvailableSpotifyNummers = await _pjfmContext.SpotifyTracks
+            var alreadyAvailableSpotifyTracks = await _pjfmContext.SpotifyTracks
                 .Where(s => s.UserId == userId)
                 .AsNoTracking()
                 .ToArrayAsync();
 
-            if (alreadyAvailableSpotifyNummers.Length > 0)
+            if (alreadyAvailableSpotifyTracks.Length > 0)
             {
-                _pjfmContext.SpotifyTracks.RemoveRange(alreadyAvailableSpotifyNummers);
+                _pjfmContext.SpotifyTracks.RemoveRange(alreadyAvailableSpotifyTracks);
             }
 
             await _pjfmContext.SpotifyTracks.AddRangeAsync(spotifyTracks);

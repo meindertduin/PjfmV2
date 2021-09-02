@@ -5,7 +5,7 @@ namespace SpotifyPlayback.Interfaces
 {
     public interface IPlaybackQueue
     {
-        Task<SpotifyTrack> GetNextSpotifyNummer();
+        Task<SpotifyTrack> GetNextSpotifyTrack();
         void ResetQueue();
         void SetTermijn(TrackTerm term);
     }
