@@ -62,8 +62,7 @@ namespace SpotifyPlayback
                 var newNummer = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
                 var nextNewNummer = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
                 
-                nextNewNummer.DueTime =
-                    DateTime.Now + TimeSpan.FromMilliseconds(nextNewNummer.SpotifyNummer.NummerDuurMs);
+                nextNewNummer.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(nextNewNummer.SpotifyNummer.NummerDuurMs);
                 
                 await PlayScheduledNummer(newNummer);
             });

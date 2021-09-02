@@ -62,8 +62,18 @@ namespace SpotifyPlayback
                 {
                     if (playbackScheduledNummer.DueTime <= time)
                     {
-                        _playbackScheduledNummers.Remove(playbackScheduledNummer);
                         dueScheduledPlaybackNummers.Add(playbackScheduledNummer);
+                    }
+                }
+            }
+
+            if (dueScheduledPlaybackNummers.Count > 0)
+            {
+                lock (_queueLock)
+                {
+                    foreach (var dueScheduledPlaybackNummer in dueScheduledPlaybackNummers)
+                    {
+                        _playbackScheduledNummers.Remove(dueScheduledPlaybackNummer);
                     }
                 }
             }
