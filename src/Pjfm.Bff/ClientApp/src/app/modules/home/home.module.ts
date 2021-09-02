@@ -9,5 +9,6 @@ const COMPONENTS = [HomeComponent];
 @NgModule({
   declarations: [COMPONENTS, PlaybackgroupComponent],
   imports: [CommonModule, HomeRoutingModule],
+  providers: [],
 })
 export class HomeModule {}

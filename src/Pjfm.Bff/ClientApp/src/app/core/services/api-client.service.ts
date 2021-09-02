@@ -12,17 +12,10 @@ import { Observable, throwError as _observableThrow, of as _observableOf } from 
 import { Injectable, Inject, Optional, InjectionToken } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpResponse, HttpResponseBase } from '@angular/common/http';
 
-export module pjfmclient {
 export const API_BASE_URL = new InjectionToken<string>('API_BASE_URL');
 
-export interface IAuthenticationClient {
-    logout(): Observable<void>;
-}
-
-@Injectable({
-    providedIn: 'root'
-})
-export class AuthenticationClient implements IAuthenticationClient {
+@Injectable()
+export class AuthenticationClient {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -77,17 +70,8 @@ export class AuthenticationClient implements IAuthenticationClient {
     }
 }
 
-export interface IGebruikersClient {
-    /**
-     * @return Success
-     */
-    me(): Observable<GetCurrentGebruikerResponseModel>;
-}
-
-@Injectable({
-    providedIn: 'root'
-})
-export class GebruikersClient implements IGebruikersClient {
+@Injectable()
+export class GebruikerClient {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -149,17 +133,8 @@ export class GebruikersClient implements IGebruikersClient {
     }
 }
 
-export interface IPlaybackClient {
-    /**
-     * @return Success
-     */
-    groups(): Observable<PlaybackGroupDto[]>;
-}
-
-@Injectable({
-    providedIn: 'root'
-})
-export class PlaybackClient implements IPlaybackClient {
+@Injectable()
+export class PlaybackClient {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -228,14 +203,8 @@ export class PlaybackClient implements IPlaybackClient {
     }
 }
 
-export interface ISpotifyClient {
-    authenticate(): Observable<void>;
-}
-
-@Injectable({
-    providedIn: 'root'
-})
-export class SpotifyClient implements ISpotifyClient {
+@Injectable()
+export class SpotifyAuthenticationClient {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -288,36 +257,13 @@ export class SpotifyClient implements ISpotifyClient {
         }
         return _observableOf<void>(<any>null);
     }
-}
-
-export interface IAuthenticateClient {
-    /**
-     * @param state (optional) 
-     * @param code (optional) 
-     * @return Success
-     */
-    callback(state?: string | null | undefined, code?: string | null | undefined): Observable<string>;
-}
-
-@Injectable({
-    providedIn: 'root'
-})
-export class AuthenticateClient implements IAuthenticateClient {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-    }
 
     /**
      * @param state (optional) 
      * @param code (optional) 
      * @return Success
      */
-    callback(state?: string | null | undefined, code?: string | null | undefined): Observable<string> {
+    callback(state: string | null | undefined, code: string | null | undefined): Observable<string> {
         let url_ = this.baseUrl + "/api/spotify/authenticate/callback?";
         if (state !== undefined && state !== null)
             url_ += "state=" + encodeURIComponent("" + state) + "&";
@@ -370,17 +316,8 @@ export class AuthenticateClient implements IAuthenticateClient {
     }
 }
 
-export interface INummersClient {
-    /**
-     * @return Success
-     */
-    update(): Observable<void>;
-}
-
-@Injectable({
-    providedIn: 'root'
-})
-export class NummersClient implements INummersClient {
+@Injectable()
+export class SpotifyNummersClient {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -443,22 +380,28 @@ export enum GebruikerRol {
     _1 = 1,
 }
 
-export class GetCurrentGebruikerResponseModel {
-    gebruikersId?: string | null;
-    gebruikersNaam?: string | null;
-    rollen?: GebruikerRol[] | null;
+export class GetCurrentGebruikerResponseModel implements IGetCurrentGebruikerResponseModel {
+    gebruikersId?: string | undefined;
+    gebruikersNaam?: string | undefined;
+    rollen?: GebruikerRol[] | undefined;
+
+    constructor(data?: IGetCurrentGebruikerResponseModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
 
     init(_data?: any) {
         if (_data) {
-            this.gebruikersId = _data["gebruikersId"] !== undefined ? _data["gebruikersId"] : <any>null;
-            this.gebruikersNaam = _data["gebruikersNaam"] !== undefined ? _data["gebruikersNaam"] : <any>null;
+            this.gebruikersId = _data["gebruikersId"];
+            this.gebruikersNaam = _data["gebruikersNaam"];
             if (Array.isArray(_data["rollen"])) {
                 this.rollen = [] as any;
                 for (let item of _data["rollen"])
                     this.rollen!.push(item);
-            }
-            else {
-                this.rollen = <any>null;
             }
         }
     }
@@ -472,8 +415,8 @@ export class GetCurrentGebruikerResponseModel {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["gebruikersId"] = this.gebruikersId !== undefined ? this.gebruikersId : <any>null;
-        data["gebruikersNaam"] = this.gebruikersNaam !== undefined ? this.gebruikersNaam : <any>null;
+        data["gebruikersId"] = this.gebruikersId;
+        data["gebruikersNaam"] = this.gebruikersNaam;
         if (Array.isArray(this.rollen)) {
             data["rollen"] = [];
             for (let item of this.rollen)
@@ -483,39 +426,51 @@ export class GetCurrentGebruikerResponseModel {
     }
 }
 
+export interface IGetCurrentGebruikerResponseModel {
+    gebruikersId?: string | undefined;
+    gebruikersNaam?: string | undefined;
+    rollen?: GebruikerRol[] | undefined;
+}
+
 export enum TrackTermijn {
     _0 = 0,
     _1 = 1,
     _2 = 2,
 }
 
-export class SpotifyNummer {
+export class SpotifyNummer implements ISpotifyNummer {
     id?: number;
-    titel?: string | null;
-    gebruikerId?: string | null;
-    spotifyNummerId?: string | null;
-    artists?: string[] | null;
+    titel?: string | undefined;
+    gebruikerId?: string | undefined;
+    spotifyNummerId?: string | undefined;
+    artists?: string[] | undefined;
     trackTermijn?: TrackTermijn;
     nummerDuurMs?: number;
     aangemaaktOp?: Date;
 
+    constructor(data?: ISpotifyNummer) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
     init(_data?: any) {
         if (_data) {
-            this.id = _data["id"] !== undefined ? _data["id"] : <any>null;
-            this.titel = _data["titel"] !== undefined ? _data["titel"] : <any>null;
-            this.gebruikerId = _data["gebruikerId"] !== undefined ? _data["gebruikerId"] : <any>null;
-            this.spotifyNummerId = _data["spotifyNummerId"] !== undefined ? _data["spotifyNummerId"] : <any>null;
+            this.id = _data["id"];
+            this.titel = _data["titel"];
+            this.gebruikerId = _data["gebruikerId"];
+            this.spotifyNummerId = _data["spotifyNummerId"];
             if (Array.isArray(_data["artists"])) {
                 this.artists = [] as any;
                 for (let item of _data["artists"])
                     this.artists!.push(item);
             }
-            else {
-                this.artists = <any>null;
-            }
-            this.trackTermijn = _data["trackTermijn"] !== undefined ? _data["trackTermijn"] : <any>null;
-            this.nummerDuurMs = _data["nummerDuurMs"] !== undefined ? _data["nummerDuurMs"] : <any>null;
-            this.aangemaaktOp = _data["aangemaaktOp"] ? new Date(_data["aangemaaktOp"].toString()) : <any>null;
+            this.trackTermijn = _data["trackTermijn"];
+            this.nummerDuurMs = _data["nummerDuurMs"];
+            this.aangemaaktOp = _data["aangemaaktOp"] ? new Date(_data["aangemaaktOp"].toString()) : <any>undefined;
         }
     }
 
@@ -528,34 +483,54 @@ export class SpotifyNummer {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id !== undefined ? this.id : <any>null;
-        data["titel"] = this.titel !== undefined ? this.titel : <any>null;
-        data["gebruikerId"] = this.gebruikerId !== undefined ? this.gebruikerId : <any>null;
-        data["spotifyNummerId"] = this.spotifyNummerId !== undefined ? this.spotifyNummerId : <any>null;
+        data["id"] = this.id;
+        data["titel"] = this.titel;
+        data["gebruikerId"] = this.gebruikerId;
+        data["spotifyNummerId"] = this.spotifyNummerId;
         if (Array.isArray(this.artists)) {
             data["artists"] = [];
             for (let item of this.artists)
                 data["artists"].push(item);
         }
-        data["trackTermijn"] = this.trackTermijn !== undefined ? this.trackTermijn : <any>null;
-        data["nummerDuurMs"] = this.nummerDuurMs !== undefined ? this.nummerDuurMs : <any>null;
-        data["aangemaaktOp"] = this.aangemaaktOp ? this.aangemaaktOp.toISOString() : <any>null;
+        data["trackTermijn"] = this.trackTermijn;
+        data["nummerDuurMs"] = this.nummerDuurMs;
+        data["aangemaaktOp"] = this.aangemaaktOp ? this.aangemaaktOp.toISOString() : <any>undefined;
         return data; 
     }
 }
 
-export class PlaybackGroupDto {
+export interface ISpotifyNummer {
+    id?: number;
+    titel?: string | undefined;
+    gebruikerId?: string | undefined;
+    spotifyNummerId?: string | undefined;
+    artists?: string[] | undefined;
+    trackTermijn?: TrackTermijn;
+    nummerDuurMs?: number;
+    aangemaaktOp?: Date;
+}
+
+export class PlaybackGroupDto implements IPlaybackGroupDto {
     groupId?: string;
-    groupName?: string | null;
+    groupName?: string | undefined;
     currentlyPlayingNummer?: SpotifyNummer;
     listenersCount?: number;
 
+    constructor(data?: IPlaybackGroupDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
     init(_data?: any) {
         if (_data) {
-            this.groupId = _data["groupId"] !== undefined ? _data["groupId"] : <any>null;
-            this.groupName = _data["groupName"] !== undefined ? _data["groupName"] : <any>null;
-            this.currentlyPlayingNummer = _data["currentlyPlayingNummer"] ? SpotifyNummer.fromJS(_data["currentlyPlayingNummer"]) : <any>null;
-            this.listenersCount = _data["listenersCount"] !== undefined ? _data["listenersCount"] : <any>null;
+            this.groupId = _data["groupId"];
+            this.groupName = _data["groupName"];
+            this.currentlyPlayingNummer = _data["currentlyPlayingNummer"] ? SpotifyNummer.fromJS(_data["currentlyPlayingNummer"]) : <any>undefined;
+            this.listenersCount = _data["listenersCount"];
         }
     }
 
@@ -568,12 +543,19 @@ export class PlaybackGroupDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["groupId"] = this.groupId !== undefined ? this.groupId : <any>null;
-        data["groupName"] = this.groupName !== undefined ? this.groupName : <any>null;
-        data["currentlyPlayingNummer"] = this.currentlyPlayingNummer ? this.currentlyPlayingNummer.toJSON() : <any>null;
-        data["listenersCount"] = this.listenersCount !== undefined ? this.listenersCount : <any>null;
+        data["groupId"] = this.groupId;
+        data["groupName"] = this.groupName;
+        data["currentlyPlayingNummer"] = this.currentlyPlayingNummer ? this.currentlyPlayingNummer.toJSON() : <any>undefined;
+        data["listenersCount"] = this.listenersCount;
         return data; 
     }
+}
+
+export interface IPlaybackGroupDto {
+    groupId?: string;
+    groupName?: string | undefined;
+    currentlyPlayingNummer?: SpotifyNummer;
+    listenersCount?: number;
 }
 
 export class ApiException extends Error {
@@ -621,6 +603,4 @@ function blobToText(blob: any): Observable<string> {
             reader.readAsText(blob);
         }
     });
-}
-
 }

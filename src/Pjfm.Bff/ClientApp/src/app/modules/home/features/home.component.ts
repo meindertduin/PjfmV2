@@ -1,7 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { pjfmclient } from '../../../core/services/api-client.service';
-import PlaybackGroupDto = pjfmclient.PlaybackGroupDto;
-import PlaybackClient = pjfmclient.PlaybackClient;
+import { PlaybackClient, PlaybackGroupDto } from '../../../core/services/api-client.service';
 
 @Component({
   selector: 'pjfm-home',
@@ -15,7 +13,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit(): void {
     this._playbackClient.groups().subscribe((result) => {
-      this.playbackGroups = result as PlaybackGroupDto[];
+      this.playbackGroups = result;
     });
   }
 }
