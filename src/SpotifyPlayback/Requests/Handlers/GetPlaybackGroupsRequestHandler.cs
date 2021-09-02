@@ -32,6 +32,6 @@ namespace SpotifyPlayback.Requests.Handlers
 
     public class GetPlaybackGroupsRequestResult
     {
-        public IEnumerable<PlaybackGroupDto> PlaybackGroups { get; set; }
+        public IEnumerable<PlaybackGroupDto> PlaybackGroups { get; set; } = null!;
     }
 }

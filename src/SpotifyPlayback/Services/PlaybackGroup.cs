@@ -11,13 +11,14 @@ namespace SpotifyPlayback.Services
     public class PlaybackGroup : IPlaybackGroup
     {
         private readonly IPlaybackQueue _playbackQueue;
-        private SpotifyNummer? _currentlyPlayingNumber = null;
-        private List<LuisteraarDto> _luisteraars = new();
+        private SpotifyNummer? _currentlyPlayingTrack = null;
+        private SpotifyNummer? _nextTrack = null;
 
+        private List<LuisteraarDto> _luisteraars = new();
         private readonly object luisteraarsLock = new();
 
         public Guid GroupId { get; private set; }
-        public string GroupName { get; private set; } 
+        public string GroupName { get; private set; }
 
         public PlaybackGroup(IPlaybackQueue playbackQueue, Guid groupId, string groupName)
         {
@@ -30,7 +31,20 @@ namespace SpotifyPlayback.Services
         public async Task<SpotifyNummer> GetNextNummer()
         {
             var newNummer = await _playbackQueue.GetNextSpotifyNummer();
-            _currentlyPlayingNumber = newNummer;
+            
+            if (_currentlyPlayingTrack == null)
+            {
+                _currentlyPlayingTrack = newNummer;
+            }
+            else if (_nextTrack == null)
+            {
+                _nextTrack = newNummer;
+            }
+            else
+            {
+                _currentlyPlayingTrack = _nextTrack;
+                _nextTrack = newNummer;
+            }
 
             return newNummer;
         }
@@ -48,6 +62,7 @@ namespace SpotifyPlayback.Services
                 {
                     _luisteraars.Add(luisteraar);
                 }
+
                 return true;
             }
 
@@ -79,9 +94,8 @@ namespace SpotifyPlayback.Services
                 GroupId = GroupId,
                 GroupName = GroupName,
                 ListenersCount = _luisteraars.Count,
-                CurrentlyPlayingNummer = _currentlyPlayingNumber,
+                CurrentlyPlayingNummer = _currentlyPlayingTrack,
             };
         }
-
     }
 }

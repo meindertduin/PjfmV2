@@ -39,6 +39,7 @@ namespace SpotifyPlayback.Services
         {
             var playbackGroup = GetPlaybackGroup(groupId);
             var groupNummer = await playbackGroup.GetNextNummer();
+            
             return new PlaybackScheduledNummer()
             {
                 SpotifyNummer = groupNummer,
