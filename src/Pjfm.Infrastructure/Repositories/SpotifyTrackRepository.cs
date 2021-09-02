@@ -18,30 +18,30 @@ namespace Pjfm.Infrastructure.Repositories
 
         public Task<List<SpotifyTrack>> GetUserSpotifyTracksByUserId(string userId)
         {
-            return _pjfmContext.SpotifyNummers.Where(x => x.UserId == userId).ToListAsync();
+            return _pjfmContext.SpotifyTracks.Where(x => x.UserId == userId).ToListAsync();
         }
 
         public async Task SetUserSpotifyTracks(IEnumerable<SpotifyTrack> spotifyTracks ,string userId)
         {
-            var alreadyAvailableSpotifyNummers = await _pjfmContext.SpotifyNummers
+            var alreadyAvailableSpotifyNummers = await _pjfmContext.SpotifyTracks
                 .Where(s => s.UserId == userId)
                 .AsNoTracking()
                 .ToArrayAsync();
 
             if (alreadyAvailableSpotifyNummers.Length > 0)
             {
-                _pjfmContext.SpotifyNummers.RemoveRange(alreadyAvailableSpotifyNummers);
+                _pjfmContext.SpotifyTracks.RemoveRange(alreadyAvailableSpotifyNummers);
             }
 
-            await _pjfmContext.SpotifyNummers.AddRangeAsync(spotifyTracks);
+            await _pjfmContext.SpotifyTracks.AddRangeAsync(spotifyTracks);
             await _pjfmContext.SaveChangesAsync();
         }
 
         public Task<List<SpotifyTrack>> GetRandomUserSpotifyTracks(IEnumerable<string> userIds, IEnumerable<TrackTerm> terms, int amount)
         {
-            return _pjfmContext.SpotifyNummers
-                // TODO: add gebruikerIds
-                // .Where(s => gebruikerIds.Contains(s.GebruikerId))
+            return _pjfmContext.SpotifyTracks
+                // TODO: add userIds
+                // .Where(s => userIds.Contains(s.userId))
                 .Where(s => terms.Contains(s.TrackTerm))
                 .OrderBy(s => Guid.NewGuid())
                 .Take(amount)

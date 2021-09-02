@@ -14,7 +14,7 @@ namespace SpotifyPlayback.Services
         private SpotifyTrack? _currentlyPlayingTrack = null;
         private SpotifyTrack? _nextTrack = null;
 
-        private List<LuisteraarDto> _luisteraars = new();
+        private List<ListenerDto> _luisteraars = new();
         private readonly object luisteraarsLock = new();
 
         public Guid GroupId { get; private set; }
@@ -49,16 +49,16 @@ namespace SpotifyPlayback.Services
         }
         public IEnumerable<string> GetGroupListenerIds()
         {
-            return _luisteraars.Select(x => x.GebruikerId);
+            return _luisteraars.Select(x => x.UserId);
         }
 
-        public bool AddListener(LuisteraarDto luisteraar)
+        public bool AddListener(ListenerDto listener)
         {
-            if (!_luisteraars.Contains(luisteraar))
+            if (!_luisteraars.Contains(listener))
             {
                 lock (luisteraarsLock)
                 {
-                    _luisteraars.Add(luisteraar);
+                    _luisteraars.Add(listener);
                 }
 
                 return true;
@@ -67,17 +67,17 @@ namespace SpotifyPlayback.Services
             return false;
         }
 
-        public bool RemoveListener(LuisteraarDto luisteraar)
+        public bool RemoveListener(ListenerDto listener)
         {
             lock (luisteraarsLock)
             {
-                return _luisteraars.Remove(luisteraar);
+                return _luisteraars.Remove(listener);
             }
         }
 
-        public bool ContainsListeners(LuisteraarDto luisteraar)
+        public bool ContainsListeners(ListenerDto listener)
         {
-            return _luisteraars.Contains(luisteraar);
+            return _luisteraars.Contains(listener);
         }
 
         public bool HasListeners()

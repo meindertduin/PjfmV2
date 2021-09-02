@@ -16,7 +16,7 @@ namespace Pjfm.Api
             serviceCollection.AddTransient<IPjfmControllerContext, PjfmControllerContext>();
             serviceCollection.AddTransient<ISpotifyTrackService, SpotifyTrackService>();
 
-            serviceCollection.AddSingleton<IGebruikerTokenService, GebruikerTokenService>();
+            serviceCollection.AddSingleton<IUserTokenService, UserTokenService>();
             serviceCollection.AddTransient<ISpotifyTokenService, SpotifyTokenService>();
 
             serviceCollection.AddScoped(x =>

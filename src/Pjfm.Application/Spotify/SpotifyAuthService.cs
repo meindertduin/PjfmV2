@@ -4,7 +4,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Domain.SpotifyGebruikerData;
+using Domain.SpotifyUserData;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Pjfm.Application.Common;
@@ -14,21 +14,21 @@ namespace Pjfm.Application.Spotify
     public interface ISpotifyAuthenticationService
     {
         Task<ServiceRequestResult<SpotifyAccessTokenRequestResult>> RequestAccessToken(string code);
-        Task<ServiceRequestResult<SpotifyAccessTokenRefreshRequestResult>> RefreshAccessToken(string gebruikerId);
+        Task<ServiceRequestResult<SpotifyAccessTokenRefreshRequestResult>> RefreshAccessToken(string userId);
     }
 
     public class SpotifyAuthService : ISpotifyAuthenticationService
     {
         private readonly IConfiguration _configuration;
         private static HttpClient _httpClient;
-        private readonly ISpotifyGebruikersDataRepository _spotifyGebruikersDataRepository;
+        private readonly ISpotifyUserDataRepository _spotifyUserDataRepository;
 
         public SpotifyAuthService(IConfiguration configuration, HttpClient httpClient,
-            ISpotifyGebruikersDataRepository spotifyGebruikersDataRepository)
+            ISpotifyUserDataRepository spotifyUserDataRepository)
         {
             _configuration = configuration;
             _httpClient = httpClient;
-            _spotifyGebruikersDataRepository = spotifyGebruikersDataRepository;
+            _spotifyUserDataRepository = spotifyUserDataRepository;
         }
 
         public async Task<ServiceRequestResult<SpotifyAccessTokenRequestResult>> RequestAccessToken(string code)
@@ -57,15 +57,15 @@ namespace Pjfm.Application.Spotify
         }
 
         public async Task<ServiceRequestResult<SpotifyAccessTokenRefreshRequestResult>> RefreshAccessToken(
-            string gebruikerId)
+            string userId)
         {
             var requestMessage = GetBaseTokenRequestMessage();
-            var gebruikerRefreshToken = await _spotifyGebruikersDataRepository.GetUserRefreshToken(gebruikerId);
+            var userRefreshToken = await _spotifyUserDataRepository.GetUserRefreshToken(userId);
 
             requestMessage.Content = new FormUrlEncodedContent(new[]
             {
                 new KeyValuePair<string, string>("grant_type", "refresh_token"),
-                new KeyValuePair<string, string>("refresh_token", gebruikerRefreshToken)
+                new KeyValuePair<string, string>("refresh_token", userRefreshToken)
             });
 
             var response = await _httpClient.SendAsync(requestMessage);

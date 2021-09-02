@@ -48,7 +48,7 @@ namespace SpotifyPlayback
                     {
                         await _playbackRequestDispatcher.HandlePlaybackRequest(new DisconnectPlaybackGroupRequest()
                         {
-                            GebruikerId = socketConnection.Principal.Id,
+                            UserId = socketConnection.Principal.Id,
                         });
                     }
                     

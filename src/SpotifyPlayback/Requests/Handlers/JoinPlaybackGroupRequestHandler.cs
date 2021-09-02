@@ -15,7 +15,7 @@ namespace SpotifyPlayback.Requests.Handlers
         }
         public Task<JoinPlaybackGroupResult> HandleAsync(JoinPlaybackGroupRequest request)
         {
-            var luistenaar = new LuisteraarDto(request.GebruikerId, request.ConnectionId);
+            var luistenaar = new ListenerDto(request.UserId, request.ConnectionId);
             var hasJoined = _playbackGroepCollection.JoinGroup(request.GroupId, luistenaar);
             
             return Task.FromResult(new JoinPlaybackGroupResult()
@@ -28,7 +28,7 @@ namespace SpotifyPlayback.Requests.Handlers
     public class JoinPlaybackGroupRequest : IPlaybackRequest<JoinPlaybackGroupResult>
     {
         public Guid GroupId { get; set; }
-        public string GebruikerId { get; set; } = null!;
+        public string UserId { get; set; } = null!;
         public Guid ConnectionId { get; set; }
     }
 

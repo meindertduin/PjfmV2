@@ -9,7 +9,7 @@ namespace Pjfm.Infrastructure.TableMappings
     {
         public void Configure(EntityTypeBuilder<SpotifyTrack> builder)
         {
-            builder.ToTable("SpotifyNummer");
+            builder.ToTable("SpotifyTrack");
             builder.HasKey(s => s.Id);
 
             builder.HasIndex(s => s.UserId);

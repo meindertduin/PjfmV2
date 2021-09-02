@@ -1,14 +1,14 @@
-using Domain.SpotifyGebruikerData;
+using Domain.SpotifyUserData;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Pjfm.Infrastructure.TableMappings
 {
-    public class SpotifyGebruikersDataMap : IEntityTypeConfiguration<SpotifyUserData>
+    public class SpotifyUserDataMap : IEntityTypeConfiguration<SpotifyUserData>
     {
         public void Configure(EntityTypeBuilder<SpotifyUserData> builder)
         {
-            builder.ToTable("SpotifyGebruikersData");
+            builder.ToTable("SpotifyUserData");
             builder.HasKey(s => s.Id);
             builder.HasIndex(s => s.UserId);
 

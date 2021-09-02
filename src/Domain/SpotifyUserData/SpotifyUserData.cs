@@ -1,4 +1,4 @@
-namespace Domain.SpotifyGebruikerData
+namespace Domain.SpotifyUserData
 {
     public class SpotifyUserData
     {

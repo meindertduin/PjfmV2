@@ -1,8 +1,8 @@
 namespace Pjfm.Common.Authentication
 {
-    public enum GebruikerRol
+    public enum UserRole
     {
-        Gebruiker,
+        User,
         Dj,
     }
 }

@@ -47,7 +47,7 @@ namespace SpotifyPlayback.Services
             };
         }
 
-        public IEnumerable<string> GetGroupGebruikerIds(Guid groupId)
+        public IEnumerable<string> GetGroupUserIds(Guid groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);
             return playbackGroup.GetGroupListenerIds();
@@ -65,26 +65,26 @@ namespace SpotifyPlayback.Services
             return groupsData;
         }
 
-        public bool JoinGroup(Guid groupId, LuisteraarDto luisteraar)
+        public bool JoinGroup(Guid groupId, ListenerDto listener)
         {
             var retrievedGroup = _playbackGroups.TryGetValue(groupId, out var playbackGroup);
             if (retrievedGroup)
             {
-                return playbackGroup!.AddListener(luisteraar);
+                return playbackGroup!.AddListener(listener);
             }
 
             return false;
         }
 
-        public bool RemoveGebruikerFromGroup(LuisteraarDto luisteraar)
+        public bool RemoveUserFromGroup(ListenerDto listener)
         {
             // TODO: This is highly inefficient on larger scale, but will work for now In the future we might be needing
             // to think of saving the groupId where the user is connected with somewhere
             foreach (var playbackGroup in _playbackGroups.Values)
             {
-                if (playbackGroup.ContainsListeners(luisteraar))
+                if (playbackGroup.ContainsListeners(listener))
                 {
-                    return playbackGroup.RemoveListener(luisteraar);
+                    return playbackGroup.RemoveListener(listener);
                 }
             }
 

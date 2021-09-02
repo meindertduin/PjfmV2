@@ -1,8 +1,8 @@
 using System.Threading.Tasks;
 
-namespace Domain.SpotifyGebruikerData
+namespace Domain.SpotifyUserData
 {
-    public interface ISpotifyGebruikersDataRepository
+    public interface ISpotifyUserDataRepository
     {
         Task<SpotifyUserData> GetSpotifyUserData(string userId);
         Task<SpotifyUserData> GetSpotifyUserDataAsNoTracking(string userId);

@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
 using Pjfm.Common.Authentication;
 
-namespace Pjfm.Api.Pages.Gebruiker
+namespace Pjfm.Api.Pages.User
 {
-    public class Registreer : PageModel
+    public class Register : PageModel
     {
         [BindProperty] public RegisterForm Form { get; set; } = null!;
 
@@ -34,8 +34,8 @@ namespace Pjfm.Api.Pages.Gebruiker
             {
                 var claimsAddResult = await userManager.AddClaimsAsync(newUser, new[]
                 {
-                    new Claim(PjfmClaimTypes.Rol, GebruikerRol.Gebruiker.ToString()),
-                    new Claim(PjfmClaimTypes.GebruikerId, newUser.Id),
+                    new Claim(PjfmClaimTypes.Rol, UserRole.User.ToString()),
+                    new Claim(PjfmClaimTypes.UserId, newUser.Id),
                 });
 
                 if (claimsAddResult.Succeeded)

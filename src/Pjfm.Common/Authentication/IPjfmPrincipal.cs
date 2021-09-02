@@ -5,8 +5,8 @@ namespace Pjfm.Common.Authentication
     public interface IPjfmPrincipal
     {
         string Id { get; }
-        public IEnumerable<GebruikerRol> Rollen { get; }
-        string GebruikersNaam { get; }
+        public IEnumerable<UserRole> Roles { get; }
+        string UserName { get; }
         bool IsAuthenticated();
 
     }

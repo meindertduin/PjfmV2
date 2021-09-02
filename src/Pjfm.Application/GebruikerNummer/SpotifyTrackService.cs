@@ -24,7 +24,7 @@ namespace Pjfm.Application.GebruikerNummer
 
         public async Task UpdateUserSpotifyTracks(string userId)
         {
-            var accessTokenResult = await _spotifyTokenService.GetGebruikerSpotifyAccessToken(userId);
+            var accessTokenResult = await _spotifyTokenService.GetUserSpotifyAccessToken(userId);
             var spotifyClient = new SpotifyClient(accessTokenResult.AccessToken);
 
             if (!accessTokenResult.IsSuccessful)

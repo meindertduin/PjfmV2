@@ -5,32 +5,32 @@ using Pjfm.Common;
 namespace Pjfm.Application.Authentication
 {
     /// <summary>
-    /// This class functions as a wrapper for the GebruikerTokenService and functions kind of like a work around as
-    /// GebruikerTokenService is a singleton service and can't consume the SpotifyAuthenticationService through DI.
+    /// This class functions as a wrapper for the UserTokenService and functions kind of like a work around as
+    /// UserTokenService is a singleton service and can't consume the SpotifyAuthenticationService through DI.
     /// That's why this class is introduced.
     /// </summary>
     public class SpotifyTokenService : ISpotifyTokenService
     {
-        private readonly IGebruikerTokenService _gebruikerTokenService;
+        private readonly IUserTokenService _userTokenService;
         private readonly ISpotifyAuthenticationService _spotifyAuthenticationService;
 
-        public SpotifyTokenService(IGebruikerTokenService gebruikerTokenService, ISpotifyAuthenticationService spotifyAuthenticationService)
+        public SpotifyTokenService(IUserTokenService userTokenService, ISpotifyAuthenticationService spotifyAuthenticationService)
         {
-            _gebruikerTokenService = gebruikerTokenService;
+            _userTokenService = userTokenService;
             _spotifyAuthenticationService = spotifyAuthenticationService;
         }
         
-        public async Task<GetAccessTokenResult> GetGebruikerSpotifyAccessToken(string gebruikerId)
+        public async Task<GetAccessTokenResult> GetUserSpotifyAccessToken(string userId)
         {
-            Guard.NotNullOrEmpty(gebruikerId, nameof(gebruikerId));
-            var gotAccessToken = _gebruikerTokenService.GetGebruikerSpotifyAccessToken(gebruikerId, out var spotifyAccessToken);
+            Guard.NotNullOrEmpty(userId, nameof(userId));
+            var gotAccessToken = _userTokenService.GetUserSpotifyAccessToken(userId, out var spotifyAccessToken);
 
             if (!gotAccessToken)
             {
-                var refreshResponse = await _spotifyAuthenticationService.RefreshAccessToken(gebruikerId);
+                var refreshResponse = await _spotifyAuthenticationService.RefreshAccessToken(userId);
                 if (refreshResponse.IsSuccessful)
                 {
-                    _gebruikerTokenService.StoreGebruikerSpotifyAccessToken(gebruikerId, refreshResponse.Result.AccessToken, refreshResponse.Result.ExpiresIn);
+                    _userTokenService.StoreUserSpotifyAccessToken(userId, refreshResponse.Result.AccessToken, refreshResponse.Result.ExpiresIn);
                 }
                 else
                 {
@@ -52,7 +52,7 @@ namespace Pjfm.Application.Authentication
 
     public interface ISpotifyTokenService
     {
-        Task<GetAccessTokenResult> GetGebruikerSpotifyAccessToken(string gebruikerId);
+        Task<GetAccessTokenResult> GetUserSpotifyAccessToken(string userId);
     }
     
     public class GetAccessTokenResult

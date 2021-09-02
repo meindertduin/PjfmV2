@@ -4,24 +4,24 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Pjfm.Application.Authentication
 {
-    public class GebruikerTokenService : IGebruikerTokenService
+    public class UserTokenService : IUserTokenService
     {
-        private ConcurrentDictionary<string, GebruikerTokensData> _gebruikerTokensData = new();
+        private ConcurrentDictionary<string, UserTokensData> _userTokensData = new();
 
-        public void StoreGebruikerSpotifyAccessToken(string gebruikerId, string accessToken, int expiresIn)
+        public void StoreUserSpotifyAccessToken(string userId, string accessToken, int expiresIn)
         {
-            if (_gebruikerTokensData.ContainsKey(gebruikerId))
+            if (_userTokensData.ContainsKey(userId))
             {
-                _gebruikerTokensData.TryRemove(gebruikerId, out var gebruikerTokensData);
+                _userTokensData.TryRemove(userId, out var userTokensData);
 
-                gebruikerTokensData!.SpotifyAccessToken = accessToken;
-                gebruikerTokensData.SpotifyAccessTokenValidUntil = DateTime.Now + new TimeSpan(0, 0, expiresIn);
+                userTokensData!.SpotifyAccessToken = accessToken;
+                userTokensData.SpotifyAccessTokenValidUntil = DateTime.Now + new TimeSpan(0, 0, expiresIn);
 
-                _gebruikerTokensData.TryAdd(gebruikerId, gebruikerTokensData);
+                _userTokensData.TryAdd(userId, userTokensData);
             }
             else
             {
-                _gebruikerTokensData.TryAdd(gebruikerId, new GebruikerTokensData()
+                _userTokensData.TryAdd(userId, new UserTokensData()
                 {
                     SpotifyAccessToken = accessToken,
                     SpotifyAccessTokenValidUntil = DateTime.Now + new TimeSpan(0, 0, expiresIn),
@@ -29,19 +29,19 @@ namespace Pjfm.Application.Authentication
             }
         }
         
-        public bool GetGebruikerSpotifyAccessToken(string gebruikerId, [MaybeNullWhen(false)] out string accessToken)
+        public bool GetUserSpotifyAccessToken(string userId, [MaybeNullWhen(false)] out string accessToken)
         {
-            var hasGebruikersData = _gebruikerTokensData.TryGetValue(gebruikerId, out var gebruikerTokensData);
+            var hasUserData = _userTokensData.TryGetValue(userId, out var userTokensData);
             accessToken = null;
 
-            if (!hasGebruikersData)
+            if (!hasUserData)
             {
                 return false;
             }
 
-            accessToken = gebruikerTokensData!.SpotifyAccessToken;
+            accessToken = userTokensData!.SpotifyAccessToken;
             
-            if (gebruikerTokensData.SpotifyAccessTokenValidUntil > DateTime.Today)
+            if (userTokensData.SpotifyAccessTokenValidUntil > DateTime.Today)
             {
                 return true;
             }
@@ -50,13 +50,13 @@ namespace Pjfm.Application.Authentication
         }
     }
 
-    public interface IGebruikerTokenService
+    public interface IUserTokenService
     {
-        void StoreGebruikerSpotifyAccessToken(string gebruikerId, string accessToken, int expiresIn);
-        bool GetGebruikerSpotifyAccessToken(string gebruikerId, [MaybeNullWhen(false)] out string accessToken);
+        void StoreUserSpotifyAccessToken(string userId, string accessToken, int expiresIn);
+        bool GetUserSpotifyAccessToken(string userId, [MaybeNullWhen(false)] out string accessToken);
     }
 
-    internal class GebruikerTokensData
+    internal class UserTokensData
     {
         // When adding new tokens, values such as SpotifyAccessToken might be set as nullable
         public string SpotifyAccessToken { get; set; } = null!;

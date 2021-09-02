@@ -13,7 +13,7 @@ namespace SpotifyPlayback.Services
         private readonly ISpotifyTrackRepository _spotifyTrackRepository;
         private readonly IConfiguration _configuration;
         private Queue<SpotifyTrack> _spotifyNummers = new();
-        private IEnumerable<string> _gebruikerIds = new List<string>();
+        private IEnumerable<string> _userIds = new List<string>();
         
         private TrackTerm _term = TrackTerm.Long;
 
@@ -34,7 +34,7 @@ namespace SpotifyPlayback.Services
             var spotifyNummerRepository = new SpotifyTrackRepository(PjfmContextFactory.Create(connectionString));
             
             var spotifyNummers =
-                await spotifyNummerRepository.GetRandomUserSpotifyTracks(_gebruikerIds, new []{ _term }, getSpotifyNummersAmount);
+                await spotifyNummerRepository.GetRandomUserSpotifyTracks(_userIds, new []{ _term }, getSpotifyNummersAmount);
             
             foreach (var spotifyNummer in spotifyNummers)
             {

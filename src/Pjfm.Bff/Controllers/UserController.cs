@@ -6,12 +6,12 @@ using Microsoft.Extensions.Configuration;
 
 namespace Pjfm.Bff.Controllers
 {
-    [Route("gebruiker")]
-    public class GebruikerController : ControllerBase
+    [Route("user")]
+    public class UserController : ControllerBase
     {
         private readonly IConfiguration _configuration;
 
-        public GebruikerController(IConfiguration configuration)
+        public UserController(IConfiguration configuration)
         {
             _configuration = configuration;
         }

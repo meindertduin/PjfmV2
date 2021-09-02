@@ -74,7 +74,7 @@ namespace Pjfm.Api
 
             services.ConfigureApplicationCookie(config =>
             {
-                config.LoginPath = "/gebruiker/login";
+                config.LoginPath = "/user/login";
                 config.LogoutPath = "/authentication/logout";
 
                 // return 401 instead of automatically challenging the user
@@ -87,7 +87,7 @@ namespace Pjfm.Api
 
             services.AddAuthorization(options =>
             {
-                options.AddPolicy(WellKnownPolicies.Gebruiker, builder => { builder.RequireAuthenticatedUser(); });
+                options.AddPolicy(WellKnownPolicies.User, builder => { builder.RequireAuthenticatedUser(); });
             });
         }
 
