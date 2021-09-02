@@ -3,11 +3,9 @@ import { PlaybackGroupDto } from '../../../../core/services/api-client.service';
 
 @Component({
   selector: 'pjfm-playbackgroup',
-  templateUrl: './playbackgroup.component.html',
-  styleUrls: ['./playbackgroup.component.scss'],
+  templateUrl: './playback-group.component.html',
+  styleUrls: ['./playback-group.component.scss'],
 })
-export class PlaybackgroupComponent {
-  clickRoute = '/session/1';
-
+export class PlaybackGroupComponent {
   @Input() playbackGroup!: PlaybackGroupDto;
 }

@@ -1,16 +1,19 @@
-<div class="container" [routerLink]="['session', '1']">
+<div class="container" [routerLink]="['session', playbackGroup.groupId]">
   <div class="title-container">
     <h3 class="title">{{playbackGroup.groupName}}</h3>
     <span class="listeners-text">{{playbackGroup.listenersCount}} {{playbackGroup.listenersCount > 1 ? 'listeners' : 'listener'}}</span>
   </div>
   <div class="content">
-    <div class="image-container">
+    <div class="image-container" *ngIf="playbackGroup.currentlyPlayingNummer != null">
       <img src="/assets/images/album-cover.jpg" alt="album cover" />
     </div>
-    <div class="group-info-container" *ngIf="playbackGroup.currentlyPlayingNummer != null">
+    <div class="group-info-container" *ngIf="playbackGroup.currentlyPlayingNummer != null; else offlineContent">
       <div class="currently-playing-title">Now playing:</div>
       <a class="track-title">[ {{playbackGroup.currentlyPlayingNummer.titel}} ]</a>
       <a class="artist-title">[ {{playbackGroup.currentlyPlayingNummer.artists | artistsPipe}} ]</a>
     </div>
+    <ng-template #offlineContent>
+      <div class="currently-offline-title">Playback group is currently offline</div>
+    </ng-template>
   </div>
 </div>

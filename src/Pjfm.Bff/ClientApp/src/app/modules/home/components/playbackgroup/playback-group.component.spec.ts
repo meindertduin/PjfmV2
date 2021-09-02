@@ -1,20 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PlaybackgroupComponent } from './playbackgroup.component';
+import { PlaybackGroupComponent } from './playback-group.component';
 
 describe('PlaybackgroupComponent', () => {
-  let component: PlaybackgroupComponent;
-  let fixture: ComponentFixture<PlaybackgroupComponent>;
+  let component: PlaybackGroupComponent;
+  let fixture: ComponentFixture<PlaybackGroupComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PlaybackgroupComponent ]
-    })
-    .compileComponents();
+      declarations: [PlaybackGroupComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PlaybackgroupComponent);
+    fixture = TestBed.createComponent(PlaybackGroupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
