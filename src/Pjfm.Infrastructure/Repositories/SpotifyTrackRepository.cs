@@ -2,29 +2,29 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.SpotifyNummer;
+using Domain.SpotifyTrack;
 using Microsoft.EntityFrameworkCore;
 
 namespace Pjfm.Infrastructure.Repositories
 {
-    public class SpotifyNummerRepository : ISpotifyNummerRepository
+    public class SpotifyTrackRepository : ISpotifyTrackRepository
     {
         private readonly IPjfmContext _pjfmContext;
 
-        public SpotifyNummerRepository(PjfmContext pjfmContext)
+        public SpotifyTrackRepository(PjfmContext pjfmContext)
         {
             _pjfmContext = pjfmContext;
         }
 
-        public Task<List<SpotifyNummer>> GetGebruikerSpotifyNummersByGebruikersId(string gebruikersId)
+        public Task<List<SpotifyTrack>> GetUserSpotifyTracksByUserId(string userId)
         {
-            return _pjfmContext.SpotifyNummers.Where(x => x.GebruikerId == gebruikersId).ToListAsync();
+            return _pjfmContext.SpotifyNummers.Where(x => x.UserId == userId).ToListAsync();
         }
 
-        public async Task SetGebruikerSpotifyNummers(IEnumerable<SpotifyNummer> spotifyNummers ,string gebruikerId)
+        public async Task SetUserSpotifyTracks(IEnumerable<SpotifyTrack> spotifyTracks ,string userId)
         {
             var alreadyAvailableSpotifyNummers = await _pjfmContext.SpotifyNummers
-                .Where(s => s.GebruikerId == gebruikerId)
+                .Where(s => s.UserId == userId)
                 .AsNoTracking()
                 .ToArrayAsync();
 
@@ -33,16 +33,16 @@ namespace Pjfm.Infrastructure.Repositories
                 _pjfmContext.SpotifyNummers.RemoveRange(alreadyAvailableSpotifyNummers);
             }
 
-            await _pjfmContext.SpotifyNummers.AddRangeAsync(spotifyNummers);
+            await _pjfmContext.SpotifyNummers.AddRangeAsync(spotifyTracks);
             await _pjfmContext.SaveChangesAsync();
         }
 
-        public Task<List<SpotifyNummer>> GetRandomGebruikersSpotifyNummers(IEnumerable<string> gebruikerIds, IEnumerable<TrackTermijn> termijnen, int amount)
+        public Task<List<SpotifyTrack>> GetRandomUserSpotifyTracks(IEnumerable<string> userIds, IEnumerable<TrackTerm> terms, int amount)
         {
             return _pjfmContext.SpotifyNummers
                 // TODO: add gebruikerIds
                 // .Where(s => gebruikerIds.Contains(s.GebruikerId))
-                .Where(s => termijnen.Contains(s.TrackTermijn))
+                .Where(s => terms.Contains(s.TrackTerm))
                 .OrderBy(s => Guid.NewGuid())
                 .Take(amount)
                 .AsNoTracking()

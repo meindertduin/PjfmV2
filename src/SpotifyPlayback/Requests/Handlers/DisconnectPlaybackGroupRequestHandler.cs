@@ -7,15 +7,15 @@ namespace SpotifyPlayback.Requests.Handlers
 {
     public class DisconnectPlaybackGroupRequestHandler : IPlaybackRequestHandler<DisconnectPlaybackGroupRequest>
     {
-        private readonly IPlaybackGroupCollection _playbackGroupCollection;
+        private readonly IPlaybackGroepCollection _playbackGroepCollection;
 
-        public DisconnectPlaybackGroupRequestHandler(IPlaybackGroupCollection playbackGroupCollection)
+        public DisconnectPlaybackGroupRequestHandler(IPlaybackGroepCollection playbackGroepCollection)
         {
-            _playbackGroupCollection = playbackGroupCollection;
+            _playbackGroepCollection = playbackGroepCollection;
         }
         public Task HandleAsync(DisconnectPlaybackGroupRequest request)
         {
-            _playbackGroupCollection.RemoveGebruikerFromGroup(new LuisteraarDto(request.GebruikerId,
+            _playbackGroepCollection.RemoveGebruikerFromGroup(new LuisteraarDto(request.GebruikerId,
                 request.ConnectionId));
 
             // TODO: pause spotify player for user once it's implemented

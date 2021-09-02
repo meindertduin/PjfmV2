@@ -1,12 +1,12 @@
 using System.Threading.Tasks;
-using Domain.SpotifyNummer;
+using Domain.SpotifyTrack;
 
 namespace SpotifyPlayback.Interfaces
 {
     public interface IPlaybackQueue
     {
-        Task<SpotifyNummer> GetNextSpotifyNummer();
+        Task<SpotifyTrack> GetNextSpotifyNummer();
         void ResetQueue();
-        void SetTermijn(TrackTermijn termijn);
+        void SetTermijn(TrackTerm term);
     }
 }

@@ -7,17 +7,17 @@ namespace SpotifyPlayback.Requests.Handlers
 {
     public class GetPlaybackInfoRequestHandler : IPlaybackRequestHandler<GetPlaybackInfoRequest, GetPlaybackInfoRequestResult>
     {
-        private readonly IPlaybackGroupCollection _playbackGroupCollection;
+        private readonly IPlaybackGroepCollection _playbackGroepCollection;
 
-        public GetPlaybackInfoRequestHandler(IPlaybackGroupCollection playbackGroupCollection)
+        public GetPlaybackInfoRequestHandler(IPlaybackGroepCollection playbackGroepCollection)
         {
-            _playbackGroupCollection = playbackGroupCollection;
+            _playbackGroepCollection = playbackGroepCollection;
         }
         public Task<GetPlaybackInfoRequestResult> HandleAsync(GetPlaybackInfoRequest request)
         {
             return Task.FromResult(new GetPlaybackInfoRequestResult()
             {
-                PlaybackGroups = _playbackGroupCollection.GetPlaybackGroupsInfo(),
+                PlaybackGroups = _playbackGroepCollection.GetPlaybackGroupsInfo(),
             });
         }
     }

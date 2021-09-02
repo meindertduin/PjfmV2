@@ -7,9 +7,9 @@ using SpotifyPlayback.Services;
 
 namespace SpotifyPlayback.Interfaces
 {
-    public interface IPlaybackGroupCollection
+    public interface IPlaybackGroepCollection
     {
-        event PlaybackGroupCreatedEvent playbackgroupCreatedEvent;
+        event PlaybackGroupCreatedEvent PlaybackGroupCreatedEvent;
         Guid CreateNewPlaybackGroup(string groupName);
         Task<PlaybackScheduledNummer> GetGroupNewTrack(Guid groupId);
         IEnumerable<string> GetGroupGebruikerIds(Guid groupId);

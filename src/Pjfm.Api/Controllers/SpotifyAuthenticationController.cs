@@ -1,12 +1,10 @@
 using System.Text;
 using System.Threading.Tasks;
 using Domain.SpotifyGebruikerData;
-using Domain.SpotifyNummer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Pjfm.Api.Authentication;
 using Pjfm.Api.Controllers.Base;
 using Pjfm.Application.Authentication;
 using Pjfm.Application.GebruikerNummer;
@@ -22,18 +20,18 @@ namespace Pjfm.Api.Controllers
         private readonly ISpotifyAuthenticationService _spotifyAuthenticationService;
         private readonly ISpotifyGebruikersDataRepository _spotifyGebruikersDataRepository;
         private readonly IGebruikerTokenService _gebruikerTokenService;
-        private readonly ISpotifyNummerService _spotifyNummerService;
+        private readonly ISpotifyTrackService _spotifyTrackService;
 
         public SpotifyAuthenticationController(IPjfmControllerContext pjfmContext,
             ISpotifyAuthenticationService spotifyAuthenticationService,
             ISpotifyGebruikersDataRepository spotifyGebruikersDataRepository,
             IGebruikerTokenService gebruikerTokenService,
-            ISpotifyNummerService spotifyNummerService) : base(pjfmContext)
+            ISpotifyTrackService spotifyTrackService) : base(pjfmContext)
         {
             _spotifyAuthenticationService = spotifyAuthenticationService;
             _spotifyGebruikersDataRepository = spotifyGebruikersDataRepository;
             _gebruikerTokenService = gebruikerTokenService;
-            _spotifyNummerService = spotifyNummerService;
+            _spotifyTrackService = spotifyTrackService;
         }
 
         [HttpGet]
@@ -61,10 +59,10 @@ namespace Pjfm.Api.Controllers
             var requestResult = await _spotifyAuthenticationService.RequestAccessToken(code);
             if (requestResult.IsSuccessful)
             {
-                await _spotifyGebruikersDataRepository.SetGebruikerRefreshToken(PjfmPrincipal.Id ,requestResult.Result.RefreshToken);
+                await _spotifyGebruikersDataRepository.SetUserRefreshToken(PjfmPrincipal.Id ,requestResult.Result.RefreshToken);
                 _gebruikerTokenService.StoreGebruikerSpotifyAccessToken(PjfmPrincipal.Id, requestResult.Result.AccessToken, requestResult.Result.ExpiresIn);
 
-                await _spotifyNummerService.UpdateGebruikerSpotifyNummers(PjfmPrincipal.Id);
+                await _spotifyTrackService.UpdateUserSpotifyTracks(PjfmPrincipal.Id);
             }
 
             return Ok(code);

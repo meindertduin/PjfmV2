@@ -7,30 +7,30 @@ namespace SpotifyPlayback.Requests.Handlers
 {
     public class
         GetPlaybackGroupsRequestHandler : IPlaybackRequestHandler<GetPlaybackGroupsRequest,
-            GetPlaybackGroupsRequestResult>
+            GetPlaybackGroepenRequestResult>
     {
-        private readonly IPlaybackGroupCollection _playbackGroupCollection;
+        private readonly IPlaybackGroepCollection _playbackGroepCollection;
 
-        public GetPlaybackGroupsRequestHandler(IPlaybackGroupCollection playbackGroupCollection)
+        public GetPlaybackGroupsRequestHandler(IPlaybackGroepCollection playbackGroepCollection)
         {
-            _playbackGroupCollection = playbackGroupCollection;
+            _playbackGroepCollection = playbackGroepCollection;
         }
 
-        public Task<GetPlaybackGroupsRequestResult> HandleAsync(GetPlaybackGroupsRequest request)
+        public Task<GetPlaybackGroepenRequestResult> HandleAsync(GetPlaybackGroupsRequest request)
         {
-            return Task.FromResult(new GetPlaybackGroupsRequestResult()
+            return Task.FromResult(new GetPlaybackGroepenRequestResult()
 
             {
-                PlaybackGroups = _playbackGroupCollection.GetPlaybackGroupsInfo(),
+                PlaybackGroups = _playbackGroepCollection.GetPlaybackGroupsInfo(),
             });
         }
     }
 
-    public class GetPlaybackGroupsRequest : IPlaybackRequest<GetPlaybackGroupsRequestResult>
+    public class GetPlaybackGroupsRequest : IPlaybackRequest<GetPlaybackGroepenRequestResult>
     {
     }
 
-    public class GetPlaybackGroupsRequestResult
+    public class GetPlaybackGroepenRequestResult
     {
         public IEnumerable<PlaybackGroupDto> PlaybackGroups { get; set; } = null!;
     }

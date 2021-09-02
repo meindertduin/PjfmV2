@@ -15,28 +15,28 @@ namespace Pjfm.Infrastructure.Repositories
             _pjfmContext = pjfmContext;
         }
         
-        public Task<SpotifyGebruikerData> GetSpotifyGebruikerData(string gebruikerId)
+        public Task<SpotifyUserData> GetSpotifyUserData(string userId)
         {
-            return GetSpotifyGebruikersDataQuery(gebruikerId).FirstOrDefaultAsync();
+            return GetSpotifyGebruikersDataQuery(userId).FirstOrDefaultAsync();
         }
         
-        public Task<SpotifyGebruikerData> GetSpotifyGebruikerDataAsNoTracking(string gebruikerId)
+        public Task<SpotifyUserData> GetSpotifyUserDataAsNoTracking(string userId)
         {
-            return GetSpotifyGebruikersDataQuery(gebruikerId).AsNoTracking().FirstOrDefaultAsync();
+            return GetSpotifyGebruikersDataQuery(userId).AsNoTracking().FirstOrDefaultAsync();
         }
 
-        public Task<string> GetGebruikerRefreshToken(string gebruikerId)
+        public Task<string> GetUserRefreshToken(string userId)
         {
             return _pjfmContext.SpotifyGebruikerData
-                .Where(s => s.GebruikerId == gebruikerId)
+                .Where(s => s.UserId == userId)
                 .Select(s => s.RefreshToken)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
         }
 
-        public async Task SetGebruikerRefreshToken(string gebruikerId, string refreshToken)
+        public async Task SetUserRefreshToken(string userId, string refreshToken)
         {
-            var spotifyGebruikerData = await GetSpotifyGebruikerData(gebruikerId);
+            var spotifyGebruikerData = await GetSpotifyUserData(userId);
 
             if (spotifyGebruikerData != null)
             {
@@ -44,9 +44,9 @@ namespace Pjfm.Infrastructure.Repositories
             }
             else
             {
-                _pjfmContext.SpotifyGebruikerData.Add(new SpotifyGebruikerData()
+                _pjfmContext.SpotifyGebruikerData.Add(new SpotifyUserData()
                 {
-                    GebruikerId = gebruikerId,
+                    UserId = userId,
                     RefreshToken = refreshToken,
                 });
             }
@@ -54,9 +54,9 @@ namespace Pjfm.Infrastructure.Repositories
             await _pjfmContext.SaveChangesAsync();
         }
 
-        private IQueryable<SpotifyGebruikerData> GetSpotifyGebruikersDataQuery(string gebruikerId)
+        private IQueryable<SpotifyUserData> GetSpotifyGebruikersDataQuery(string gebruikerId)
         {
-            return _pjfmContext.SpotifyGebruikerData.Where(x => x.GebruikerId == gebruikerId);
+            return _pjfmContext.SpotifyGebruikerData.Where(x => x.UserId == gebruikerId);
         }
 
     }

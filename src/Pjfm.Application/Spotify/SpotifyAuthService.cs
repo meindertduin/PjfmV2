@@ -60,7 +60,7 @@ namespace Pjfm.Application.Spotify
             string gebruikerId)
         {
             var requestMessage = GetBaseTokenRequestMessage();
-            var gebruikerRefreshToken = await _spotifyGebruikersDataRepository.GetGebruikerRefreshToken(gebruikerId);
+            var gebruikerRefreshToken = await _spotifyGebruikersDataRepository.GetUserRefreshToken(gebruikerId);
 
             requestMessage.Content = new FormUrlEncodedContent(new[]
             {

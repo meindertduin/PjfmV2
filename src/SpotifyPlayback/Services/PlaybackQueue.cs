@@ -1,7 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.SpotifyNummer;
+using Domain.SpotifyTrack;
 using Microsoft.Extensions.Configuration;
 using Pjfm.Infrastructure;
 using Pjfm.Infrastructure.Repositories;
@@ -11,19 +10,19 @@ namespace SpotifyPlayback.Services
 {
     public class PlaybackQueue : IPlaybackQueue
     {
-        private readonly ISpotifyNummerRepository _spotifyNummerRepository;
+        private readonly ISpotifyTrackRepository _spotifyTrackRepository;
         private readonly IConfiguration _configuration;
-        private Queue<SpotifyNummer> _spotifyNummers = new();
+        private Queue<SpotifyTrack> _spotifyNummers = new();
         private IEnumerable<string> _gebruikerIds = new List<string>();
         
-        private TrackTermijn _termijn = TrackTermijn.Lang;
+        private TrackTerm _term = TrackTerm.Long;
 
-        public PlaybackQueue(ISpotifyNummerRepository spotifyNummerRepository, IConfiguration configuration)
+        public PlaybackQueue(ISpotifyTrackRepository spotifyTrackRepository, IConfiguration configuration)
         {
-            _spotifyNummerRepository = spotifyNummerRepository;
+            _spotifyTrackRepository = spotifyTrackRepository;
             _configuration = configuration;
         }
-        public async Task<SpotifyNummer> GetNextSpotifyNummer()
+        public async Task<SpotifyTrack> GetNextSpotifyNummer()
         {
             int getSpotifyNummersAmount = 1;
             if (_spotifyNummers.Count == 0)
@@ -32,10 +31,10 @@ namespace SpotifyPlayback.Services
             }
 
             var connectionString = _configuration.GetValue<string>("ConnectionStrings:ApplicationDb");
-            var spotifyNummerRepository = new SpotifyNummerRepository(PjfmContextFactory.Create(connectionString));
+            var spotifyNummerRepository = new SpotifyTrackRepository(PjfmContextFactory.Create(connectionString));
             
             var spotifyNummers =
-                await spotifyNummerRepository.GetRandomGebruikersSpotifyNummers(_gebruikerIds, new []{ _termijn }, getSpotifyNummersAmount);
+                await spotifyNummerRepository.GetRandomUserSpotifyTracks(_gebruikerIds, new []{ _term }, getSpotifyNummersAmount);
             
             foreach (var spotifyNummer in spotifyNummers)
             {
@@ -50,9 +49,9 @@ namespace SpotifyPlayback.Services
             _spotifyNummers.Clear();
         }
 
-        public void SetTermijn(TrackTermijn termijn)
+        public void SetTermijn(TrackTerm term)
         {
-            _termijn = termijn;
+            _term = term;
         }
     }
 }

@@ -1,21 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.SpotifyNummer;
+using Domain.SpotifyTrack;
 using SpotifyPlayback.Models.DataTransferObjects;
 
 namespace SpotifyPlayback.Interfaces
 {
-    public interface IPlaybackGroup
+    public interface IPlaybackGroep
     {
         Guid GroupId { get; }
         string GroupName { get; }
-        Task<SpotifyNummer> GetNextNummer();
+        Task<SpotifyTrack> GetNextTrack();
         IEnumerable<string> GetGroupListenerIds();
-        bool AddLuisteraar(LuisteraarDto luisteraar);
-        bool RemoveLuisteraar(LuisteraarDto luisteraar);
-        bool ContainsLuisteraar(LuisteraarDto luisteraar);
-        bool HasLuisteraars();
+        bool AddListener(LuisteraarDto luisteraar);
+        bool RemoveListener(LuisteraarDto luisteraar);
+        bool ContainsListeners(LuisteraarDto luisteraar);
+        bool HasListeners();
         PlaybackGroupDto GetPlaybackGroupInfo();
     }
 }

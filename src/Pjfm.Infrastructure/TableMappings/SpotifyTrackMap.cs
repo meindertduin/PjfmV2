@@ -1,24 +1,21 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using Domain.SpotifyNummer;
+using Domain.SpotifyTrack;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Pjfm.Infrastructure.TableMappings
 {
-    public class SpotifyNummerMap : IEntityTypeConfiguration<SpotifyNummer>
+    public class SpotifyTrackMap : IEntityTypeConfiguration<SpotifyTrack>
     {
-        public void Configure(EntityTypeBuilder<SpotifyNummer> builder)
+        public void Configure(EntityTypeBuilder<SpotifyTrack> builder)
         {
             builder.ToTable("SpotifyNummer");
             builder.HasKey(s => s.Id);
 
-            builder.HasIndex(s => s.GebruikerId);
+            builder.HasIndex(s => s.UserId);
 
-            builder.Property(s => s.SpotifyNummerId).HasMaxLength(50).IsRequired();
-            builder.Property(s => s.GebruikerId).HasMaxLength(50);
+            builder.Property(s => s.SpotifyTrackId).HasMaxLength(50).IsRequired();
+            builder.Property(s => s.UserId).HasMaxLength(50);
             builder.Property(s => s.Artists).HasConversion(
                 v => string.Join(',', v),
                 v => v.Split(',', StringSplitOptions.RemoveEmptyEntries))
@@ -34,7 +31,7 @@ namespace Pjfm.Infrastructure.TableMappings
             //
             // builder.Property(s => s.Artists).Metadata.SetValueComparer(artistsValueComparer);
             
-            builder.Property(s => s.Titel).HasMaxLength(255).IsRequired();
+            builder.Property(s => s.Title).HasMaxLength(255).IsRequired();
         }
     }
 }

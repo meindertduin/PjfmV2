@@ -16,7 +16,7 @@ namespace Pjfm.Api
             services.AddTransient<IPlaybackQueue, PlaybackQueue>();
             
             services.AddSingleton<ISocketDirector, PlaybackSocketDirector>();
-            services.AddSingleton<IPlaybackGroupCollection, PlaybackGroupCollection>();
+            services.AddSingleton<IPlaybackGroepCollection, PlaybackGroepCollection>();
             
             services.AddHostedService<SpotifyPlaybackHostedService>();
 

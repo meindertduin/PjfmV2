@@ -9,14 +9,14 @@ using SpotifyPlayback.Models.DataTransferObjects;
 
 namespace SpotifyPlayback.Services
 {
-    public class PlaybackGroupCollection : IPlaybackGroupCollection
+    public class PlaybackGroepCollection : IPlaybackGroepCollection
     {
         private readonly IServiceProvider _serviceProvider;
-        private ConcurrentDictionary<Guid, IPlaybackGroup> _playbackGroups = new();
+        private ConcurrentDictionary<Guid, IPlaybackGroep> _playbackGroups = new();
 
-        public event PlaybackGroupCreatedEvent playbackgroupCreatedEvent = null!;
+        public event PlaybackGroupCreatedEvent PlaybackGroupCreatedEvent = null!;
 
-        public PlaybackGroupCollection(IServiceProvider serviceProvider)
+        public PlaybackGroepCollection(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
@@ -27,22 +27,22 @@ namespace SpotifyPlayback.Services
             var playbackQueue = scope.ServiceProvider.GetRequiredService<IPlaybackQueue>();
             var groupId = Guid.NewGuid();
 
-            var playbackGroup = new PlaybackGroup(playbackQueue, groupId, groupName);
+            var playbackGroup = new PlaybackGroep(playbackQueue, groupId, groupName);
 
             _playbackGroups.TryAdd(groupId, playbackGroup);
 
-            playbackgroupCreatedEvent.Invoke(this, new PlaybackGroupCreatedEventArgs() { GroupId = groupId });
+            PlaybackGroupCreatedEvent.Invoke(this, new PlaybackGroupCreatedEventArgs() { GroupId = groupId });
             return groupId;
         }
 
         public async Task<PlaybackScheduledNummer> GetGroupNewTrack(Guid groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);
-            var groupNummer = await playbackGroup.GetNextNummer();
+            var groupNummer = await playbackGroup.GetNextTrack();
             
             return new PlaybackScheduledNummer()
             {
-                SpotifyNummer = groupNummer,
+                SpotifyTrack = groupNummer,
                 GroupId = groupId,
             };
         }
@@ -70,7 +70,7 @@ namespace SpotifyPlayback.Services
             var retrievedGroup = _playbackGroups.TryGetValue(groupId, out var playbackGroup);
             if (retrievedGroup)
             {
-                return playbackGroup!.AddLuisteraar(luisteraar);
+                return playbackGroup!.AddListener(luisteraar);
             }
 
             return false;
@@ -82,16 +82,16 @@ namespace SpotifyPlayback.Services
             // to think of saving the groupId where the user is connected with somewhere
             foreach (var playbackGroup in _playbackGroups.Values)
             {
-                if (playbackGroup.ContainsLuisteraar(luisteraar))
+                if (playbackGroup.ContainsListeners(luisteraar))
                 {
-                    return playbackGroup.RemoveLuisteraar(luisteraar);
+                    return playbackGroup.RemoveListener(luisteraar);
                 }
             }
 
             return false;
         }
 
-        private IPlaybackGroup GetPlaybackGroup(Guid groupId)
+        private IPlaybackGroep GetPlaybackGroup(Guid groupId)
         {
             if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
             {
