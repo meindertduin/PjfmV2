@@ -16,6 +16,7 @@ namespace SpotifyPlayback
 
         public void AddPlaybackScheduledNummer(PlaybackScheduledNummer playbackScheduledNummer)
         {
+            var hasInserted = false;
             lock (_queueLock)
             {
                 for (int i = 0; i < _playbackScheduledNummers.Count; i++)
@@ -23,7 +24,14 @@ namespace SpotifyPlayback
                     if (_playbackScheduledNummers[i].DueTime > playbackScheduledNummer.DueTime)
                     {
                         _playbackScheduledNummers.Insert(i, playbackScheduledNummer);
+                        hasInserted = true;
+                        break;
                     }
+                }
+
+                if (!hasInserted)
+                {
+                    _playbackScheduledNummers.Add(playbackScheduledNummer);
                 }
             }
         }

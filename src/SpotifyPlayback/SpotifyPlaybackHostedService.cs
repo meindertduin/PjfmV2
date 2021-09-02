@@ -45,12 +45,12 @@ namespace SpotifyPlayback
 
         private void ExecuteAsync(object? state)
         {
-            Task.Run(() =>
+            Task.Run(async () =>
             {
                 var dueNummers = _playbackScheduledTaskQueue.GetDueNummers();
                 foreach (var dueNummer in dueNummers)
                 {
-                    PlayScheduledNummer(dueNummer);
+                    await PlayScheduledNummer(dueNummer);
                 }
             });
         }
@@ -62,14 +62,18 @@ namespace SpotifyPlayback
                 var newNummer = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
                 var nextNewNummer = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
                 
-                PlayScheduledNummer(newNummer);
-                _playbackScheduledTaskQueue.AddPlaybackScheduledNummer(nextNewNummer);
+                nextNewNummer.DueTime =
+                    DateTime.Now + TimeSpan.FromMilliseconds(nextNewNummer.SpotifyNummer.NummerDuurMs);
+                
+                await PlayScheduledNummer(newNummer);
             });
         }
 
-        private void PlayScheduledNummer(PlaybackScheduledNummer playbackScheduledNummer)
+        private async Task PlayScheduledNummer(PlaybackScheduledNummer playbackScheduledNummer)
         {
-            
+            var groupNewTrack = await _playbackGroupCollection.GetGroupNewTrack(playbackScheduledNummer.GroupId);
+            groupNewTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(groupNewTrack.SpotifyNummer.NummerDuurMs);
+            _playbackScheduledTaskQueue.AddPlaybackScheduledNummer(groupNewTrack);
         }
 
         public void Dispose()
