@@ -10,19 +10,19 @@
     flex-wrap: wrap;
     width: 95%;
 
-    pjfm-playbackgroup {
+    pjfm-playback-group {
       margin: 10px;
       flex: 1 0 90%;
     }
 
     @media screen and (min-width: $breakpoint-m) {
-      pjfm-playbackgroup {
+      pjfm-playback-group {
         flex: 1 0 40%;
       }
     }
 
     @media screen and (min-width: $breakpoint-xl) {
-      pjfm-playbackgroup {
+      pjfm-playback-group {
         flex: 1 0 30%;
       }
     }

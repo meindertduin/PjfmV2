@@ -58,23 +58,20 @@ namespace SpotifyPlayback
 
             lock (_queueLock)
             {
-                foreach (var playbackScheduledTrack in _playbackScheduledTracks)
-                {
-                    if (playbackScheduledTrack.DueTime <= time)
-                    {
-                        dueScheduledPlaybackTracks.Add(playbackScheduledTrack);
-                    }
-                }
+                var dueTracks = _playbackScheduledTracks.Where(playbackScheduledTrack => playbackScheduledTrack.DueTime <= time);
+                dueScheduledPlaybackTracks.AddRange(dueTracks);
             }
 
-            if (dueScheduledPlaybackTracks.Count > 0)
+            if (dueScheduledPlaybackTracks.Count <= 0)
             {
-                lock (_queueLock)
+                return dueScheduledPlaybackTracks;
+            }
+            
+            lock (_queueLock)
+            {
+                foreach (var dueScheduledPlaybackTrack in dueScheduledPlaybackTracks)
                 {
-                    foreach (var dueScheduledPlaybackTrack in dueScheduledPlaybackTracks)
-                    {
-                        _playbackScheduledTracks.Remove(dueScheduledPlaybackTrack);
-                    }
+                    _playbackScheduledTracks.Remove(dueScheduledPlaybackTrack);
                 }
             }
 

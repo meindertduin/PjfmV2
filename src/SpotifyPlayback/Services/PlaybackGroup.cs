@@ -8,7 +8,7 @@ using SpotifyPlayback.Models.DataTransferObjects;
 
 namespace SpotifyPlayback.Services
 {
-    public class PlaybackGroep : IPlaybackGroep
+    public class PlaybackGroup : IPlaybackGroup
     {
         private readonly IPlaybackQueue _playbackQueue;
         private SpotifyTrack? _currentlyPlayingTrack = null;
@@ -20,7 +20,7 @@ namespace SpotifyPlayback.Services
         public Guid GroupId { get; private set; }
         public string GroupName { get; private set; }
 
-        public PlaybackGroep(IPlaybackQueue playbackQueue, Guid groupId, string groupName)
+        public PlaybackGroup(IPlaybackQueue playbackQueue, Guid groupId, string groupName)
         {
             _playbackQueue = playbackQueue;
             GroupName = groupName;
@@ -31,6 +31,13 @@ namespace SpotifyPlayback.Services
         {
             var newTrack = await _playbackQueue.GetNextSpotifyTrack();
             
+            SetCurrentNextTracks(newTrack);
+
+            return newTrack;
+        }
+
+        private void SetCurrentNextTracks(SpotifyTrack? newTrack)
+        {
             if (_currentlyPlayingTrack == null)
             {
                 _currentlyPlayingTrack = newTrack;
@@ -44,9 +51,8 @@ namespace SpotifyPlayback.Services
                 _currentlyPlayingTrack = _nextTrack;
                 _nextTrack = newTrack;
             }
-
-            return newTrack;
         }
+
         public IEnumerable<string> GetGroupListenerIds()
         {
             return _luisteraars.Select(x => x.UserId);

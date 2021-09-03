@@ -12,7 +12,7 @@ namespace SpotifyPlayback
     public class SpotifyPlaybackHostedService : IHostedService, IDisposable
     {
         private readonly IServiceProvider _services;
-        private IPlaybackGroepCollection _playbackGroepCollection = null!;
+        private IPlaybackGroupCollection _playbackGroupCollection = null!;
         private Timer? _timer;
         private IPlaybackScheduledTaskQueue _playbackScheduledTaskQueue = null!;
 
@@ -23,13 +23,13 @@ namespace SpotifyPlayback
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _playbackGroepCollection = _services.GetRequiredService<IPlaybackGroepCollection>();
+            _playbackGroupCollection = _services.GetRequiredService<IPlaybackGroupCollection>();
             _playbackScheduledTaskQueue = _services.GetRequiredService<IPlaybackScheduledTaskQueue>();
             
-            _playbackGroepCollection.PlaybackGroupCreatedEvent += AddNewGroepToScheduler;
+            _playbackGroupCollection.PlaybackGroupCreatedEvent += AddNewGroupToScheduler;
             
             // TODO: For now we create one at the start. In later versions more groups should be able to be created
-            _playbackGroepCollection.CreateNewPlaybackGroup("Pjfm");
+            _playbackGroupCollection.CreateNewPlaybackGroup("Pjfm");
 
             _timer = new Timer(ExecuteAsync, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
 
@@ -55,12 +55,12 @@ namespace SpotifyPlayback
             });
         }
 
-        private void AddNewGroepToScheduler(object sender, PlaybackGroupCreatedEventArgs eventArgs)
+        private void AddNewGroupToScheduler(object sender, PlaybackGroupCreatedEventArgs eventArgs)
         {
             Task.Run(async () =>
             {
-                var newTrack = await _playbackGroepCollection.GetGroupNewTrack(eventArgs.GroupId);
-                var nextNewTrack = await _playbackGroepCollection.GetGroupNewTrack(eventArgs.GroupId);
+                var newTrack = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
+                var nextNewTrack = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
                 
                 nextNewTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(nextNewTrack.SpotifyTrack.TrackDurationMs);
                 
@@ -70,7 +70,7 @@ namespace SpotifyPlayback
 
         private async Task PlayScheduledTrack(PlaybackScheduledTracks playbackScheduledTracks)
         {
-            var groupNewTrack = await _playbackGroepCollection.GetGroupNewTrack(playbackScheduledTracks.GroupId);
+            var groupNewTrack = await _playbackGroupCollection.GetGroupNewTrack(playbackScheduledTracks.GroupId);
             groupNewTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(groupNewTrack.SpotifyTrack.TrackDurationMs);
             _playbackScheduledTaskQueue.AddPlaybackScheduledTrack(groupNewTrack);
         }

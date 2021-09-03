@@ -9,14 +9,14 @@ using SpotifyPlayback.Models.DataTransferObjects;
 
 namespace SpotifyPlayback.Services
 {
-    public class PlaybackGroepCollection : IPlaybackGroepCollection
+    public class PlaybackGroupCollection : IPlaybackGroupCollection
     {
         private readonly IServiceProvider _serviceProvider;
-        private ConcurrentDictionary<Guid, IPlaybackGroep> _playbackGroups = new();
+        private ConcurrentDictionary<Guid, IPlaybackGroup> _playbackGroups = new();
 
         public event PlaybackGroupCreatedEvent PlaybackGroupCreatedEvent = null!;
 
-        public PlaybackGroepCollection(IServiceProvider serviceProvider)
+        public PlaybackGroupCollection(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
@@ -27,7 +27,7 @@ namespace SpotifyPlayback.Services
             var playbackQueue = scope.ServiceProvider.GetRequiredService<IPlaybackQueue>();
             var groupId = Guid.NewGuid();
 
-            var playbackGroup = new PlaybackGroep(playbackQueue, groupId, groupName);
+            var playbackGroup = new PlaybackGroup(playbackQueue, groupId, groupName);
 
             _playbackGroups.TryAdd(groupId, playbackGroup);
 
@@ -91,7 +91,7 @@ namespace SpotifyPlayback.Services
             return false;
         }
 
-        private IPlaybackGroep GetPlaybackGroup(Guid groupId)
+        private IPlaybackGroup GetPlaybackGroup(Guid groupId)
         {
             if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
             {

@@ -6,7 +6,7 @@ using SpotifyPlayback.Models.DataTransferObjects;
 
 namespace SpotifyPlayback.Interfaces
 {
-    public interface IPlaybackGroep
+    public interface IPlaybackGroup
     {
         Guid GroupId { get; }
         string GroupName { get; }

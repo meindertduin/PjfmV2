@@ -7,7 +7,7 @@ using SpotifyPlayback.Services;
 
 namespace SpotifyPlayback.Interfaces
 {
-    public interface IPlaybackGroepCollection
+    public interface IPlaybackGroupCollection
     {
         event PlaybackGroupCreatedEvent PlaybackGroupCreatedEvent;
         Guid CreateNewPlaybackGroup(string groupName);

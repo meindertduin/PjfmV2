@@ -7,16 +7,16 @@ namespace SpotifyPlayback.Requests.Handlers
 {
     public class JoinPlaybackGroupRequestHandler : IPlaybackRequestHandler<JoinPlaybackGroupRequest, JoinPlaybackGroupResult>
     {
-        private readonly IPlaybackGroepCollection _playbackGroepCollection;
+        private readonly IPlaybackGroupCollection _playbackGroupCollection;
 
-        public JoinPlaybackGroupRequestHandler(IPlaybackGroepCollection playbackGroepCollection)
+        public JoinPlaybackGroupRequestHandler(IPlaybackGroupCollection playbackGroupCollection)
         {
-            _playbackGroepCollection = playbackGroepCollection;
+            _playbackGroupCollection = playbackGroupCollection;
         }
         public Task<JoinPlaybackGroupResult> HandleAsync(JoinPlaybackGroupRequest request)
         {
             var luistenaar = new ListenerDto(request.UserId, request.ConnectionId);
-            var hasJoined = _playbackGroepCollection.JoinGroup(request.GroupId, luistenaar);
+            var hasJoined = _playbackGroupCollection.JoinGroup(request.GroupId, luistenaar);
             
             return Task.FromResult(new JoinPlaybackGroupResult()
             {
