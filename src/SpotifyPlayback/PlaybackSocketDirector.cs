@@ -34,6 +34,7 @@ namespace SpotifyPlayback
                     ContentType = PlaybackMessageContentType.PlaybackUpdate,
                 };
                 await socketConnection.SendMessage(response.GetBytes());
+                
                 await socketConnection.PollConnection((result, buffer) =>
                 {
                     if (result.MessageType == WebSocketMessageType.Text)
@@ -42,20 +43,27 @@ namespace SpotifyPlayback
                     }
                 });
 
-                if (!socketConnection.IsConnected)
-                {
-                    if (socketConnection.Principal.IsAuthenticated())
-                    {
-                        await _playbackRequestDispatcher.HandlePlaybackRequest(new DisconnectPlaybackGroupRequest()
-                        {
-                            GebruikerId = socketConnection.Principal.Id,
-                        });
-                    }
-                    
-                    RemoveSocket(socketConnection.ConnectionId);
-                }
+                // If the connection isn't polling anymore it means that the connection is likely closed
+                await HandleConnectionClose(socketConnection);
             }
         }
+
+        private async Task HandleConnectionClose(SocketConnection socketConnection)
+        {
+            if (!socketConnection.IsConnected)
+            {
+                if (socketConnection.Principal.IsAuthenticated())
+                {
+                    await _playbackRequestDispatcher.HandlePlaybackRequest(new DisconnectPlaybackGroupRequest()
+                    {
+                        UserId = socketConnection.Principal.Id,
+                    });
+                }
+
+                RemoveSocket(socketConnection.ConnectionId);
+            }
+        }
+
         public bool RemoveSocket(Guid connectionId)
         {
             return Connections.Remove(connectionId, out _);

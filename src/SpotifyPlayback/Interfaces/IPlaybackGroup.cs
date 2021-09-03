@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.SpotifyNummer;
+using Domain.SpotifyTrack;
 using SpotifyPlayback.Models.DataTransferObjects;
 
 namespace SpotifyPlayback.Interfaces
@@ -10,11 +10,12 @@ namespace SpotifyPlayback.Interfaces
     {
         Guid GroupId { get; }
         string GroupName { get; }
-        Task<SpotifyNummer> GetNextNummer();
+        Task<SpotifyTrack> GetNextTrack();
         IEnumerable<string> GetGroupListenerIds();
-        bool AddLuisteraar(LuisteraarDto luisteraar);
-        bool RemoveLuisteraar(LuisteraarDto luisteraar);
-        bool ContainsLuisteraar(LuisteraarDto luisteraar);
-        bool HasLuisteraars();
+        bool AddListener(ListenerDto listener);
+        bool RemoveListener(ListenerDto listener);
+        bool ContainsListeners(ListenerDto listener);
+        bool HasListeners();
+        PlaybackGroupDto GetPlaybackGroupInfo();
     }
 }

@@ -14,7 +14,7 @@ namespace SpotifyPlayback.Services
         private readonly IServiceProvider _serviceProvider;
         private ConcurrentDictionary<Guid, IPlaybackGroup> _playbackGroups = new();
 
-        public event PlaybackGroupCreatedEvent playbackgroupCreatedEvent = null!;
+        public event PlaybackGroupCreatedEvent PlaybackGroupCreatedEvent = null!;
 
         public PlaybackGroupCollection(IServiceProvider serviceProvider)
         {
@@ -31,22 +31,23 @@ namespace SpotifyPlayback.Services
 
             _playbackGroups.TryAdd(groupId, playbackGroup);
 
-            playbackgroupCreatedEvent.Invoke(this, new PlaybackGroupCreatedEventArgs() { GroupId = groupId });
+            PlaybackGroupCreatedEvent.Invoke(this, new PlaybackGroupCreatedEventArgs() { GroupId = groupId });
             return groupId;
         }
 
-        public async Task<PlaybackScheduledNummer> GetGroupNewTrack(Guid groupId)
+        public async Task<PlaybackScheduledTracks> GetGroupNewTrack(Guid groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);
-            var groupNummer = await playbackGroup.GetNextNummer();
-            return new PlaybackScheduledNummer()
+            var groupTrack = await playbackGroup.GetNextTrack();
+            
+            return new PlaybackScheduledTracks()
             {
-                SpotifyNummer = groupNummer,
+                SpotifyTrack = groupTrack,
                 GroupId = groupId,
             };
         }
 
-        public IEnumerable<string> GetGroupGebruikerIds(Guid groupId)
+        public IEnumerable<string> GetGroupUserIds(Guid groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);
             return playbackGroup.GetGroupListenerIds();
@@ -58,36 +59,32 @@ namespace SpotifyPlayback.Services
             
             foreach (var playbackGroup in _playbackGroups.Values)
             {
-                groupsData.Add(new PlaybackGroupDto()
-                {
-                    GroupId = playbackGroup.GroupId,
-                    GroupName = playbackGroup.GroupName,
-                });
+                groupsData.Add(playbackGroup.GetPlaybackGroupInfo());
             }
 
             return groupsData;
         }
 
-        public bool JoinGroup(Guid groupId, LuisteraarDto luisteraar)
+        public bool JoinGroup(Guid groupId, ListenerDto listener)
         {
             var retrievedGroup = _playbackGroups.TryGetValue(groupId, out var playbackGroup);
             if (retrievedGroup)
             {
-                return playbackGroup!.AddLuisteraar(luisteraar);
+                return playbackGroup!.AddListener(listener);
             }
 
             return false;
         }
 
-        public bool RemoveGebruikerFromGroup(LuisteraarDto luisteraar)
+        public bool RemoveUserFromGroup(ListenerDto listener)
         {
             // TODO: This is highly inefficient on larger scale, but will work for now In the future we might be needing
             // to think of saving the groupId where the user is connected with somewhere
             foreach (var playbackGroup in _playbackGroups.Values)
             {
-                if (playbackGroup.ContainsLuisteraar(luisteraar))
+                if (playbackGroup.ContainsListeners(listener))
                 {
-                    return playbackGroup.RemoveLuisteraar(luisteraar);
+                    return playbackGroup.RemoveListener(listener);
                 }
             }
 

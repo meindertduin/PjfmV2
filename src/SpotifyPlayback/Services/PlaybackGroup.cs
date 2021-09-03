@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.SpotifyNummer;
+using Domain.SpotifyTrack;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models.DataTransferObjects;
 
@@ -11,13 +11,14 @@ namespace SpotifyPlayback.Services
     public class PlaybackGroup : IPlaybackGroup
     {
         private readonly IPlaybackQueue _playbackQueue;
-        private SpotifyNummer? _currentlyPlayingNumber = null;
-        private List<LuisteraarDto> _luisteraars = new();
+        private SpotifyTrack? _currentlyPlayingTrack = null;
+        private SpotifyTrack? _nextTrack = null;
 
+        private List<ListenerDto> _luisteraars = new();
         private readonly object luisteraarsLock = new();
 
         public Guid GroupId { get; private set; }
-        public string GroupName { get; private set; } 
+        public string GroupName { get; private set; }
 
         public PlaybackGroup(IPlaybackQueue playbackQueue, Guid groupId, string groupName)
         {
@@ -26,50 +27,79 @@ namespace SpotifyPlayback.Services
             GroupId = groupId;
         }
 
-
-        public async Task<SpotifyNummer> GetNextNummer()
+        public async Task<SpotifyTrack> GetNextTrack()
         {
-            var newNummer = await _playbackQueue.GetNextSpotifyNummer();
-            _currentlyPlayingNumber = newNummer;
+            var newTrack = await _playbackQueue.GetNextSpotifyTrack();
+            
+            SetCurrentNextTracks(newTrack);
 
-            return newNummer;
+            return newTrack;
+        }
+
+        private void SetCurrentNextTracks(SpotifyTrack? newTrack)
+        {
+            if (_currentlyPlayingTrack == null)
+            {
+                _currentlyPlayingTrack = newTrack;
+            }
+            else if (_nextTrack == null)
+            {
+                _nextTrack = newTrack;
+            }
+            else
+            {
+                _currentlyPlayingTrack = _nextTrack;
+                _nextTrack = newTrack;
+            }
         }
 
         public IEnumerable<string> GetGroupListenerIds()
         {
-            return _luisteraars.Select(x => x.GebruikerId);
+            return _luisteraars.Select(x => x.UserId);
         }
 
-        public bool AddLuisteraar(LuisteraarDto luisteraar)
+        public bool AddListener(ListenerDto listener)
         {
-            if (!_luisteraars.Contains(luisteraar))
+            if (!_luisteraars.Contains(listener))
             {
                 lock (luisteraarsLock)
                 {
-                    _luisteraars.Add(luisteraar);
+                    _luisteraars.Add(listener);
                 }
+
                 return true;
             }
 
             return false;
         }
 
-        public bool RemoveLuisteraar(LuisteraarDto luisteraar)
+        public bool RemoveListener(ListenerDto listener)
         {
             lock (luisteraarsLock)
             {
-                return _luisteraars.Remove(luisteraar);
+                return _luisteraars.Remove(listener);
             }
         }
 
-        public bool ContainsLuisteraar(LuisteraarDto luisteraar)
+        public bool ContainsListeners(ListenerDto listener)
         {
-            return _luisteraars.Contains(luisteraar);
+            return _luisteraars.Contains(listener);
         }
 
-        public bool HasLuisteraars()
+        public bool HasListeners()
         {
             return !_luisteraars.Any();
+        }
+
+        public PlaybackGroupDto GetPlaybackGroupInfo()
+        {
+            return new()
+            {
+                GroupId = GroupId,
+                GroupName = GroupName,
+                ListenersCount = _luisteraars.Count,
+                CurrentlyPlayingTrack = _currentlyPlayingTrack,
+            };
         }
     }
 }

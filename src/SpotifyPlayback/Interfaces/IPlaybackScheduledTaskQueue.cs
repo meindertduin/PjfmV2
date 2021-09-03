@@ -7,8 +7,8 @@ namespace SpotifyPlayback.Interfaces
     public interface IPlaybackScheduledTaskQueue
     {
         int Count { get; }
-        void AddPlaybackScheduledNummer(PlaybackScheduledNummer playbackScheduledNummer);
-        bool RemovePlaybackScheduledNummer(Guid groupId);
-        IEnumerable<PlaybackScheduledNummer> GetDueNummers();
+        void AddPlaybackScheduledTrack(PlaybackScheduledTracks playbackScheduledTrack);
+        bool RemovePlaybackScheduledTrack(Guid groupId);
+        IEnumerable<PlaybackScheduledTracks> GetDueTracks();
     }
 }

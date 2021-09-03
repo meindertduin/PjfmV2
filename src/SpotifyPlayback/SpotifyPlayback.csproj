@@ -14,6 +14,7 @@
     <ItemGroup>
       <ProjectReference Include="..\Domain\Domain.csproj" />
       <ProjectReference Include="..\Pjfm.Common\Pjfm.Common.csproj" />
+      <ProjectReference Include="..\Pjfm.Infrastructure\Pjfm.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

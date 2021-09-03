@@ -1,0 +1,73 @@
+@import "variables";
+
+.container {
+  margin: 20px;
+
+  .playback {
+    margin-bottom: 20px;
+    flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+
+    .playback-info {
+      display: flex;
+
+      .image-container {
+        margin-right: 20px;
+        img {
+          width: 80px;
+          height: 80px;
+        }
+      }
+
+      .track-info-container {
+        display: flex;
+        flex-direction: column;
+
+        .currently-playing-title {
+          font-size: 20px;
+          margin-bottom: 10px;
+          text-decoration: underline;
+        }
+
+        .track-title {
+          margin-bottom: 5px;
+          color: $color-yellow;
+        }
+
+        .artist-title {
+          font-size: 14px;
+          color: $color-red;
+        }
+      }
+    }
+
+    .playback-controls-container {
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+
+      @media screen and (min-width: $breakpoint-m) {
+        margin-left: 40px;
+        width: 60%;
+        margin-top: 0;
+      }
+    }
+  }
+
+  .playback-queue {
+    h4 {
+      margin: 0 0 10px 0;
+    }
+
+    .queue-container {
+      display: flex;
+      flex-direction: column;
+
+      pjfm-queued-track {
+        margin-bottom: 10px;
+      }
+    }
+  }
+}

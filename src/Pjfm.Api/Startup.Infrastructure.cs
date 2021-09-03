@@ -1,6 +1,6 @@
 using System.Data;
-using Domain.SpotifyGebruikerData;
-using Domain.SpotifyNummer;
+using Domain.SpotifyTrack;
+using Domain.SpotifyUserData;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,8 +14,8 @@ namespace Pjfm.Api
     {
         private void ConfigureInfrastructure(IServiceCollection services)
         {
-            services.AddTransient<ISpotifyGebruikersDataRepository, SpotifyGebruikerDataRepository>();
-            services.AddTransient<ISpotifyNummerRepository, SpotifyNummerRepository>();
+            services.AddTransient<ISpotifyUserDataRepository, SpotifyUserDataRepository>();
+            services.AddTransient<ISpotifyTrackRepository, SpotifyTrackRepository>();
             
             var connectionString = Configuration.GetValue<string>("ConnectionStrings:ApplicationDb");
 

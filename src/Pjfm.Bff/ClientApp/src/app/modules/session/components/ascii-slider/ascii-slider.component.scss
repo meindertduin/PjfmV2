@@ -1,0 +1,12 @@
+@import "variables";
+
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  color: $color-purple;
+
+  pre {
+    margin-top: 0;
+  }
+}

@@ -1,0 +1,24 @@
+<div class="container">
+  <section class="playback">
+    <div class="playback-info">
+      <div class="image-container">
+        <img src="/assets/images/album-cover.jpg" alt="album cover" />
+      </div>
+      <div class="track-info-container">
+        <div class="currently-playing-title">Now playing:</div>
+        <a class="track-title">[ Book of spells ]</a>
+        <a class="artist-title">[ Ian taylor ]</a>
+      </div>
+    </div>
+    <div class="playback-controls-container">
+      <pjfm-track-progression-bar [startTimeMs]="0" [trackDurationMs]="10000"></pjfm-track-progression-bar>
+      <pjfm-playback-buttons></pjfm-playback-buttons>
+    </div>
+  </section>
+  <section class="playback-queue">
+    <h4>Up next:</h4>
+    <div class="queue-container">
+      <pjfm-queued-track *ngFor="let x of [1, 2, 3, 4, 5]"></pjfm-queued-track>
+    </div>
+  </section>
+</div>

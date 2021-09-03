@@ -15,7 +15,7 @@ namespace SpotifyPlayback.Requests.Handlers
         }
         public Task HandleAsync(DisconnectPlaybackGroupRequest request)
         {
-            _playbackGroupCollection.RemoveGebruikerFromGroup(new LuisteraarDto(request.GebruikerId,
+            _playbackGroupCollection.RemoveUserFromGroup(new ListenerDto(request.UserId,
                 request.ConnectionId));
 
             // TODO: pause spotify player for user once it's implemented
@@ -26,7 +26,7 @@ namespace SpotifyPlayback.Requests.Handlers
 
     public class DisconnectPlaybackGroupRequest : IPlaybackRequest
     {
-        public string GebruikerId { get; set; } = null!;
+        public string UserId { get; set; } = null!;
         public Guid ConnectionId { get; set; }
     }
 }

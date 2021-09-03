@@ -8,49 +8,49 @@ namespace Pjfm.Common.Authentication
     public class PjfmPrincipal : IPjfmPrincipal
     {
         public string? Id { get; }
-        public IEnumerable<GebruikerRol> Rollen { get; }
-        public string? GebruikersNaam { get; }
+        public IEnumerable<UserRole> Roles { get; }
+        public string? UserName { get; }
 
         public PjfmPrincipal(ClaimsPrincipal principal)
         {
-            Id = GetGebruikerIdClaimValue(principal);
-            Rollen = GetGebruikerRollenValue(principal);
-            GebruikersNaam = GetGebruikerGebruikersNaamValue(principal);
+            Id = GetUserIdClaimValue(principal);
+            Roles = GetUserRollenValue(principal);
+            UserName = GetUserUserNameValue(principal);
         }
 
-        private string? GetGebruikerGebruikersNaamValue(ClaimsPrincipal principal)
+        private string? GetUserUserNameValue(ClaimsPrincipal principal)
         {
             return principal.FindFirst(PjfmClaimTypes.Name)?.Value;
         }
 
-        private string? GetGebruikerIdClaimValue(ClaimsPrincipal principal)
+        private string? GetUserIdClaimValue(ClaimsPrincipal principal)
         {
-            var idClaim = principal.FindFirst(PjfmClaimTypes.GebruikerId);
+            var idClaim = principal.FindFirst(PjfmClaimTypes.UserId);
 
             return idClaim?.Value;
         }
 
-        private IEnumerable<GebruikerRol> GetGebruikerRollenValue(ClaimsPrincipal principal)
+        private IEnumerable<UserRole> GetUserRollenValue(ClaimsPrincipal principal)
         {
-            var gebruikerRollen = new List<GebruikerRol>();
+            var userRoles = new List<UserRole>();
             foreach (var rol in principal.FindAll(PjfmClaimTypes.Rol))
             {
-                var parseSucceeded = Enum.TryParse(rol.Value, out GebruikerRol castedRol);
+                var parseSucceeded = Enum.TryParse(rol.Value, out UserRole castedRol);
                 if (parseSucceeded)
                 {
-                    if (Enum.GetValues<GebruikerRol>().Contains(castedRol))
+                    if (Enum.GetValues<UserRole>().Contains(castedRol))
                     {
-                        gebruikerRollen.Add(castedRol);
+                        userRoles.Add(castedRol);
                     }
                 }
             }
 
-            return gebruikerRollen;
+            return userRoles;
         }
         
         public bool IsAuthenticated()
         {
-            return Rollen.Contains(GebruikerRol.Gebruiker);
+            return Roles.Contains(UserRole.User);
         }
     }
 }

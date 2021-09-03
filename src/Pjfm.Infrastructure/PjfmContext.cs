@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain;
-using Domain.SpotifyGebruikerData;
-using Domain.SpotifyNummer;
+using Domain.SpotifyTrack;
+using Domain.SpotifyUserData;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -12,8 +12,8 @@ namespace Pjfm.Infrastructure
 {
     public class PjfmContext : IdentityDbContext, IPjfmContext
     {
-        public DbSet<SpotifyNummer> SpotifyNummers { get; private set; } = null!;
-        public DbSet<SpotifyGebruikerData> SpotifyGebruikerData { get; private set; } = null!;
+        public DbSet<SpotifyTrack> SpotifyTracks { get; private set; } = null!;
+        public DbSet<SpotifyUserData> SpotifyUserData { get; private set; } = null!;
 
         public PjfmContext(DbContextOptions<PjfmContext> options) : base(options)
         {
@@ -22,8 +22,8 @@ namespace Pjfm.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
-            builder.ApplyConfiguration(new SpotifyNummerMap());
-            builder.ApplyConfiguration(new SpotifyGebruikersDataMap());
+            builder.ApplyConfiguration(new SpotifyTrackMap());
+            builder.ApplyConfiguration(new SpotifyUserDataMap());
             
             base.OnModelCreating(builder);
         }

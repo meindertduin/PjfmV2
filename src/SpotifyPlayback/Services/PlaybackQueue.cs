@@ -1,48 +1,57 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Domain.SpotifyNummer;
+using Domain.SpotifyTrack;
+using Microsoft.Extensions.Configuration;
+using Pjfm.Infrastructure;
+using Pjfm.Infrastructure.Repositories;
 using SpotifyPlayback.Interfaces;
 
 namespace SpotifyPlayback.Services
 {
     public class PlaybackQueue : IPlaybackQueue
     {
-        private readonly ISpotifyNummerRepository _spotifyNummerRepository;
-        private Queue<SpotifyNummer> _spotifyNummers = new();
-        private IEnumerable<string> _gebruikerIds = new List<string>();
+        private readonly ISpotifyTrackRepository _spotifyTrackRepository;
+        private readonly IConfiguration _configuration;
+        private Queue<SpotifyTrack> _spotifyTracks = new();
+        private IEnumerable<string> _userIds = new List<string>();
         
-        private TrackTermijn _termijn = TrackTermijn.Lang;
+        private TrackTerm _term = TrackTerm.Long;
 
-        public PlaybackQueue(ISpotifyNummerRepository spotifyNummerRepository)
+        public PlaybackQueue(ISpotifyTrackRepository spotifyTrackRepository, IConfiguration configuration)
         {
-            _spotifyNummerRepository = spotifyNummerRepository;
+            _spotifyTrackRepository = spotifyTrackRepository;
+            _configuration = configuration;
         }
-        public async Task<SpotifyNummer> GetNextSpotifyNummer()
+        public async Task<SpotifyTrack> GetNextSpotifyTrack()
         {
-            int getSpotifyNummersAmount = 1;
-            if (_spotifyNummers.Count == 0)
+            int getSpotifyTracksAmount = 1;
+            if (_spotifyTracks.Count == 0)
             {
-                getSpotifyNummersAmount = 20;
-            }
-            
-            var spotifyNummers =
-                await _spotifyNummerRepository.GetRandomGebruikersSpotifyNummers(_gebruikerIds, new []{ _termijn }, getSpotifyNummersAmount);
-            foreach (var spotifyNummer in spotifyNummers)
-            {
-                _spotifyNummers.Enqueue(spotifyNummer);
+                getSpotifyTracksAmount = 20;
             }
 
-            return _spotifyNummers.Dequeue();
+            var connectionString = _configuration.GetValue<string>("ConnectionStrings:ApplicationDb");
+            var spotifyTrackRepository = new SpotifyTrackRepository(PjfmContextFactory.Create(connectionString));
+            
+            var spotifyTracks =
+                await spotifyTrackRepository.GetRandomUserSpotifyTracks(_userIds, new []{ _term }, getSpotifyTracksAmount);
+            
+            foreach (var spotifyTrack in spotifyTracks)
+            {
+                _spotifyTracks.Enqueue(spotifyTrack);
+            }
+
+            return _spotifyTracks.Dequeue();
         }
 
         public void ResetQueue()
         {
-            _spotifyNummers.Clear();
+            _spotifyTracks.Clear();
         }
 
-        public void SetTermijn(TrackTermijn termijn)
+        public void SetTermijn(TrackTerm term)
         {
-            _termijn = termijn;
+            _term = term;
         }
     }
 }

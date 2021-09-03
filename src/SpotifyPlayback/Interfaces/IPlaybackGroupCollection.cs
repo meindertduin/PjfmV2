@@ -9,12 +9,12 @@ namespace SpotifyPlayback.Interfaces
 {
     public interface IPlaybackGroupCollection
     {
-        event PlaybackGroupCreatedEvent playbackgroupCreatedEvent;
+        event PlaybackGroupCreatedEvent PlaybackGroupCreatedEvent;
         Guid CreateNewPlaybackGroup(string groupName);
-        Task<PlaybackScheduledNummer> GetGroupNewTrack(Guid groupId);
-        IEnumerable<string> GetGroupGebruikerIds(Guid groupId);
+        Task<PlaybackScheduledTracks> GetGroupNewTrack(Guid groupId);
+        IEnumerable<string> GetGroupUserIds(Guid groupId);
         IEnumerable<PlaybackGroupDto> GetPlaybackGroupsInfo();
-        bool JoinGroup(Guid groupId, LuisteraarDto luisteraar);
-        bool RemoveGebruikerFromGroup(LuisteraarDto luisteraar);
+        bool JoinGroup(Guid groupId, ListenerDto listener);
+        bool RemoveUserFromGroup(ListenerDto listener);
     }
 }

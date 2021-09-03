@@ -1,11 +1,10 @@
 using System.Text;
 using System.Threading.Tasks;
-using Domain.SpotifyGebruikerData;
-using Domain.SpotifyNummer;
+using Domain.SpotifyUserData;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
-using Pjfm.Api.Authentication;
 using Pjfm.Api.Controllers.Base;
 using Pjfm.Application.Authentication;
 using Pjfm.Application.GebruikerNummer;
@@ -19,23 +18,24 @@ namespace Pjfm.Api.Controllers
     public class SpotifyAuthenticationController : PjfmController
     {
         private readonly ISpotifyAuthenticationService _spotifyAuthenticationService;
-        private readonly ISpotifyGebruikersDataRepository _spotifyGebruikersDataRepository;
-        private readonly IGebruikerTokenService _gebruikerTokenService;
-        private readonly ISpotifyNummerService _spotifyNummerService;
+        private readonly ISpotifyUserDataRepository _spotifyUserDataRepository;
+        private readonly IUserTokenService _userTokenService;
+        private readonly ISpotifyTrackService _spotifyTrackService;
 
         public SpotifyAuthenticationController(IPjfmControllerContext pjfmContext,
             ISpotifyAuthenticationService spotifyAuthenticationService,
-            ISpotifyGebruikersDataRepository spotifyGebruikersDataRepository,
-            IGebruikerTokenService gebruikerTokenService,
-            ISpotifyNummerService spotifyNummerService) : base(pjfmContext)
+            ISpotifyUserDataRepository spotifyUserDataRepository,
+            IUserTokenService userTokenService,
+            ISpotifyTrackService spotifyTrackService) : base(pjfmContext)
         {
             _spotifyAuthenticationService = spotifyAuthenticationService;
-            _spotifyGebruikersDataRepository = spotifyGebruikersDataRepository;
-            _gebruikerTokenService = gebruikerTokenService;
-            _spotifyNummerService = spotifyNummerService;
+            _spotifyUserDataRepository = spotifyUserDataRepository;
+            _userTokenService = userTokenService;
+            _spotifyTrackService = spotifyTrackService;
         }
 
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status302Found)]
         public IActionResult Authenticate()
         {
             var authorizationUrl = new StringBuilder("https://accounts.spotify.com/authorize")
@@ -51,6 +51,7 @@ namespace Pjfm.Api.Controllers
         }
 
         [HttpGet("callback")]
+        [ProducesResponseType(typeof(string),StatusCodes.Status200OK)]
         public async Task<IActionResult> Callback([FromQuery] string state, [FromQuery] string code)
         {
             // TODO: add validation for the code
@@ -58,10 +59,10 @@ namespace Pjfm.Api.Controllers
             var requestResult = await _spotifyAuthenticationService.RequestAccessToken(code);
             if (requestResult.IsSuccessful)
             {
-                await _spotifyGebruikersDataRepository.SetGebruikerRefreshToken(PjfmPrincipal.Id ,requestResult.Result.RefreshToken);
-                _gebruikerTokenService.StoreGebruikerSpotifyAccessToken(PjfmPrincipal.Id, requestResult.Result.AccessToken, requestResult.Result.ExpiresIn);
+                await _spotifyUserDataRepository.SetUserRefreshToken(PjfmPrincipal.Id ,requestResult.Result.RefreshToken);
+                _userTokenService.StoreUserSpotifyAccessToken(PjfmPrincipal.Id, requestResult.Result.AccessToken, requestResult.Result.ExpiresIn);
 
-                await _spotifyNummerService.UpdateGebruikerSpotifyNummers(PjfmPrincipal.Id);
+                await _spotifyTrackService.UpdateUserSpotifyTracks(PjfmPrincipal.Id);
             }
 
             return Ok(code);

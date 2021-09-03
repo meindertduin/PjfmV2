@@ -1,0 +1,7 @@
+<nav class="toolbar">
+  <button *ngIf="isDetailPage" class="back-button" [routerLink]="'../'"><--</button>
+  <span class="title glow">This is PJFM</span>
+</nav>
+<div class="view-container">
+  <router-outlet></router-outlet>
+</div>
