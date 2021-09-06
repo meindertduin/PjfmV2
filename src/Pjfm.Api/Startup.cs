@@ -16,8 +16,8 @@ namespace Pjfm.Api
             WebHostEnvironment = webHostEnvironment;
         }
 
-        public IConfiguration Configuration { get; }
-        public IWebHostEnvironment WebHostEnvironment { get; }
+        private IConfiguration Configuration { get; }
+        private IWebHostEnvironment WebHostEnvironment { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {

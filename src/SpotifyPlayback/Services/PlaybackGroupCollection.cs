@@ -35,22 +35,22 @@ namespace SpotifyPlayback.Services
             return groupId;
         }
 
-        public async Task<PlaybackScheduledTracks> GetGroupNewTrack(Guid groupId)
+        public async Task<PlaybackScheduledTrack> GetGroupNewTrack(Guid groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);
             var groupTrack = await playbackGroup.GetNextTrack();
             
-            return new PlaybackScheduledTracks()
+            return new PlaybackScheduledTrack()
             {
                 SpotifyTrack = groupTrack,
                 GroupId = groupId,
             };
         }
 
-        public IEnumerable<string> GetGroupUserIds(Guid groupId)
+        public IEnumerable<ListenerDto> GetGroupListeners(Guid groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);
-            return playbackGroup.GetGroupListenerIds();
+            return playbackGroup.GetGroupListeners();
         }
 
         public IEnumerable<PlaybackGroupDto> GetPlaybackGroupsInfo()

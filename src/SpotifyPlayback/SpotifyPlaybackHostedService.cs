@@ -12,6 +12,7 @@ namespace SpotifyPlayback
     public class SpotifyPlaybackHostedService : IHostedService, IDisposable
     {
         private readonly IServiceProvider _services;
+        private ISpotifyPlaybackController _spotifyPlaybackController = null!;
         private IPlaybackGroupCollection _playbackGroupCollection = null!;
         private Timer? _timer;
         private IPlaybackScheduledTaskQueue _playbackScheduledTaskQueue = null!;
@@ -25,6 +26,7 @@ namespace SpotifyPlayback
         {
             _playbackGroupCollection = _services.GetRequiredService<IPlaybackGroupCollection>();
             _playbackScheduledTaskQueue = _services.GetRequiredService<IPlaybackScheduledTaskQueue>();
+            _spotifyPlaybackController = _services.GetRequiredService<ISpotifyPlaybackController>();
             
             _playbackGroupCollection.PlaybackGroupCreatedEvent += AddNewGroupToScheduler;
             
@@ -68,11 +70,12 @@ namespace SpotifyPlayback
             });
         }
 
-        private async Task PlayScheduledTrack(PlaybackScheduledTracks playbackScheduledTracks)
+        private async Task PlayScheduledTrack(PlaybackScheduledTrack playbackScheduledTrack)
         {
-            var groupNewTrack = await _playbackGroupCollection.GetGroupNewTrack(playbackScheduledTracks.GroupId);
+            var groupNewTrack = await _playbackGroupCollection.GetGroupNewTrack(playbackScheduledTrack.GroupId);
             groupNewTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(groupNewTrack.SpotifyTrack.TrackDurationMs);
             _playbackScheduledTaskQueue.AddPlaybackScheduledTrack(groupNewTrack);
+            await _spotifyPlaybackController.PlaySpotifyTrackForUsers(playbackScheduledTrack);
         }
 
         public void Dispose()

@@ -11,7 +11,7 @@ namespace SpotifyPlayback.Interfaces
         Guid GroupId { get; }
         string GroupName { get; }
         Task<SpotifyTrack> GetNextTrack();
-        IEnumerable<string> GetGroupListenerIds();
+        IEnumerable<ListenerDto> GetGroupListeners();
         bool AddListener(ListenerDto listener);
         bool RemoveListener(ListenerDto listener);
         bool ContainsListeners(ListenerDto listener);

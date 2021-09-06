@@ -1,7 +1,11 @@
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Pjfm.Application.Common;
 using SpotifyPlayback.Interfaces;
+using SpotifyPlayback.Models.DataTransferObjects;
 
 namespace SpotifyPlayback.Services
 {
@@ -15,7 +19,7 @@ namespace SpotifyPlayback.Services
             _httpClient = httpClient;
         }
 
-        public async Task<bool> PlayTrackForUser(string accessToken, string? deviceId = null)
+        public async Task<bool> PlayTrackForUser(string accessToken, SpotifyPlayRequestDto content, string? deviceId = null)
         {
             var url = "/me/player/play";
             if (!string.IsNullOrEmpty(deviceId))
@@ -25,6 +29,9 @@ namespace SpotifyPlayback.Services
             
             var requestMessage = CreateBaseSpotifyRequestMessage(HttpMethod.Put, url, accessToken);
             var response = await _httpClient.SendAsync(requestMessage);
+
+            var jsonString = JsonConvert.SerializeObject(content, SpotifyApiHelpers.GetSpotifySerializerSettings());
+            requestMessage.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
             return response.IsSuccessStatusCode;
         }

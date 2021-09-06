@@ -11,10 +11,10 @@ namespace SpotifyPlayback
         private const int DefaultCapacity = 5;
 
         private object _queueLock = new ();
-        private List<PlaybackScheduledTracks> _playbackScheduledTracks = new();
+        private List<PlaybackScheduledTrack> _playbackScheduledTracks = new();
         public int Count => _playbackScheduledTracks.Count;
 
-        public void AddPlaybackScheduledTrack(PlaybackScheduledTracks playbackScheduledTrack)
+        public void AddPlaybackScheduledTrack(PlaybackScheduledTrack playbackScheduledTrack)
         {
             var hasInserted = false;
             lock (_queueLock)
@@ -51,10 +51,10 @@ namespace SpotifyPlayback
             return false;
         }
 
-        public IEnumerable<PlaybackScheduledTracks> GetDueTracks()
+        public IEnumerable<PlaybackScheduledTrack> GetDueTracks()
         {
             var time = DateTime.Now;
-            var dueScheduledPlaybackTracks = new List<PlaybackScheduledTracks>();
+            var dueScheduledPlaybackTracks = new List<PlaybackScheduledTrack>();
 
             lock (_queueLock)
             {

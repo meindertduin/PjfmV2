@@ -53,9 +53,9 @@ namespace SpotifyPlayback.Services
             }
         }
 
-        public IEnumerable<string> GetGroupListenerIds()
+        public IEnumerable<ListenerDto> GetGroupListeners()
         {
-            return _luisteraars.Select(x => x.UserId);
+            return _luisteraars;
         }
 
         public bool AddListener(ListenerDto listener)
