@@ -3,8 +3,13 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
+using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using IdentityServer4.Stores.Serialization;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
 using SpotifyPlayback.Requests.Handlers;
@@ -27,19 +32,25 @@ namespace SpotifyPlayback
             if (Connections.TryAdd(socketConnection.ConnectionId, socketConnection))
             {
                 var playbackInfo = await _playbackRequestDispatcher.HandlePlaybackRequest(new GetPlaybackInfoRequest());
-                var response = new PlaybackSocketMessage<GetPlaybackInfoRequestResult>()
+                var response = new PlaybackSocketMessage<int>()
                 {
-                    Body = playbackInfo,
-                    MessageType = MessageType.Playback,
-                    ContentType = PlaybackMessageContentType.PlaybackUpdate,
+                    MessageType = MessageType.ConnectionEstablished,
                 };
+
+                socketConnection.UpdateConnectionStatus();
                 await socketConnection.SendMessage(response.GetBytes());
-                
+
                 await socketConnection.PollConnection((result, buffer) =>
                 {
                     if (result.MessageType == WebSocketMessageType.Text)
                     {
                         // TODO: handle message or maybe delete receiving messages in the future
+
+                        var json = Encoding.UTF8.GetString(buffer);
+                        var serializedObject =
+                            JsonConvert.DeserializeObject<dynamic>(json, new JsonSerializerSettings());
+
+                        var requestType = (RequestType) ((serializedObject?.requestType ?? null) ?? throw new InvalidOperationException());
                     }
                 });
 
