@@ -58,7 +58,7 @@ namespace SpotifyPlayback
             {
                 if (socketConnection.Principal.IsAuthenticated())
                 {
-                    await _playbackRequestDispatcher.HandlePlaybackRequest(new DisconnectPlaybackGroupRequest(), socketConnection);
+                    await _playbackRequestDispatcher.HandlePlaybackSocketRequest(new DisconnectPlaybackGroupRequest(), socketConnection);
                 }
 
                 RemoveSocket(socketConnection.ConnectionId);

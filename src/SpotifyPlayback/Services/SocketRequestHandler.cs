@@ -42,7 +42,7 @@ namespace SpotifyPlayback.Services
         {
             if (request is T playbackRequest)
             {
-                return _playbackRequestDispatcher.HandlePlaybackRequest(playbackRequest, socketConnection);
+                return _playbackRequestDispatcher.HandlePlaybackSocketRequest(playbackRequest, socketConnection);
             }
 
             throw new InvalidCastException($"Cannot cast request to type: {typeof(T)}");
