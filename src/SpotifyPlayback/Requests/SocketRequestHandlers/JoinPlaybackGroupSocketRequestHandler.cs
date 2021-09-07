@@ -25,7 +25,7 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
             
             var listener = new ListenerDto(socketConnection.Principal.Id, socketConnection.ConnectionId);
             var hasJoined = _playbackGroupCollection.JoinGroup(request.GroupId, listener);
-
+            
             var responseModel = new SocketMessage<JoinPlaybackGroupSocketResponse>()
             {
                 MessageType = MessageType.JoinedGroupStatusUpdate,
@@ -34,6 +34,11 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
                     SuccessfullyJoined = hasJoined,
                 }
             };
+
+            if (hasJoined)
+            {
+                responseModel.Body.PlaybackGroupInfo = _playbackGroupCollection.GetPlaybackGroupInfo(request.GroupId);
+            }
 
             return socketConnection.SendMessage(responseModel.GetBytes());
         }
@@ -47,5 +52,6 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
     public class JoinPlaybackGroupSocketResponse
     {
         public bool SuccessfullyJoined { get; set; }
+        public PlaybackGroupDto PlaybackGroupInfo { get; set; }
     }
 }

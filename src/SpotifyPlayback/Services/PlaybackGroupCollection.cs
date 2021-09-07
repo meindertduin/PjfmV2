@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Pjfm.Common;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
 using SpotifyPlayback.Models.DataTransferObjects;
@@ -51,6 +52,14 @@ namespace SpotifyPlayback.Services
         {
             var playbackGroup = GetPlaybackGroup(groupId);
             return playbackGroup.GetGroupListeners();
+        }
+
+        public PlaybackGroupDto GetPlaybackGroupInfo(Guid groupId)
+        {
+            var playbackGroup = GetPlaybackGroup(groupId);
+            Guard.NotNull(playbackGroup, nameof(playbackGroup));
+
+            return playbackGroup.GetPlaybackGroupInfo();
         }
 
         public IEnumerable<PlaybackGroupDto> GetPlaybackGroupsInfo()

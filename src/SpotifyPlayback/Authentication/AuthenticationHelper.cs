@@ -11,7 +11,11 @@ namespace SpotifyPlayback.Authentication
         public static Task HandleUnauthorized(SocketConnection connection, out bool isAuthorized)
         {
             var isAuthenticated = connection.Principal.IsAuthenticated();
-            if (isAuthenticated) isAuthorized = true;
+            if (isAuthenticated)
+            {
+                isAuthorized = true;
+                return Task.CompletedTask;
+            }
             
             isAuthorized = false;
             return SendUnauthorizedResponse(connection);
@@ -20,7 +24,11 @@ namespace SpotifyPlayback.Authentication
         public static Task HandleUnauthorized(IEnumerable<UserRole> neededRoles, SocketConnection connection, out bool isAuthorized)
         {
             var hasRequiredRoles = connection.Principal.Roles.All(neededRoles.Contains);
-            if (hasRequiredRoles) isAuthorized = true;
+            if (hasRequiredRoles)
+            {
+                isAuthorized = true;
+                return Task.CompletedTask;
+            }
             
             isAuthorized = false;
             return SendUnauthorizedResponse(connection);
