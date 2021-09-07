@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Pjfm.Api.Controllers.Base;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models.DataTransferObjects;
-using SpotifyPlayback.Requests.Handlers;
+using SpotifyPlayback.Requests.SocketRequestHandlers;
 
 namespace Pjfm.Api.Controllers
 {

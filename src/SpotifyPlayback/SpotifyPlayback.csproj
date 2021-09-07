@@ -21,6 +21,8 @@
 
     <ItemGroup>
       <Folder Include="Models\Socket\MessageBodies" />
+      <Folder Include="Models\Socket\RequestBodies" />
+      <Folder Include="Requests\PlaybackRequestHandlers" />
     </ItemGroup>
 
 </Project>

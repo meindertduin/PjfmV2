@@ -30,10 +30,15 @@ namespace Pjfm.Api
                     .AddClasses(p => p.AssignableTo(typeof(IPlaybackRequestHandler<,>)))
                     .AsClosedTypeOf(typeof(IPlaybackRequestHandler<,>))
                     .WithTransientLifetime();
-
+                
                 a.FromAssemblies(typeof(SpotifyPlaybackHostedService).Assembly)
                     .AddClasses(p => p.AssignableTo(typeof(IPlaybackRequestHandler<>)))
                     .AsClosedTypeOf(typeof(IPlaybackRequestHandler<>))
+                    .WithTransientLifetime();
+
+                a.FromAssemblies(typeof(SpotifyPlaybackHostedService).Assembly)
+                    .AddClasses(p => p.AssignableTo(typeof(IPlaybackSocketRequestHandler<>)))
+                    .AsClosedTypeOf(typeof(IPlaybackSocketRequestHandler<>))
                     .WithTransientLifetime();
             });
         }

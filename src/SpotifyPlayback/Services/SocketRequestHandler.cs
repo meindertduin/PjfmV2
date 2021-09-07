@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
-using SpotifyPlayback.Requests.Handlers;
+using SpotifyPlayback.Requests.SocketRequestHandlers;
 
 namespace SpotifyPlayback.Services
 {

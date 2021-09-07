@@ -17,7 +17,7 @@ namespace SpotifyPlayback.Requests
 
         public Task HandlePlaybackSocketRequest<TRequest>(TRequest request, SocketConnection connection) where TRequest : IPlaybackRequest
         {
-            var handler = _serviceProvider.GetRequiredService<IPlaybackRequestHandler<TRequest>>();
+            var handler = _serviceProvider.GetRequiredService<IPlaybackSocketRequestHandler<TRequest>>();
             return handler.HandleAsync(request, connection);
         }
 

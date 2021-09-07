@@ -4,13 +4,13 @@ using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
 using SpotifyPlayback.Models.DataTransferObjects;
 
-namespace SpotifyPlayback.Requests.Handlers
+namespace SpotifyPlayback.Requests.SocketRequestHandlers
 {
-    public class DisconnectPlaybackGroupRequestHandler : IPlaybackRequestHandler<DisconnectPlaybackGroupRequest>
+    public class DisconnectPlaybackSocketGroupRequestHandler : IPlaybackSocketRequestHandler<DisconnectPlaybackGroupRequest>
     {
         private readonly IPlaybackGroupCollection _playbackGroupCollection;
 
-        public DisconnectPlaybackGroupRequestHandler(IPlaybackGroupCollection playbackGroupCollection)
+        public DisconnectPlaybackSocketGroupRequestHandler(IPlaybackGroupCollection playbackGroupCollection)
         {
             _playbackGroupCollection = playbackGroupCollection;
         }

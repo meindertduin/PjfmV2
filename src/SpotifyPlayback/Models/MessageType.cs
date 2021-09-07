@@ -4,6 +4,7 @@ namespace SpotifyPlayback.Models
     {
         PlaybackInfo = 0,
         ConnectionEstablished = 100,
-        ConnectionClosed
+        ConnectionClosed = 101,
+        JoinedGroupStatusUpdate = 200,
     }
 }
