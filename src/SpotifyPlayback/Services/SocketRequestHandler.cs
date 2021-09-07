@@ -2,6 +2,7 @@ using System;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
 using SpotifyPlayback.Requests.SocketRequestHandlers;
@@ -21,7 +22,7 @@ namespace SpotifyPlayback.Services
         {
             var json = Encoding.UTF8.GetString(buffer);
             var serializedObject =
-                JsonConvert.DeserializeObject<SocketRequest<object>>(json, new JsonSerializerSettings());
+                JsonConvert.DeserializeObject<SocketRequest<dynamic>>(json);
 
             // TODO: handle badRequests accordingly
             if (serializedObject == null)
@@ -32,20 +33,23 @@ namespace SpotifyPlayback.Services
             switch (serializedObject.RequestType)
             {
                 case RequestType.ConnectToGroup:
-                    return SendRequestThroughDispatcher<JoinPlaybackGroupRequest>(serializedObject.Body, socketConnection);
+                    return SendRequestThroughDispatcher<JoinPlaybackGroupRequest>(serializedObject.Body,
+                        socketConnection);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
         }
 
-        private Task SendRequestThroughDispatcher<T>(object request, SocketConnection socketConnection) where T : IPlaybackRequest
+        private Task SendRequestThroughDispatcher<T>(JObject request, SocketConnection socketConnection)
+            where T : IPlaybackRequest
         {
-            if (request is T playbackRequest)
+            var playbackRequest = JsonConvert.DeserializeObject<T>(request.ToString());
+            if (playbackRequest != null)
             {
                 return _playbackRequestDispatcher.HandlePlaybackSocketRequest(playbackRequest, socketConnection);
             }
 
-            throw new InvalidCastException($"Cannot cast request to type: {typeof(T)}");
+            throw new JsonSerializationException($"Cannot serialize request to type: {typeof(T)}");
         }
     }
 }

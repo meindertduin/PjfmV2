@@ -38,13 +38,19 @@ export class ApiSocketClientService {
   }
 
   connectToGroup(groupId: string): void {
-    const groupConnectionRequest: ApiSocketRequest<string> = {
+    const groupConnectionRequest: ApiSocketRequest<JoinPlaybackGroupRequest> = {
       requestType: RequestType.ConnectToGroup,
-      body: groupId,
+      body: {
+        groupId: groupId,
+      },
     };
 
     ApiSocketClientService.socket.next(groupConnectionRequest);
   }
 
   onComplete(): void {}
+}
+
+interface JoinPlaybackGroupRequest {
+  groupId: string;
 }

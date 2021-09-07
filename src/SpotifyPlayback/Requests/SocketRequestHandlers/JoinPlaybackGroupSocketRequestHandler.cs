@@ -1,21 +1,28 @@
 using System;
 using System.Threading.Tasks;
+using SpotifyPlayback.Authentication;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
 using SpotifyPlayback.Models.DataTransferObjects;
 
 namespace SpotifyPlayback.Requests.SocketRequestHandlers
 {
-    public class JoinPlaybackSocketGroupSocketRequestHandler : IPlaybackSocketRequestHandler<JoinPlaybackGroupRequest>
+    public class JoinPlaybackGroupSocketRequestHandler : IPlaybackSocketRequestHandler<JoinPlaybackGroupRequest>
     {
         private readonly IPlaybackGroupCollection _playbackGroupCollection;
 
-        public JoinPlaybackSocketGroupSocketRequestHandler(IPlaybackGroupCollection playbackGroupCollection)
+        public JoinPlaybackGroupSocketRequestHandler(IPlaybackGroupCollection playbackGroupCollection)
         {
             _playbackGroupCollection = playbackGroupCollection;
         }
         public Task HandleAsync(JoinPlaybackGroupRequest request, SocketConnection socketConnection)
         {
+            AuthenticationHelper.HandleUnauthorized(socketConnection, out var isAuthorized);
+            if (!isAuthorized)
+            {
+                return Task.CompletedTask;
+            }
+            
             var listener = new ListenerDto(socketConnection.Principal.Id, socketConnection.ConnectionId);
             var hasJoined = _playbackGroupCollection.JoinGroup(request.GroupId, listener);
 
@@ -32,7 +39,7 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
         }
     }
 
-    public abstract class JoinPlaybackGroupRequest : IPlaybackRequest
+    public class JoinPlaybackGroupRequest : IPlaybackRequest
     {
         public Guid GroupId { get; set; }
     }

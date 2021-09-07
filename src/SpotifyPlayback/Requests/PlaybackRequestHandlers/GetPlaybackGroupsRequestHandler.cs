@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models.DataTransferObjects;
 
-namespace SpotifyPlayback.Requests.SocketRequestHandlers
+namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 {
     public class
         GetPlaybackGroupsRequestHandler : IPlaybackRequestHandler<GetPlaybackGroupsRequest,

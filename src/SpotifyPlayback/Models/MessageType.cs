@@ -6,5 +6,6 @@ namespace SpotifyPlayback.Models
         ConnectionEstablished = 100,
         ConnectionClosed = 101,
         JoinedGroupStatusUpdate = 200,
+        Unauthorized = 400,
     }
 }
