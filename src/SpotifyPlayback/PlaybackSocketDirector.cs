@@ -4,12 +4,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using IdentityServer4.Stores.Serialization;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
 using SpotifyPlayback.Requests.Handlers;
@@ -19,11 +16,13 @@ namespace SpotifyPlayback
     public class PlaybackSocketDirector : ISocketDirector
     {
         private readonly IPlaybackRequestDispatcher _playbackRequestDispatcher;
+        private readonly ISocketRequestHandler _socketRequestHandler;
         private static readonly ConcurrentDictionary<Guid, SocketConnection> Connections = new();
 
-        public PlaybackSocketDirector(IPlaybackRequestDispatcher playbackRequestDispatcher)
+        public PlaybackSocketDirector(IPlaybackRequestDispatcher playbackRequestDispatcher, ISocketRequestHandler socketRequestHandler)
         {
             _playbackRequestDispatcher = playbackRequestDispatcher;
+            _socketRequestHandler = socketRequestHandler;
         }
         
         public async Task HandleSocketConnection(WebSocket socket, HttpContext context)
@@ -31,26 +30,20 @@ namespace SpotifyPlayback
             var socketConnection = new SocketConnection(socket, context, Guid.NewGuid());
             if (Connections.TryAdd(socketConnection.ConnectionId, socketConnection))
             {
-                var playbackInfo = await _playbackRequestDispatcher.HandlePlaybackRequest(new GetPlaybackInfoRequest());
+                socketConnection.UpdateConnectionStatus();
+                
                 var response = new PlaybackSocketMessage<int>()
                 {
                     MessageType = MessageType.ConnectionEstablished,
                 };
 
-                socketConnection.UpdateConnectionStatus();
                 await socketConnection.SendMessage(response.GetBytes());
 
                 await socketConnection.PollConnection((result, buffer) =>
                 {
                     if (result.MessageType == WebSocketMessageType.Text)
                     {
-                        // TODO: handle message or maybe delete receiving messages in the future
-
-                        var json = Encoding.UTF8.GetString(buffer);
-                        var serializedObject =
-                            JsonConvert.DeserializeObject<dynamic>(json, new JsonSerializerSettings());
-
-                        var requestType = (RequestType) ((serializedObject?.requestType ?? null) ?? throw new InvalidOperationException());
+                        _socketRequestHandler.HandleSocketRequest(buffer, socketConnection);
                     }
                 });
 
@@ -65,10 +58,7 @@ namespace SpotifyPlayback
             {
                 if (socketConnection.Principal.IsAuthenticated())
                 {
-                    await _playbackRequestDispatcher.HandlePlaybackRequest(new DisconnectPlaybackGroupRequest()
-                    {
-                        UserId = socketConnection.Principal.Id,
-                    });
+                    await _playbackRequestDispatcher.HandlePlaybackRequest(new DisconnectPlaybackGroupRequest(), socketConnection);
                 }
 
                 RemoveSocket(socketConnection.ConnectionId);
