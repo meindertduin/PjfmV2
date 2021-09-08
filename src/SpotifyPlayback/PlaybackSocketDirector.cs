@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.WebSockets;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using SpotifyPlayback.Interfaces;
@@ -59,7 +62,16 @@ namespace SpotifyPlayback
                     await _playbackRequestDispatcher.HandlePlaybackSocketRequest(new DisconnectPlaybackGroupRequest(), socketConnection);
                 }
 
+                RemoveUserFromConnectionIdMap(socketConnection);
                 RemoveSocket(socketConnection.ConnectionId);
+            }
+        }
+
+        private void RemoveUserFromConnectionIdMap(SocketConnection socketConnection)
+        {
+            if (socketConnection.Principal.IsAuthenticated())
+            {
+                UserConnectionIdMap.Remove(socketConnection.Principal.Id, out _);
             }
         }
 
@@ -71,6 +83,18 @@ namespace SpotifyPlayback
         public IEnumerable<SocketConnection> GetSocketConnections()
         {
             return Connections.Values;
+        }
+
+        public bool TryGetUserSocketConnection(string userId, [MaybeNullWhen(false)] out SocketConnection socketConnection)
+        {
+            var hasFoundConnectionId = UserConnectionIdMap.TryGetValue(userId, out var connectionId);
+            if (!hasFoundConnectionId)
+            {
+                socketConnection = null;
+                return false;
+            }
+            var hasFoundSocketConnection = Connections.TryGetValue(connectionId, out socketConnection);
+            return hasFoundSocketConnection;
         }
 
         public async Task BroadCastMessage<T>(SocketMessage<T> message)

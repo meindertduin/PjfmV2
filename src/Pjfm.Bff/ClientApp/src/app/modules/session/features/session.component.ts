@@ -3,6 +3,7 @@ import { ApiSocketClientService } from '../../../core/services/api-socket-client
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { PlaybackGroupClient } from '../../../core/services/api-client.service';
 
 @Component({
   selector: 'pjfm-session',
@@ -12,7 +13,11 @@ import { ActivatedRoute } from '@angular/router';
 export class SessionComponent implements OnInit, OnDestroy {
   private readonly _destroyed$ = new Subject();
 
-  constructor(private readonly _apiSocketClient: ApiSocketClientService, private readonly _activatedRoute: ActivatedRoute) {}
+  constructor(
+    private readonly _apiSocketClient: ApiSocketClientService,
+    private readonly _activatedRoute: ActivatedRoute,
+    private readonly _playbackGroupClient: PlaybackGroupClient,
+  ) {}
 
   ngOnInit(): void {
     this._apiSocketClient.initializeConnection();
@@ -20,7 +25,9 @@ export class SessionComponent implements OnInit, OnDestroy {
       const groupId = this._activatedRoute.snapshot.paramMap.get('id');
 
       if (groupId != null) {
-        this._apiSocketClient.connectToGroup(groupId);
+        this._playbackGroupClient.join(groupId).subscribe(() => {
+          console.log('connected');
+        });
       }
     });
   }
