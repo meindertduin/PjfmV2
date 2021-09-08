@@ -1,10 +1,7 @@
-using System;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Api.Controllers.Base;
 using SpotifyPlayback.Interfaces;
-using SpotifyPlayback.Requests.PlaybackRequestHandlers;
 
 namespace Pjfm.Api.Controllers
 {
@@ -19,31 +16,6 @@ namespace Pjfm.Api.Controllers
         {
             _playbackRequestDispatcher = playbackRequestDispatcher;
             _socketDirector = socketDirector;
-        }
-
-        [HttpPut("{groupId:guid}/join")]
-        public async Task<IActionResult> Join(Guid groupId)
-        {
-            var sessionId = HttpContext.Session.Id;
-            var hasSocketConnection = _socketDirector.TryGetUserSocketConnection(PjfmContext.PjfmPrincipal.Id, out var socketConnection);
-            if (!hasSocketConnection)
-            {
-                return NotFound();
-            }
-            
-            var result = await _playbackRequestDispatcher.HandlePlaybackRequest(new JoinPlaybackGroupRequest()
-            {
-                GroupId = groupId,
-                UserId = PjfmContext.PjfmPrincipal.Id,
-                ConnectionId = socketConnection!.ConnectionId,
-            });
-
-            if (result.SuccessfullyJoined)
-            {
-                return Ok();
-            }
-            
-            return BadRequest();
         }
     }
 }

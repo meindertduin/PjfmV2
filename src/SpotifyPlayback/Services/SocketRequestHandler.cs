@@ -33,8 +33,7 @@ namespace SpotifyPlayback.Services
             switch (serializedObject.RequestType)
             {
                 case RequestType.ConnectToGroup:
-                    return SendRequestThroughDispatcher<JoinPlaybackGroupRequest>(serializedObject.Body,
-                        socketConnection);
+                    return SendRequestThroughDispatcher<JoinPlaybackGroupSocketRequest>(serializedObject.Body, socketConnection);
                 default:
                     throw new ArgumentOutOfRangeException();
             }

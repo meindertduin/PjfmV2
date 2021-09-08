@@ -1,7 +1,7 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Pjfm.Application.Authentication;
-using Pjfm.Application.Spotify;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models.DataTransferObjects;
 
@@ -25,23 +25,21 @@ namespace SpotifyPlayback.Services
                 Uris = new[] {$"spotify:track:{trackId}"}
             };
 
-            var getListenerAccessTokenTasks = new List<Task<(GetAccessTokenResult accessTokenResult, ListenerDto listener)>>();
-            foreach (var listener in listeners)
-            {
-                var getListenerAccessTokenTupleTask = Task.Run(async () =>
+            var getListenerAccessTokenTasks = (
+                from listener in listeners
+                where listener.Principal.IsAuthenticated()
+                select Task.Run(async () =>
                 {
-                    var listenerAccessToken = await _spotifyTokenService.GetUserSpotifyAccessToken(listener.UserId);
+                    var listenerAccessToken = await _spotifyTokenService.GetUserSpotifyAccessToken(listener.Principal.Id);
                     return (listenerAccessToken, listener);
-                });
-                getListenerAccessTokenTasks.Add(getListenerAccessTokenTupleTask);
-            }
+                })).ToList();
 
             var listenerAccessTokenTuples = await Task.WhenAll(getListenerAccessTokenTasks);
 
             var playRequestTasks = new List<Task<bool>>();
             foreach (var listenerAccessTokenTuple in listenerAccessTokenTuples)
             {
-                var accessToken = listenerAccessTokenTuple.accessTokenResult.AccessToken;
+                var accessToken = listenerAccessTokenTuple.listenerAccessToken.AccessToken;
                 if (!string.IsNullOrEmpty(accessToken))
                 {
                     var listenerDeviceId = listenerAccessTokenTuple.listener.DeviceId;

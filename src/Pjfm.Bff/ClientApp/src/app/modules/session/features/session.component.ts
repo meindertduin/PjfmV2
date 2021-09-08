@@ -25,9 +25,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       const groupId = this._activatedRoute.snapshot.paramMap.get('id');
 
       if (groupId != null) {
-        this._playbackGroupClient.join(groupId).subscribe(() => {
-          console.log('connected');
-        });
+        this._apiSocketClient.connectToGroup(groupId);
       }
     });
   }

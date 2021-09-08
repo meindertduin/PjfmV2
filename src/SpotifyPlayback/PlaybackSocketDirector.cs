@@ -4,8 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.WebSockets;
-using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using SpotifyPlayback.Interfaces;
@@ -19,6 +17,7 @@ namespace SpotifyPlayback
         private readonly IPlaybackRequestDispatcher _playbackRequestDispatcher;
         private readonly ISocketRequestHandler _socketRequestHandler;
         private static readonly ConcurrentDictionary<Guid, SocketConnection> Connections = new();
+        private static readonly ConcurrentDictionary<string, Guid> UserConnectionIdMap = new();
 
         public PlaybackSocketDirector(IPlaybackRequestDispatcher playbackRequestDispatcher, ISocketRequestHandler socketRequestHandler)
         {
