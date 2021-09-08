@@ -74,7 +74,33 @@ namespace SpotifyPlayback.Services
             return groupsData;
         }
 
-        public bool JoinGroup(Guid groupId, ListenerDto listener)
+        public bool JoinGroup(Guid groupId, Guid connectionId)
+        {
+            var retrievedGroup = _playbackGroups.TryGetValue(groupId, out var playbackGroup);
+            if (retrievedGroup)
+            {
+                return playbackGroup!.AddJoinedConnectionId(connectionId);
+            }
+
+            return false;
+        }
+
+        public bool RemoveJoinedConnectionFromGroup(Guid connectionId)
+        {
+            // TODO: This is highly inefficient on larger scale, but will work for now In the future we might be needing
+            // to think of saving the groupId where the user is connected with somewhere
+            foreach (var playbackGroup in _playbackGroups.Values)
+            {
+                if (playbackGroup.ContainsJoinedConnectionId(connectionId))
+                {
+                    return playbackGroup.RemoveJoinedConnection(connectionId);
+                }
+            }
+
+            return false;
+        }
+
+        public bool ListenToGroup(Guid groupId, ListenerDto listener)
         {
             var retrievedGroup = _playbackGroups.TryGetValue(groupId, out var playbackGroup);
             if (retrievedGroup)
@@ -84,22 +110,6 @@ namespace SpotifyPlayback.Services
 
             return false;
         }
-
-        public bool RemoveUserFromGroup(ListenerDto listener)
-        {
-            // TODO: This is highly inefficient on larger scale, but will work for now In the future we might be needing
-            // to think of saving the groupId where the user is connected with somewhere
-            foreach (var playbackGroup in _playbackGroups.Values)
-            {
-                if (playbackGroup.ContainsListeners(listener))
-                {
-                    return playbackGroup.RemoveListener(listener);
-                }
-            }
-
-            return false;
-        }
-
         private IPlaybackGroup GetPlaybackGroup(Guid groupId)
         {
             if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))

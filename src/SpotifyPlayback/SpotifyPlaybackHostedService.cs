@@ -15,7 +15,7 @@ namespace SpotifyPlayback
         private ISpotifyPlaybackController _spotifyPlaybackController = null!;
         private IPlaybackGroupCollection _playbackGroupCollection = null!;
         private Timer? _timer;
-        private IPlaybackScheduledTaskQueue _playbackScheduledTaskQueue = null!;
+        private IPlaybackScheduledTrackQueue _playbackScheduledTrackQueue = null!;
 
         public SpotifyPlaybackHostedService(IServiceProvider services)
         {
@@ -25,7 +25,7 @@ namespace SpotifyPlayback
         public Task StartAsync(CancellationToken cancellationToken)
         {
             _playbackGroupCollection = _services.GetRequiredService<IPlaybackGroupCollection>();
-            _playbackScheduledTaskQueue = _services.GetRequiredService<IPlaybackScheduledTaskQueue>();
+            _playbackScheduledTrackQueue = _services.GetRequiredService<IPlaybackScheduledTrackQueue>();
             _spotifyPlaybackController = _services.GetRequiredService<ISpotifyPlaybackController>();
             
             _playbackGroupCollection.PlaybackGroupCreatedEvent += AddNewGroupToScheduler;
@@ -49,7 +49,7 @@ namespace SpotifyPlayback
         {
             Task.Run(async () =>
             {
-                var dueTracks = _playbackScheduledTaskQueue.GetDueTracks();
+                var dueTracks = _playbackScheduledTrackQueue.GetDueTracks();
                 foreach (var dueTrack in dueTracks)
                 {
                     await PlayScheduledTrack(dueTrack);
@@ -74,7 +74,7 @@ namespace SpotifyPlayback
         {
             var groupNewTrack = await _playbackGroupCollection.GetGroupNewTrack(playbackScheduledTrack.GroupId);
             groupNewTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(groupNewTrack.SpotifyTrack.TrackDurationMs);
-            _playbackScheduledTaskQueue.AddPlaybackScheduledTrack(groupNewTrack);
+            _playbackScheduledTrackQueue.AddPlaybackScheduledTrack(groupNewTrack);
             await _spotifyPlaybackController.PlaySpotifyTrackForUsers(playbackScheduledTrack);
         }
 

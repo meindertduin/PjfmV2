@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
-using SpotifyPlayback.Models.DataTransferObjects;
 
 namespace SpotifyPlayback.Requests.SocketRequestHandlers
 {
@@ -15,7 +14,7 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
         }
         public Task HandleAsync(DisconnectPlaybackGroupRequest request, SocketConnection socketConnection)
         {
-            _playbackGroupCollection.RemoveUserFromGroup(new ListenerDto(socketConnection.ConnectionId, socketConnection.Principal));
+            _playbackGroupCollection.RemoveJoinedConnectionFromGroup(socketConnection.ConnectionId);
 
             // TODO: pause spotify player for user once it's implemented
             

@@ -2,7 +2,6 @@ using System;
 using System.Threading.Tasks;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
-using SpotifyPlayback.Models.DataTransferObjects;
 using SpotifyPlayback.Models.Socket;
 
 namespace SpotifyPlayback.Requests.SocketRequestHandlers
@@ -17,8 +16,7 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
         }
         public Task HandleAsync(JoinPlaybackGroupSocketRequest request, SocketConnection socketConnection)
         {
-            var joinedGroup = _playbackGroupCollection.JoinGroup(request.GroupId,
-                new ListenerDto(socketConnection.ConnectionId, socketConnection.Principal));
+            var joinedGroup = _playbackGroupCollection.JoinGroup(request.GroupId, socketConnection.ConnectionId);
 
             if (!joinedGroup)
             {

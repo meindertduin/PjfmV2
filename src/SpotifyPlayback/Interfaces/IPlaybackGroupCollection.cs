@@ -15,7 +15,8 @@ namespace SpotifyPlayback.Interfaces
         IEnumerable<ListenerDto> GetGroupListeners(Guid groupId);
         PlaybackGroupDto GetPlaybackGroupInfo(Guid groupId);
         IEnumerable<PlaybackGroupDto> GetPlaybackGroupsInfo();
-        bool JoinGroup(Guid groupId, ListenerDto listener);
-        bool RemoveUserFromGroup(ListenerDto listener);
+        bool JoinGroup(Guid groupId, Guid connectionId);
+        bool RemoveJoinedConnectionFromGroup(Guid connectionId);
+        bool ListenToGroup(Guid groupId, ListenerDto listener);
     }
 }

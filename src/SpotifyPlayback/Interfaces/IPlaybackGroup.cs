@@ -12,9 +12,12 @@ namespace SpotifyPlayback.Interfaces
         string GroupName { get; }
         Task<SpotifyTrack> GetNextTrack();
         IEnumerable<ListenerDto> GetGroupListeners();
+        IEnumerable<Guid> GetJoinedConnectionIds();
         bool AddListener(ListenerDto listener);
-        bool RemoveListener(ListenerDto listener);
+        bool AddJoinedConnectionId(Guid connectionId);
+        bool RemoveJoinedConnection(Guid connectionId);
         bool ContainsListeners(ListenerDto listener);
+        bool ContainsJoinedConnectionId(Guid connectionId);
         bool HasListeners();
         PlaybackGroupDto GetPlaybackGroupInfo();
     }

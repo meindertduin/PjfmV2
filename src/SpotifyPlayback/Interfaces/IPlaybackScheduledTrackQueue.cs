@@ -4,7 +4,7 @@ using SpotifyPlayback.Models;
 
 namespace SpotifyPlayback.Interfaces
 {
-    public interface IPlaybackScheduledTaskQueue
+    public interface IPlaybackScheduledTrackQueue
     {
         int Count { get; }
         void AddPlaybackScheduledTrack(PlaybackScheduledTrack playbackScheduledTrack);

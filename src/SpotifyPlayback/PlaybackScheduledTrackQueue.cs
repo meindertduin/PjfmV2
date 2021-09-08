@@ -6,10 +6,8 @@ using SpotifyPlayback.Models;
 
 namespace SpotifyPlayback
 {
-    public class PlaybackScheduledTaskQueue : IPlaybackScheduledTaskQueue
+    public class PlaybackScheduledTrackQueue : IPlaybackScheduledTrackQueue
     {
-        private const int DefaultCapacity = 5;
-
         private object _queueLock = new ();
         private List<PlaybackScheduledTrack> _playbackScheduledTracks = new();
         public int Count => _playbackScheduledTracks.Count;

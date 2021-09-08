@@ -14,8 +14,10 @@ namespace SpotifyPlayback.Services
         private SpotifyTrack? _currentlyPlayingTrack = null;
         private SpotifyTrack? _nextTrack = null;
 
-        private List<ListenerDto> _luisteraars = new();
-        private readonly object luisteraarsLock = new();
+        private List<Guid> _joinedConnections = new();
+        private List<ListenerDto> _listeners = new();
+        private readonly object listenerLock = new();
+        private readonly object joinedConnectionsLock = new();
 
         public Guid GroupId { get; private set; }
         public string GroupName { get; private set; }
@@ -55,16 +57,35 @@ namespace SpotifyPlayback.Services
 
         public IEnumerable<ListenerDto> GetGroupListeners()
         {
-            return _luisteraars;
+            return _listeners;
+        }
+
+        public IEnumerable<Guid> GetJoinedConnectionIds()
+        {
+            return _joinedConnections;
         }
 
         public bool AddListener(ListenerDto listener)
         {
-            if (!_luisteraars.Contains(listener))
+            if (!_listeners.Contains(listener))
             {
-                lock (luisteraarsLock)
+                lock (listenerLock)
                 {
-                    _luisteraars.Add(listener);
+                    _listeners.Add(listener);
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+        public bool AddJoinedConnectionId(Guid connectionId)
+        {
+            if (!_joinedConnections.Contains(connectionId))
+            {
+                lock (joinedConnectionsLock)
+                {
+                    _joinedConnections.Add(connectionId);
                 }
 
                 return true;
@@ -73,22 +94,36 @@ namespace SpotifyPlayback.Services
             return false;
         }
 
-        public bool RemoveListener(ListenerDto listener)
+        public bool RemoveJoinedConnection(Guid connectionId)
         {
-            lock (luisteraarsLock)
+            lock (joinedConnectionsLock)
             {
-                return _luisteraars.Remove(listener);
+                lock (listenerLock)
+                {
+                    var listener = _listeners.FirstOrDefault(x => x.ConnectionId == connectionId);
+                    if (listener != null)
+                    {
+                        _listeners.Remove(listener);
+                    }
+                }
+                
+                return _joinedConnections.Remove(connectionId);
             }
         }
 
         public bool ContainsListeners(ListenerDto listener)
         {
-            return _luisteraars.Contains(listener);
+            return _listeners.Contains(listener);
+        }
+
+        public bool ContainsJoinedConnectionId(Guid connectionId)
+        {
+            return _joinedConnections.Contains(connectionId);
         }
 
         public bool HasListeners()
         {
-            return !_luisteraars.Any();
+            return !_listeners.Any();
         }
 
         public PlaybackGroupDto GetPlaybackGroupInfo()
@@ -97,7 +132,7 @@ namespace SpotifyPlayback.Services
             {
                 GroupId = GroupId,
                 GroupName = GroupName,
-                ListenersCount = _luisteraars.Count,
+                ListenersCount = _listeners.Count,
                 CurrentlyPlayingTrack = _currentlyPlayingTrack,
             };
         }
