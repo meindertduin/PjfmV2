@@ -13,6 +13,7 @@ namespace SpotifyPlayback.Interfaces
         Guid CreateNewPlaybackGroup(string groupName);
         Task<PlaybackScheduledTrack> GetGroupNewTrack(Guid groupId);
         IEnumerable<ListenerDto> GetGroupListeners(Guid groupId);
+        IEnumerable<Guid> GetGroupJoinedConnectionIds(Guid groupId);
         PlaybackGroupDto GetPlaybackGroupInfo(Guid groupId);
         IEnumerable<PlaybackGroupDto> GetPlaybackGroupsInfo();
         bool JoinGroup(Guid groupId, Guid connectionId);

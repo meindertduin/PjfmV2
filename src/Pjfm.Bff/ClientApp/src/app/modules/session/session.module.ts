@@ -9,12 +9,13 @@ import { InlineSVGModule } from 'ng-inline-svg';
 import { HttpClientModule } from '@angular/common/http';
 import { QueuedTrackComponent } from './components/queued-track/queued-track.component';
 import { PlaybackButtonsComponent } from './components/playback-buttons/playback-buttons.component';
+import { SharedModule } from '../../shared/shared.module';
 
 const COMPONENTS = [SessionComponent, AsciiSliderComponent, TrackProgressionBarComponent];
 const PIPES = [ConvertMsToTimePipe];
 
 @NgModule({
   declarations: [COMPONENTS, PIPES, QueuedTrackComponent, PlaybackButtonsComponent],
-  imports: [CommonModule, SessionRoutingModule, InlineSVGModule, HttpClientModule],
+  imports: [CommonModule, SessionRoutingModule, InlineSVGModule, HttpClientModule, SharedModule],
 })
 export class SessionModule {}

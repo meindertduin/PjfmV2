@@ -54,6 +54,12 @@ namespace SpotifyPlayback.Services
             return playbackGroup.GetGroupListeners();
         }
 
+        public IEnumerable<Guid> GetGroupJoinedConnectionIds(Guid groupId)
+        {
+            var playbackGroup = GetPlaybackGroup(groupId);
+            return playbackGroup.GetJoinedConnectionIds();
+        }
+
         public PlaybackGroupDto GetPlaybackGroupInfo(Guid groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);

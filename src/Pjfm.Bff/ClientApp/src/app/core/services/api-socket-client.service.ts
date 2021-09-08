@@ -45,8 +45,7 @@ export class ApiSocketClientService {
   }
 
   private handlePlaybackInfoUpdate(message: PlaybackMessage<unknown>) {
-    const typedMessage = message.body as PlaybackMessage<PlaybackUpdateMessageBody>;
-    console.log(typedMessage);
+    const typedMessage = message as PlaybackMessage<PlaybackUpdateMessageBody>;
     this._playbackData.next(typedMessage.body);
   }
 
@@ -77,7 +76,7 @@ interface PlaybackMessage<T> {
   body: T;
 }
 
-interface PlaybackUpdateMessageBody {
+export interface PlaybackUpdateMessageBody {
   groupId: string;
   groupName: string;
   currentlyPlayingTrack: SpotifyTrack;

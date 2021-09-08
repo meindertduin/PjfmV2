@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ApiSocketClientService } from '../../../core/services/api-socket-client.service';
+import { ApiSocketClientService, PlaybackUpdateMessageBody } from '../../../core/services/api-socket-client.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
@@ -12,6 +12,7 @@ import { PlaybackGroupClient } from '../../../core/services/api-client.service';
 })
 export class SessionComponent implements OnInit, OnDestroy {
   private readonly _destroyed$ = new Subject();
+  loadedPlaybackData: PlaybackUpdateMessageBody | null = null;
 
   constructor(
     private readonly _apiSocketClient: ApiSocketClientService,
@@ -28,6 +29,13 @@ export class SessionComponent implements OnInit, OnDestroy {
         this._apiSocketClient.connectToGroup(groupId);
       }
     });
+
+    this._apiSocketClient
+      .getPlaybackData()
+      .pipe(takeUntil(this._destroyed$))
+      .subscribe((playbackData) => {
+        this.loadedPlaybackData = playbackData;
+      });
   }
 
   ngOnDestroy(): void {
