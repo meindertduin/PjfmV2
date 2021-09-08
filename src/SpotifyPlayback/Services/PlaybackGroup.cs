@@ -2,17 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.SpotifyTrack;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models.DataTransferObjects;
+using SpotifyPlayback.Models.Socket;
 
 namespace SpotifyPlayback.Services
 {
     public class PlaybackGroup : IPlaybackGroup
     {
         private readonly IPlaybackQueue _playbackQueue;
-        private SpotifyTrack? _currentlyPlayingTrack = null;
-        private SpotifyTrack? _nextTrack = null;
+        private SpotifyTrackDto? _currentlyPlayingTrack = null;
+        private SpotifyTrackDto? _nextTrack = null;
 
         private List<Guid> _joinedConnections = new();
         private List<ListenerDto> _listeners = new();
@@ -29,16 +29,17 @@ namespace SpotifyPlayback.Services
             GroupId = groupId;
         }
 
-        public async Task<SpotifyTrack> GetNextTrack()
+        public async Task<SpotifyTrackDto> GetNextTrack()
         {
             var newTrack = await _playbackQueue.GetNextSpotifyTrack();
             
             SetCurrentNextTracks(newTrack);
+            SetCurrentlyPlayingTrackStartTime();
 
             return newTrack;
         }
 
-        private void SetCurrentNextTracks(SpotifyTrack? newTrack)
+        private void SetCurrentNextTracks(SpotifyTrackDto? newTrack)
         {
             if (_currentlyPlayingTrack == null)
             {
@@ -52,6 +53,14 @@ namespace SpotifyPlayback.Services
             {
                 _currentlyPlayingTrack = _nextTrack;
                 _nextTrack = newTrack;
+            }
+        }
+
+        private void SetCurrentlyPlayingTrackStartTime()
+        {
+            if (_currentlyPlayingTrack != null)
+            {
+                _currentlyPlayingTrack.TrackStartDate = DateTime.Now;
             }
         }
 

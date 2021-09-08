@@ -12,7 +12,7 @@
     </div>
     <div class="playback-controls-container" *ngIf="loadedPlaybackData != null">
       <pjfm-track-progression-bar
-        [startTimeMs]="2000"
+        [startTimeMs]="trackStartTimeMs"
         [trackDurationMs]="loadedPlaybackData.currentlyPlayingTrack.trackDurationMs"
       ></pjfm-track-progression-bar>
       <pjfm-playback-buttons></pjfm-playback-buttons>

@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Pjfm.Infrastructure;
 using Pjfm.Infrastructure.Repositories;
 using SpotifyPlayback.Interfaces;
+using SpotifyPlayback.Models.Socket;
 
 namespace SpotifyPlayback.Services
 {
@@ -12,7 +13,7 @@ namespace SpotifyPlayback.Services
     {
         private readonly ISpotifyTrackRepository _spotifyTrackRepository;
         private readonly IConfiguration _configuration;
-        private Queue<SpotifyTrack> _spotifyTracks = new();
+        private Queue<SpotifyTrackDto> _spotifyTracks = new();
         private IEnumerable<string> _userIds = new List<string>();
         
         private TrackTerm _term = TrackTerm.Long;
@@ -22,7 +23,7 @@ namespace SpotifyPlayback.Services
             _spotifyTrackRepository = spotifyTrackRepository;
             _configuration = configuration;
         }
-        public async Task<SpotifyTrack> GetNextSpotifyTrack()
+        public async Task<SpotifyTrackDto> GetNextSpotifyTrack()
         {
             int getSpotifyTracksAmount = 1;
             if (_spotifyTracks.Count == 0)
@@ -38,7 +39,14 @@ namespace SpotifyPlayback.Services
             
             foreach (var spotifyTrack in spotifyTracks)
             {
-                _spotifyTracks.Enqueue(spotifyTrack);
+                _spotifyTracks.Enqueue(new SpotifyTrackDto()
+                {
+                    Title = spotifyTrack.Title,
+                    Artists = spotifyTrack.Artists,
+                    SpotifyTrackId = spotifyTrack.SpotifyTrackId,
+                    TrackDurationMs = spotifyTrack.TrackDurationMs,
+                    TrackTerm = spotifyTrack.TrackTerm,
+                });
             }
 
             return _spotifyTracks.Dequeue();

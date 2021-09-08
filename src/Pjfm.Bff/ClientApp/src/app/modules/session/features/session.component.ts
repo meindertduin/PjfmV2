@@ -13,6 +13,7 @@ import { PlaybackGroupClient } from '../../../core/services/api-client.service';
 export class SessionComponent implements OnInit, OnDestroy {
   private readonly _destroyed$ = new Subject();
   loadedPlaybackData: PlaybackUpdateMessageBody | null = null;
+  trackStartTimeMs = 0;
 
   constructor(
     private readonly _apiSocketClient: ApiSocketClientService,
@@ -35,6 +36,9 @@ export class SessionComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this._destroyed$))
       .subscribe((playbackData) => {
         this.loadedPlaybackData = playbackData;
+        if (this.loadedPlaybackData != null) {
+          this.trackStartTimeMs = new Date().getTime() - new Date(this.loadedPlaybackData.currentlyPlayingTrack.trackStartDate).getTime();
+        }
       });
   }
 

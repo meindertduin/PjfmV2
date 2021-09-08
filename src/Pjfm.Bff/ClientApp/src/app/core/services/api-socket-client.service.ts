@@ -4,7 +4,7 @@ import { webSocket } from 'rxjs/webSocket';
 import { MessageType } from '../models/api-socket-message';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ApiSocketRequest, RequestType } from '../models/api-socket-request';
-import { SpotifyTrack } from './api-client.service';
+import { SpotifyTrack, TrackTerm } from './api-client.service';
 
 @Injectable({
   providedIn: 'root',
@@ -79,5 +79,14 @@ interface PlaybackMessage<T> {
 export interface PlaybackUpdateMessageBody {
   groupId: string;
   groupName: string;
-  currentlyPlayingTrack: SpotifyTrack;
+  currentlyPlayingTrack: SpotifyTrackDto;
+}
+
+export interface SpotifyTrackDto {
+  title: string;
+  spotifyTrackId: string;
+  artists: string[];
+  trackTerm: TrackTerm;
+  trackDurationMs: number;
+  trackStartDate: Date;
 }
