@@ -25,6 +25,7 @@
       <Folder Include="ClientApp\src\app\core\services" />
       <Folder Include="ClientApp\src\app\modules" />
       <Folder Include="ClientApp\src\app\modules\session\components" />
+      <Folder Include="ClientApp\src\app\shared\components" />
       <Folder Include="ClientApp\src\app\shared\services" />
     </ItemGroup>
 

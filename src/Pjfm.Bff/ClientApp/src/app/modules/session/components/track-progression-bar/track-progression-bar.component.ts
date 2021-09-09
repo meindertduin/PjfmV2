@@ -26,7 +26,6 @@ export class TrackProgressionBarComponent implements OnInit, OnChanges {
 
   private reset(): void {
     this.currentTimeMs = this.startTimeMs;
-    console.log(this.currentTimeMs);
 
     if (this._currentInterval != null) {
       clearInterval(this._currentInterval);
