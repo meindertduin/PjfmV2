@@ -58,4 +58,6 @@ export class StartListenDialogComponent implements OnInit {
   onCloseDialog(): void {
     this.closeDialog.emit();
   }
+
+  onPlayClicked(): void {}
 }

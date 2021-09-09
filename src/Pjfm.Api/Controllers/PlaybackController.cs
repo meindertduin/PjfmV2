@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -28,6 +29,25 @@ namespace Pjfm.Api.Controllers
             // TODO: later on we might have to add pagination, keep this in mind
             var playbackGroupsInfo = await _playbackRequestDispatcher.HandlePlaybackRequest(new GetPlaybackGroupsRequest());
             return Ok(playbackGroupsInfo.PlaybackGroups);
+        }
+
+        [HttpPut("{groupId:guid}/play")]
+        public async Task<IActionResult> Play(string deviceId, Guid groupId)
+        {
+            var playResult = await _playbackRequestDispatcher.HandlePlaybackRequest(new PlayPlaybackForUserRequest()
+            {
+                DeviceId = deviceId,
+                GroupId = groupId,
+                Principal = PjfmPrincipal,
+            });
+
+            if (!playResult.IsSuccessful)
+            {
+                // log result
+                
+            }
+
+            return Ok();
         }
     }
 }
