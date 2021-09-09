@@ -1,0 +1,44 @@
+@import "variables";
+
+$dialog-header-height: 40px;
+$dialog-footer-height: 80px;
+
+.container {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  background: $color-secondary;
+  color: $white;
+  max-height: 90vh;
+  border-radius: 30px 30px 0 0;
+
+  .dialog {
+    padding: 5px 10px 5px 10px;
+  }
+
+  .dialog-header-container {
+    display: flex;
+    flex-direction: row;
+    height: $dialog-header-height;
+    justify-content: space-between;
+    align-items: center;
+
+    .close-button {
+      color: white;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+  }
+
+  .dialog-content-container {
+    max-height: calc(85vh - #{$dialog-header-height + $dialog-footer-height});
+    overflow-y: auto;
+  }
+
+  .dialog-footer-container {
+    height: $dialog-footer-height;
+  }
+}

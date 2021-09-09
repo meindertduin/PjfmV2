@@ -14,6 +14,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   private readonly _destroyed$ = new Subject();
   loadedPlaybackData: PlaybackUpdateMessageBody | null = null;
   trackStartTimeMs = 0;
+  showStartListenDialog = false;
 
   constructor(
     private readonly _apiSocketClient: ApiSocketClientService,
@@ -45,5 +46,9 @@ export class SessionComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this._destroyed$.complete();
     this._destroyed$.next();
+  }
+
+  playClicked(): void {
+    this.showStartListenDialog = true;
   }
 }

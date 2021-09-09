@@ -15,7 +15,17 @@
         [startTimeMs]="trackStartTimeMs"
         [trackDurationMs]="loadedPlaybackData.currentlyPlayingTrack.trackDurationMs"
       ></pjfm-track-progression-bar>
-      <pjfm-playback-buttons></pjfm-playback-buttons>
+      <div class="playback-buttons">
+        <button class="control-button">
+          <span class="icon" [inlineSVG]="'assets/icons/search.svg'"></span>
+        </button>
+        <button class="control-button" (click)="playClicked()">
+          <span class="icon" [inlineSVG]="'assets/icons/play-arrow.svg'"></span>
+        </button>
+        <button class="control-button">
+          <span class="icon" [inlineSVG]="'assets/icons/skip.svg'"></span>
+        </button>
+      </div>
     </div>
   </section>
   <section class="playback-queue">
@@ -25,4 +35,4 @@
     </div>
   </section>
 </div>
-<pjfm-start-listen-dialog></pjfm-start-listen-dialog>
+<pjfm-start-listen-dialog [showDialog]="showStartListenDialog" (closeDialog)="showStartListenDialog = false"></pjfm-start-listen-dialog>

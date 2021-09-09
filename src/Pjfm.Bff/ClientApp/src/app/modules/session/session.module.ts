@@ -8,7 +8,6 @@ import { ConvertMsToTimePipe } from './pipes/convert-ms-to-time.pipe';
 import { InlineSVGModule } from 'ng-inline-svg';
 import { HttpClientModule } from '@angular/common/http';
 import { QueuedTrackComponent } from './components/queued-track/queued-track.component';
-import { PlaybackButtonsComponent } from './components/playback-buttons/playback-buttons.component';
 import { SharedModule } from '../../shared/shared.module';
 import { StartListenDialogComponent } from './components/start-listen-dialog/start-listen-dialog.component';
 
@@ -17,7 +16,6 @@ const COMPONENTS = [
   AsciiSliderComponent,
   TrackProgressionBarComponent,
   QueuedTrackComponent,
-  PlaybackButtonsComponent,
   StartListenDialogComponent,
 ];
 const PIPES = [ConvertMsToTimePipe];

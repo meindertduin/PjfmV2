@@ -1,15 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'pjfm-start-listen-dialog',
   templateUrl: './start-listen-dialog.component.html',
-  styleUrls: ['./start-listen-dialog.component.scss']
+  styleUrls: ['./start-listen-dialog.component.scss'],
 })
-export class StartListenDialogComponent implements OnInit {
+export class StartListenDialogComponent {
+  @Input() showDialog = false;
+  @Output() closeDialog = new EventEmitter();
 
-  constructor() { }
-
-  ngOnInit(): void {
+  onCloseDialog(): void {
+    this.closeDialog.emit();
   }
-
 }
