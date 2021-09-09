@@ -6,7 +6,7 @@
     <div class="container">
       <form [formGroup]="listenSettingsFormGroup">
         <select formControlName="deviceId">
-          <option ngValue="abc">abc</option>
+          <option *ngFor="let device of devices" [ngValue]="device.deviceId">{{device.deviceName}}</option>
         </select>
       </form>
     </div>

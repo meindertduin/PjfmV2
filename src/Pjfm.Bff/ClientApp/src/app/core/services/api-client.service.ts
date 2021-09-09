@@ -138,67 +138,6 @@ export class PlaybackClient {
 }
 
 @Injectable()
-export class PlaybackGroupClient {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "https://localhost:5004";
-    }
-
-    join(groupId: string): Observable<FileResponse | null> {
-        let url_ = this.baseUrl + "/api/playback/group/{groupId}/join";
-        if (groupId === undefined || groupId === null)
-            throw new Error("The parameter 'groupId' must be defined.");
-        url_ = url_.replace("{groupId}", encodeURIComponent("" + groupId));
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/octet-stream"
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processJoin(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processJoin(<any>response_);
-                } catch (e) {
-                    return <Observable<FileResponse | null>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<FileResponse | null>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processJoin(response: HttpResponseBase): Observable<FileResponse | null> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200 || status === 206) {
-            const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
-            const fileNameMatch = contentDisposition ? /filename="?([^"]*?)"?(;|$)/g.exec(contentDisposition) : undefined;
-            const fileName = fileNameMatch && fileNameMatch.length > 1 ? fileNameMatch[1] : undefined;
-            return _observableOf({ fileName: fileName, data: <any>responseBlob, status: status, headers: _headers });
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<FileResponse | null>(<any>null);
-    }
-}
-
-@Injectable()
 export class SpotifyAuthenticationClient {
     private http: HttpClient;
     private baseUrl: string;
@@ -307,7 +246,7 @@ export class SpotifyAuthenticationClient {
 }
 
 @Injectable()
-export class SpotifyTracksClient {
+export class SpotifyClient {
     private http: HttpClient;
     private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
@@ -361,6 +300,54 @@ export class SpotifyTracksClient {
             }));
         }
         return _observableOf<FileResponse | null>(<any>null);
+    }
+
+    devices(): Observable<GetDevicesResponse> {
+        let url_ = this.baseUrl + "/api/spotify/devices";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDevices(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDevices(<any>response_);
+                } catch (e) {
+                    return <Observable<GetDevicesResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetDevicesResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDevices(response: HttpResponseBase): Observable<GetDevicesResponse> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GetDevicesResponse.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetDevicesResponse>(<any>null);
     }
 }
 
@@ -427,7 +414,7 @@ export class UserClient {
 export class PlaybackGroupDto implements IPlaybackGroupDto {
     groupId!: string;
     groupName!: string;
-    currentlyPlayingTrack?: SpotifyTrack | undefined;
+    currentlyPlayingTrack?: SpotifyTrackDto | undefined;
     listenersCount!: number;
 
     constructor(data?: IPlaybackGroupDto) {
@@ -443,7 +430,7 @@ export class PlaybackGroupDto implements IPlaybackGroupDto {
         if (_data) {
             this.groupId = _data["groupId"];
             this.groupName = _data["groupName"];
-            this.currentlyPlayingTrack = _data["currentlyPlayingTrack"] ? SpotifyTrack.fromJS(_data["currentlyPlayingTrack"]) : <any>undefined;
+            this.currentlyPlayingTrack = _data["currentlyPlayingTrack"] ? SpotifyTrackDto.fromJS(_data["currentlyPlayingTrack"]) : <any>undefined;
             this.listenersCount = _data["listenersCount"];
         }
     }
@@ -468,13 +455,136 @@ export class PlaybackGroupDto implements IPlaybackGroupDto {
 export interface IPlaybackGroupDto {
     groupId: string;
     groupName: string;
-    currentlyPlayingTrack?: SpotifyTrack | undefined;
+    currentlyPlayingTrack?: SpotifyTrackDto | undefined;
     listenersCount: number;
 }
 
-export class Entity implements IEntity {
+export class SpotifyTrackDto implements ISpotifyTrackDto {
+    title!: string;
+    spotifyTrackId!: string;
+    artists!: string[];
+    trackTerm!: TrackTerm;
+    trackDurationMs!: number;
+    trackStartDate!: Date;
 
-    constructor(data?: IEntity) {
+    constructor(data?: ISpotifyTrackDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.artists = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.title = _data["title"];
+            this.spotifyTrackId = _data["spotifyTrackId"];
+            if (Array.isArray(_data["artists"])) {
+                this.artists = [] as any;
+                for (let item of _data["artists"])
+                    this.artists!.push(item);
+            }
+            this.trackTerm = _data["trackTerm"];
+            this.trackDurationMs = _data["trackDurationMs"];
+            this.trackStartDate = _data["trackStartDate"] ? new Date(_data["trackStartDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): SpotifyTrackDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpotifyTrackDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["title"] = this.title;
+        data["spotifyTrackId"] = this.spotifyTrackId;
+        if (Array.isArray(this.artists)) {
+            data["artists"] = [];
+            for (let item of this.artists)
+                data["artists"].push(item);
+        }
+        data["trackTerm"] = this.trackTerm;
+        data["trackDurationMs"] = this.trackDurationMs;
+        data["trackStartDate"] = this.trackStartDate ? this.trackStartDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ISpotifyTrackDto {
+    title: string;
+    spotifyTrackId: string;
+    artists: string[];
+    trackTerm: TrackTerm;
+    trackDurationMs: number;
+    trackStartDate: Date;
+}
+
+export enum TrackTerm {
+    Short = 0,
+    Medium = 1,
+    Long = 2,
+}
+
+export class GetDevicesResponse implements IGetDevicesResponse {
+    devices!: DeviceModel[];
+
+    constructor(data?: IGetDevicesResponse) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.devices = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["devices"])) {
+                this.devices = [] as any;
+                for (let item of _data["devices"])
+                    this.devices!.push(DeviceModel.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GetDevicesResponse {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetDevicesResponse();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.devices)) {
+            data["devices"] = [];
+            for (let item of this.devices)
+                data["devices"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IGetDevicesResponse {
+    devices: DeviceModel[];
+}
+
+export class DeviceModel implements IDeviceModel {
+    deviceId!: string;
+    deviceName!: string;
+    isActive!: boolean;
+
+    constructor(data?: IDeviceModel) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -484,100 +594,33 @@ export class Entity implements IEntity {
     }
 
     init(_data?: any) {
-    }
-
-    static fromJS(data: any): Entity {
-        data = typeof data === 'object' ? data : {};
-        let result = new Entity();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        return data; 
-    }
-}
-
-export interface IEntity {
-}
-
-export class SpotifyTrack extends Entity implements ISpotifyTrack {
-    id!: number;
-    title!: string;
-    userId!: string;
-    spotifyTrackId!: string;
-    artists!: string[];
-    trackTerm!: TrackTerm;
-    trackDurationMs!: number;
-    creationDate!: Date;
-
-    constructor(data?: ISpotifyTrack) {
-        super(data);
-        if (!data) {
-            this.artists = [];
-        }
-    }
-
-    init(_data?: any) {
-        super.init(_data);
         if (_data) {
-            this.id = _data["id"];
-            this.title = _data["title"];
-            this.userId = _data["userId"];
-            this.spotifyTrackId = _data["spotifyTrackId"];
-            if (Array.isArray(_data["artists"])) {
-                this.artists = [] as any;
-                for (let item of _data["artists"])
-                    this.artists!.push(item);
-            }
-            this.trackTerm = _data["trackTerm"];
-            this.trackDurationMs = _data["trackDurationMs"];
-            this.creationDate = _data["creationDate"] ? new Date(_data["creationDate"].toString()) : <any>undefined;
+            this.deviceId = _data["deviceId"];
+            this.deviceName = _data["deviceName"];
+            this.isActive = _data["isActive"];
         }
     }
 
-    static fromJS(data: any): SpotifyTrack {
+    static fromJS(data: any): DeviceModel {
         data = typeof data === 'object' ? data : {};
-        let result = new SpotifyTrack();
+        let result = new DeviceModel();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["title"] = this.title;
-        data["userId"] = this.userId;
-        data["spotifyTrackId"] = this.spotifyTrackId;
-        if (Array.isArray(this.artists)) {
-            data["artists"] = [];
-            for (let item of this.artists)
-                data["artists"].push(item);
-        }
-        data["trackTerm"] = this.trackTerm;
-        data["trackDurationMs"] = this.trackDurationMs;
-        data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
-        super.toJSON(data);
+        data["deviceId"] = this.deviceId;
+        data["deviceName"] = this.deviceName;
+        data["isActive"] = this.isActive;
         return data; 
     }
 }
 
-export interface ISpotifyTrack extends IEntity {
-    id: number;
-    title: string;
-    userId: string;
-    spotifyTrackId: string;
-    artists: string[];
-    trackTerm: TrackTerm;
-    trackDurationMs: number;
-    creationDate: Date;
-}
-
-export enum TrackTerm {
-    Short = 0,
-    Medium = 1,
-    Long = 2,
+export interface IDeviceModel {
+    deviceId: string;
+    deviceName: string;
+    isActive: boolean;
 }
 
 export class GetCurrentUserResponseModel implements IGetCurrentUserResponseModel {

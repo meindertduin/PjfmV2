@@ -4,7 +4,7 @@ import { webSocket } from 'rxjs/webSocket';
 import { MessageType } from '../models/api-socket-message';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { ApiSocketRequest, RequestType } from '../models/api-socket-request';
-import { SpotifyTrack, TrackTerm } from './api-client.service';
+import { TrackTerm } from './api-client.service';
 
 @Injectable({
   providedIn: 'root',

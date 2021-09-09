@@ -3,7 +3,6 @@ import { ApiSocketClientService, PlaybackUpdateMessageBody } from '../../../core
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { PlaybackGroupClient } from '../../../core/services/api-client.service';
 
 @Component({
   selector: 'pjfm-session',
@@ -19,7 +18,6 @@ export class SessionComponent implements OnInit, OnDestroy {
   constructor(
     private readonly _apiSocketClient: ApiSocketClientService,
     private readonly _activatedRoute: ActivatedRoute,
-    private readonly _playbackGroupClient: PlaybackGroupClient,
   ) {}
 
   ngOnInit(): void {
