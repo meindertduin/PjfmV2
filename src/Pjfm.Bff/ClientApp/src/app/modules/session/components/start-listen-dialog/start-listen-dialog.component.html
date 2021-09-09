@@ -3,7 +3,13 @@
     <h4 class="has-no-margin">Set play time</h4>
   </ng-container>
   <ng-container content>
-    <div>What about it?</div>
+    <div class="container">
+      <form [formGroup]="listenSettingsFormGroup">
+        <select formControlName="deviceId">
+          <option ngValue="abc">abc</option>
+        </select>
+      </form>
+    </div>
   </ng-container>
   <ng-container footer>
     <button>Play</button>

@@ -10,18 +10,13 @@ import { HttpClientModule } from '@angular/common/http';
 import { QueuedTrackComponent } from './components/queued-track/queued-track.component';
 import { SharedModule } from '../../shared/shared.module';
 import { StartListenDialogComponent } from './components/start-listen-dialog/start-listen-dialog.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
-const COMPONENTS = [
-  SessionComponent,
-  AsciiSliderComponent,
-  TrackProgressionBarComponent,
-  QueuedTrackComponent,
-  StartListenDialogComponent,
-];
+const COMPONENTS = [SessionComponent, AsciiSliderComponent, TrackProgressionBarComponent, QueuedTrackComponent, StartListenDialogComponent];
 const PIPES = [ConvertMsToTimePipe];
 
 @NgModule({
   declarations: [COMPONENTS, PIPES],
-  imports: [CommonModule, SessionRoutingModule, InlineSVGModule, HttpClientModule, SharedModule],
+  imports: [CommonModule, SessionRoutingModule, InlineSVGModule, HttpClientModule, SharedModule, ReactiveFormsModule],
 })
 export class SessionModule {}
