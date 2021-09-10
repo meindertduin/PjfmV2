@@ -24,19 +24,22 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
             var retrievedConnectionId =  _socketDirector.TryGetUserSocketConnection(request.Principal.Id, out var socketConnection);
             if (!retrievedConnectionId)
             {
-                return Task.FromResult(PlaybackRequestResult.Fail<PlayPlaybackForUserRequestResult>("Failed to retrieve ConnectionId"));
+                return Task.FromResult(PlaybackRequestResult.Fail<PlayPlaybackForUserRequestResult>("Failed to retrieve ConnectionId."));
             }
 
             var newListener = new ListenerDto(socketConnection!.ConnectionId, request.Principal, request.DeviceId);
             
             var hasJoinedAsListener = _playbackGroupCollection.ListenToGroup(request.GroupId, newListener);
-            if (hasJoinedAsListener)
+            if (!hasJoinedAsListener)
             {
-                var groupInfo = _playbackGroupCollection.GetPlaybackGroupInfo(request.GroupId);
-                if (groupInfo.CurrentlyPlayingTrack != null)
-                {
-                    _spotifyPlaybackService.PlayTrackForUser(newListener, groupInfo.CurrentlyPlayingTrack.SpotifyTrackId);
-                }
+                return Task.FromResult(PlaybackRequestResult.Fail<PlayPlaybackForUserRequestResult>("Failed to join as listener."));
+            }
+            
+            var groupInfo = _playbackGroupCollection.GetPlaybackGroupInfo(request.GroupId);
+            if (groupInfo.CurrentlyPlayingTrack != null)
+            {
+                var trackStartTimeMs = (DateTime.Now - groupInfo.CurrentlyPlayingTrack.TrackStartDate).Milliseconds;
+                _spotifyPlaybackService.PlayTrackForUser(newListener, groupInfo.CurrentlyPlayingTrack.SpotifyTrackId, request.SpotifyAccessToken, trackStartTimeMs);
             }
 
             return Task.FromResult(
@@ -49,6 +52,7 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
         public Guid GroupId { get; set; }
         public string DeviceId { get; set; }
         public IPjfmPrincipal Principal { get; set; }
+        public string SpotifyAccessToken { get; set; }
     }
 
     public class PlayPlaybackForUserRequestResult

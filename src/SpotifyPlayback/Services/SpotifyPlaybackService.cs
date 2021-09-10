@@ -49,5 +49,16 @@ namespace SpotifyPlayback.Services
 
             await Task.WhenAll(playRequestTasks);
         }
+
+        public Task PlayTrackForUser(ListenerDto listener, string trackId, string spotifyAccessToken ,int trackStartTimeMs)
+        {
+            var playRequest = new SpotifyPlayRequestDto()
+            {
+                Uris = new[] {$"spotify:track:{trackId}"},
+                PositionMs = trackStartTimeMs
+            };
+
+            return _spotifyPlaybackClient.PlayTrackForUser(spotifyAccessToken, playRequest);
+        }
     }
 }
