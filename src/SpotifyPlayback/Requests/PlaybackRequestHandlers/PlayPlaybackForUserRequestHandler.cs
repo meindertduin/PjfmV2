@@ -35,19 +35,20 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 
             var newListener = new ListenerDto(socketConnection!.ConnectionId, request.Principal, request.DeviceId);
 
-            var hasJoinedAsListener = _playbackGroupCollection.ListenToGroup(request.GroupId, newListener);
-            if (!hasJoinedAsListener)
-            {
-                return Task.FromResult(
-                    PlaybackRequestResult.Fail<PlayPlaybackForUserRequestResult>("Failed to join as listener."));
-            }
+            // TODO: uncomment this when listeners do work
+            // var hasJoinedAsListener = _playbackGroupCollection.ListenToGroup(request.GroupId, newListener);
+            // if (!hasJoinedAsListener)
+            // {
+            //     return Task.FromResult(
+            //         PlaybackRequestResult.Fail<PlayPlaybackForUserRequestResult>("Failed to join as listener."));
+            // }
 
             var groupInfo = _playbackGroupCollection.GetPlaybackGroupInfo(request.GroupId);
             if (groupInfo.CurrentlyPlayingTrack != null)
             {
-                var trackStartTimeMs = (DateTime.Now - groupInfo.CurrentlyPlayingTrack.TrackStartDate).Milliseconds;
+                var trackStartTimeMs = (DateTime.Now - groupInfo.CurrentlyPlayingTrack.TrackStartDate).TotalMilliseconds;
                 _spotifyPlaybackService.PlayTrackForUser(newListener, groupInfo.CurrentlyPlayingTrack.SpotifyTrackId,
-                    request.SpotifyAccessToken, trackStartTimeMs);
+                    request.SpotifyAccessToken, (int) trackStartTimeMs);
             }
 
             return Task.FromResult(

@@ -23,10 +23,11 @@ namespace SpotifyPlayback.Services
             }
             
             var requestMessage = CreateBaseSpotifyRequestMessage(HttpMethod.Put, url, accessToken);
-            var response = await _httpClient.SendAsync(requestMessage);
-
+            
             var jsonString = JsonConvert.SerializeObject(content, SpotifyApiHelpers.GetSpotifySerializerSettings());
             requestMessage.Content = new StringContent(jsonString, Encoding.UTF8, "application/json");
+            
+            var response = await _httpClient.SendAsync(requestMessage);
 
             return response.IsSuccessStatusCode;
         }
