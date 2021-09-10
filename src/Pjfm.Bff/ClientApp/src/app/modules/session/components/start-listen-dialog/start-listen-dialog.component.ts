@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { requiredValidator } from '../../../../core/utils/custom-form-validators';
-import { DeviceModel, SpotifyClient } from '../../../../core/services/api-client.service';
+import { DeviceModel, PlaybackClient, SpotifyClient } from '../../../../core/services/api-client.service';
 
 @Component({
   selector: 'pjfm-start-listen-dialog',
@@ -10,6 +10,7 @@ import { DeviceModel, SpotifyClient } from '../../../../core/services/api-client
 })
 export class StartListenDialogComponent implements OnInit {
   @Input() showDialog = false;
+  @Input() groupId!: string;
   @Output() closeDialog = new EventEmitter();
 
   listenSettingsFormGroup!: FormGroup;
@@ -22,7 +23,11 @@ export class StartListenDialogComponent implements OnInit {
     return 0;
   };
 
-  constructor(private readonly _formBuilder: FormBuilder, private readonly _spotifyClient: SpotifyClient) {}
+  constructor(
+    private readonly _formBuilder: FormBuilder,
+    private readonly _spotifyClient: SpotifyClient,
+    private readonly _playbackClient: PlaybackClient,
+  ) {}
 
   ngOnInit(): void {
     this.createFormGroup();
@@ -59,5 +64,12 @@ export class StartListenDialogComponent implements OnInit {
     this.closeDialog.emit();
   }
 
-  onPlayClicked(): void {}
+  onPlayClicked(): void {
+    const deviceId = this.deviceIdFormControl.value as string;
+    if (deviceId != null && deviceId) {
+      this._playbackClient.play(deviceId, this.groupId).subscribe(() => {
+        console.log('success');
+      });
+    }
+  }
 }

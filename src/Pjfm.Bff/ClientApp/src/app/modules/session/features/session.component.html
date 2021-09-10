@@ -35,4 +35,9 @@
     </div>
   </section>
 </div>
-<pjfm-start-listen-dialog [showDialog]="showStartListenDialog" (closeDialog)="showStartListenDialog = false"></pjfm-start-listen-dialog>
+<pjfm-start-listen-dialog
+  *ngIf="loadedPlaybackData != null"
+  [showDialog]="showStartListenDialog"
+  (closeDialog)="showStartListenDialog = false"
+  [groupId]="loadedPlaybackData.groupId"
+></pjfm-start-listen-dialog>

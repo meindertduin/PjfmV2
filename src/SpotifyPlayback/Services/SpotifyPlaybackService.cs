@@ -58,7 +58,7 @@ namespace SpotifyPlayback.Services
                 PositionMs = trackStartTimeMs
             };
 
-            return _spotifyPlaybackClient.PlayTrackForUser(spotifyAccessToken, playRequest);
+            return _spotifyPlaybackClient.PlayTrackForUser(spotifyAccessToken, playRequest, listener.DeviceId);
         }
     }
 }

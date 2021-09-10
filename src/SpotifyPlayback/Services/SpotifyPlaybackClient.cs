@@ -11,15 +11,10 @@ namespace SpotifyPlayback.Services
 {
     public class SpotifyPlaybackClient : ISpotifyPlaybackClient
     {
-        private static HttpClient _httpClient = null!;
+        private static HttpClient _httpClient = new HttpClient();
         private static readonly string _spotifyApiBaseUrl = "https://api.spotify.com/v1";
 
-        public SpotifyPlaybackClient(HttpClient httpClient)
-        {
-            _httpClient = httpClient;
-        }
-
-        public async Task<bool> PlayTrackForUser(string accessToken, SpotifyPlayRequestDto content, string? deviceId = null)
+        public async Task<bool> PlayTrackForUser(string accessToken, SpotifyPlayRequestDto content, string deviceId)
         {
             var url = "/me/player/play";
             if (!string.IsNullOrEmpty(deviceId))

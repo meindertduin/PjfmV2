@@ -31,6 +31,10 @@ namespace SpotifyPlayback
             if (Connections.TryAdd(socketConnection.ConnectionId, socketConnection))
             {
                 socketConnection.UpdateConnectionStatus();
+                if (socketConnection.Principal.IsAuthenticated())
+                {
+                    UserConnectionIdMap.TryAdd(socketConnection.Principal.Id, socketConnection.ConnectionId);
+                }
                 
                 var response = new PlaybackSocketMessage<int>()
                 {
