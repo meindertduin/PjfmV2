@@ -7,5 +7,6 @@ namespace SpotifyPlayback.Interfaces
     {
         Task PlayNextTrackForUsers(ListenerDto[] listeners, string trackId);
         Task PlayTrackForUser(ListenerDto listener, string trackId, string spotifyAccessToken, int trackStartTimeMs);
+        Task PausePlaybackForUser(string userId);
     }
 }

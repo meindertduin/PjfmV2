@@ -1,23 +1,27 @@
 using System;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
 
 namespace SpotifyPlayback.Requests.SocketRequestHandlers
 {
-    public class DisconnectPlaybackSocketGroupRequestHandler : IPlaybackSocketRequestHandler<DisconnectPlaybackGroupRequest>
+    public class DisconnectPlaybackGroupSocketRequestHandler : IPlaybackSocketRequestHandler<DisconnectPlaybackGroupRequest>
     {
         private readonly IPlaybackGroupCollection _playbackGroupCollection;
+        private readonly IServiceProvider _serviceProvider;
 
-        public DisconnectPlaybackSocketGroupRequestHandler(IPlaybackGroupCollection playbackGroupCollection)
+        public DisconnectPlaybackGroupSocketRequestHandler(IPlaybackGroupCollection playbackGroupCollection, IServiceProvider serviceProvider)
         {
             _playbackGroupCollection = playbackGroupCollection;
+            _serviceProvider = serviceProvider;
         }
         public Task HandleAsync(DisconnectPlaybackGroupRequest request, SocketConnection socketConnection)
         {
+            using var scope = _serviceProvider.CreateScope();
+            var spotifyPlaybackService = scope.ServiceProvider.GetRequiredService<ISpotifyPlaybackService>();
             _playbackGroupCollection.RemoveJoinedConnectionFromGroup(socketConnection.ConnectionId, request.ConnectedGroupId);
-
-            // TODO: pause spotify player for user once it's implemented
+            spotifyPlaybackService.PausePlaybackForUser(socketConnection.Principal.Id);
             
             return Task.CompletedTask;
         }

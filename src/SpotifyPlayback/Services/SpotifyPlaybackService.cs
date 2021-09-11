@@ -60,5 +60,14 @@ namespace SpotifyPlayback.Services
 
             return _spotifyPlaybackClient.PlayTrackForUser(spotifyAccessToken, playRequest, listener.DeviceId);
         }
+
+        public async Task PausePlaybackForUser(string userId)
+        {
+            var accessTokenResult = await _spotifyTokenService.GetUserSpotifyAccessToken(userId);
+            if (accessTokenResult.IsSuccessful)
+            {
+                await _spotifyPlaybackClient.PausePlayer(accessTokenResult.AccessToken);
+            }
+        }
     }
 }
