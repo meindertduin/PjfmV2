@@ -13,7 +13,7 @@ namespace SpotifyPlayback.Models
         private HttpContext _context;
         public Guid ConnectionId { get; init; }
         public IPjfmPrincipal Principal { get; init; }
-        public bool IsConnected { get; private set; }
+        public bool IsConnected => _webSocket.State is WebSocketState.Open;
 
         public SocketConnection(WebSocket webSocket, HttpContext context, Guid connectionId)
         {
@@ -41,7 +41,6 @@ namespace SpotifyPlayback.Models
             if (_webSocket.State is WebSocketState.Open or WebSocketState.CloseReceived or WebSocketState.CloseSent)
             {
                 await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "closing", CancellationToken.None);
-                IsConnected = false;
             }
         }
 
@@ -54,11 +53,6 @@ namespace SpotifyPlayback.Models
             }
             
             return Task.CompletedTask;
-        }
-
-        public void UpdateConnectionStatus()
-        {
-            IsConnected = _webSocket.State is WebSocketState.Open;
         }
     }
 }

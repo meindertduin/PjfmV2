@@ -15,7 +15,7 @@ namespace SpotifyPlayback
         private readonly ISocketDirector _socketDirector;
         private ISpotifyPlaybackController _spotifyPlaybackController = null!;
         private IPlaybackGroupCollection _playbackGroupCollection = null!;
-        private Timer? _timer;
+        private Timer? _playbackTimer;
         private IPlaybackScheduledTrackQueue _playbackScheduledTrackQueue = null!;
 
         public SpotifyPlaybackHostedService(IServiceProvider services, ISocketDirector socketDirector)
@@ -35,14 +35,14 @@ namespace SpotifyPlayback
             // TODO: For now we create one at the start. In later versions more groups should be able to be created
             _playbackGroupCollection.CreateNewPlaybackGroup("Pjfm");
 
-            _timer = new Timer(ExecuteAsync, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
-
+            _playbackTimer = new Timer(ExecuteAsync, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
+            
             return Task.CompletedTask;
         }
 
         public Task StopAsync(CancellationToken cancellationToken)
         {
-            _timer?.Change(Timeout.Infinite, 0);
+            _playbackTimer?.Change(Timeout.Infinite, 0);
 
             return Task.CompletedTask;
         }
@@ -58,7 +58,6 @@ namespace SpotifyPlayback
                 }
             });
         }
-
         private void AddNewGroupToScheduler(object sender, PlaybackGroupCreatedEventArgs eventArgs)
         {
             Task.Run(async () =>
@@ -84,7 +83,7 @@ namespace SpotifyPlayback
 
         public void Dispose()
         {
-            _timer?.Dispose();
+            _playbackTimer?.Dispose();
         }
     }
 }
