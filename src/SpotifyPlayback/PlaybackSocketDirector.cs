@@ -30,7 +30,6 @@ namespace SpotifyPlayback
             var socketConnection = new SocketConnection(socket, context, Guid.NewGuid());
             if (Connections.TryAdd(socketConnection.ConnectionId, socketConnection))
             {
-                socketConnection.UpdateConnectionStatus();
                 if (socketConnection.Principal.IsAuthenticated())
                 {
                     UserConnectionIdMap.TryAdd(socketConnection.Principal.Id, socketConnection.ConnectionId);
@@ -42,7 +41,7 @@ namespace SpotifyPlayback
                 };
 
                 await socketConnection.SendMessage(response.GetBytes());
-
+                
                 await socketConnection.PollConnection((result, buffer) =>
                 {
                     if (result.MessageType == WebSocketMessageType.Text)

@@ -10,24 +10,34 @@ import { TrackTerm } from './api-client.service';
   providedIn: 'root',
 })
 export class ApiSocketClientService {
-  static socket: WebSocketSubject<unknown>;
-  onConnectionEstablished = new Subject();
+  private socket!: WebSocketSubject<unknown>;
+
+  private readonly _isConnected = new BehaviorSubject<boolean>(false);
+  private readonly _isConnected$ = this._isConnected.asObservable();
+
   private readonly _playbackData = new BehaviorSubject<PlaybackUpdateMessageBody | null>(null);
   private readonly _playbackData$: Observable<PlaybackUpdateMessageBody | null> = this._playbackData.asObservable();
 
   initializeConnection(): void {
     // TODO: set the connection through the bff
-    ApiSocketClientService.socket = webSocket('wss://localhost:5004/api/playback/ws');
-    ApiSocketClientService.socket.subscribe(
-      (message) => this.handleIncomingMessage(message as PlaybackMessage<unknown>),
+    this.socket = webSocket('wss://localhost:5004/api/playback/ws');
+    this.socket.subscribe(
+      (message) => {
+        this.handleIncomingMessage(message as PlaybackMessage<unknown>);
+      },
       (error) => {
+        // TODO: add a way of logging application errors
         console.log(error);
       },
       () => this.onComplete(),
     );
   }
 
-  handleIncomingMessage(message: PlaybackMessage<unknown>): void {
+  getIsConnected(): Observable<boolean> {
+    return this._isConnected$;
+  }
+
+  private handleIncomingMessage(message: PlaybackMessage<unknown>): void {
     const messageType = message.messageType;
 
     if (messageType == null) {
@@ -36,7 +46,7 @@ export class ApiSocketClientService {
 
     switch (messageType) {
       case MessageType.connectionEstablished:
-        this.onConnectionEstablished.next();
+        this._isConnected.next(true);
         break;
       case MessageType.playbackInfo:
         this.handlePlaybackInfoUpdate(message);
@@ -61,7 +71,7 @@ export class ApiSocketClientService {
       },
     };
 
-    ApiSocketClientService.socket.next(groupConnectionRequest);
+    this.socket.next(groupConnectionRequest);
   }
 
   onComplete(): void {}

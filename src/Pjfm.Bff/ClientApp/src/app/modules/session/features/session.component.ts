@@ -15,28 +15,37 @@ export class SessionComponent implements OnInit, OnDestroy {
   trackStartTimeMs = 0;
   showStartListenDialog = false;
 
-  constructor(
-    private readonly _apiSocketClient: ApiSocketClientService,
-    private readonly _activatedRoute: ActivatedRoute,
-  ) {}
+  constructor(private readonly _apiSocketClient: ApiSocketClientService, private readonly _activatedRoute: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this._apiSocketClient.initializeConnection();
-    this._apiSocketClient.onConnectionEstablished.pipe(takeUntil(this._destroyed$)).subscribe(() => {
-      const groupId = this._activatedRoute.snapshot.paramMap.get('id');
+    this.connectToGroup();
+    this.getPlaybackData();
+  }
 
-      if (groupId != null) {
-        this._apiSocketClient.connectToGroup(groupId);
-      }
-    });
+  private connectToGroup() {
+    this._apiSocketClient
+      .getIsConnected()
+      .pipe(takeUntil(this._destroyed$))
+      .subscribe((isConnected) => {
+        if (isConnected) {
+          const groupId = this._activatedRoute.snapshot.paramMap.get('id');
 
+          if (groupId != null) {
+            this._apiSocketClient.connectToGroup(groupId);
+          }
+        }
+      });
+  }
+
+  private getPlaybackData() {
     this._apiSocketClient
       .getPlaybackData()
       .pipe(takeUntil(this._destroyed$))
       .subscribe((playbackData) => {
         this.loadedPlaybackData = playbackData;
         if (this.loadedPlaybackData != null) {
-          this.trackStartTimeMs = new Date().getTime() - new Date(this.loadedPlaybackData.currentlyPlayingTrack.trackStartDate).getTime();
+          const trackStartDate = new Date(this.loadedPlaybackData.currentlyPlayingTrack.trackStartDate);
+          this.trackStartTimeMs = new Date().getTime() - trackStartDate.getTime();
         }
       });
   }
