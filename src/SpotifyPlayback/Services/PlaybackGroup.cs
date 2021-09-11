@@ -107,17 +107,23 @@ namespace SpotifyPlayback.Services
         {
             lock (joinedConnectionsLock)
             {
-                lock (listenerLock)
-                {
-                    var listener = _listeners.FirstOrDefault(x => x.ConnectionId == connectionId);
-                    if (listener != null)
-                    {
-                        _listeners.Remove(listener);
-                    }
-                }
-                
                 return _joinedConnections.Remove(connectionId);
             }
+        }
+
+        public bool RemoveListener(Guid connectionId)
+        {
+            lock (listenerLock)
+            {
+                var listener = _listeners.FirstOrDefault(x => x.ConnectionId == connectionId);
+                if (listener != null)
+                {
+                    _listeners.Remove(listener);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool ContainsListeners(ListenerDto listener)

@@ -19,7 +19,6 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
         public Task<GetPlaybackGroupsRequestResult> HandleAsync(GetPlaybackGroupsRequest request)
         {
             return Task.FromResult(new GetPlaybackGroupsRequestResult()
-
             {
                 PlaybackGroups = _playbackGroupCollection.GetPlaybackGroupsInfo(),
             });

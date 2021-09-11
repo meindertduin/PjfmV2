@@ -17,6 +17,7 @@ namespace SpotifyPlayback.Interfaces
         bool AddListener(ListenerDto listener);
         bool AddJoinedConnectionId(Guid connectionId);
         bool RemoveJoinedConnection(Guid connectionId);
+        bool RemoveListener(Guid connectionId);
         bool ContainsListeners(ListenerDto listener);
         bool ContainsJoinedConnectionId(Guid connectionId);
         bool HasListeners();

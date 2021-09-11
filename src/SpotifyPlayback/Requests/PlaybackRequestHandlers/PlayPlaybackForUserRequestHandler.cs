@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Pjfm.Application.Authentication;
 using Pjfm.Common.Authentication;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models.DataTransferObjects;
@@ -35,13 +34,12 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 
             var newListener = new ListenerDto(socketConnection!.ConnectionId, request.Principal, request.DeviceId);
 
-            // TODO: uncomment this when listeners do work
-            // var hasJoinedAsListener = _playbackGroupCollection.ListenToGroup(request.GroupId, newListener);
-            // if (!hasJoinedAsListener)
-            // {
-            //     return Task.FromResult(
-            //         PlaybackRequestResult.Fail<PlayPlaybackForUserRequestResult>("Failed to join as listener."));
-            // }
+            var hasJoinedAsListener = _playbackGroupCollection.ListenToGroup(request.GroupId, newListener);
+            if (!hasJoinedAsListener)
+            {
+                return Task.FromResult(
+                    PlaybackRequestResult.Fail<PlayPlaybackForUserRequestResult>("Failed to join as listener."));
+            }
 
             var groupInfo = _playbackGroupCollection.GetPlaybackGroupInfo(request.GroupId);
             if (groupInfo.CurrentlyPlayingTrack != null)

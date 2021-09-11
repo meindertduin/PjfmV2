@@ -101,6 +101,25 @@ namespace SpotifyPlayback.Services
             return false;
         }
 
+        public bool RemoveListenerFromGroup(Guid connectionId, Guid groupId)
+        {
+            if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
+            {
+                return playbackGroup.RemoveListener(connectionId);
+            }
+            
+            return false;
+        }
+
+        public void ClearConnectionFromGroup(Guid connectionId, Guid groupId)
+        {
+            if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
+            {
+                playbackGroup.RemoveListener(connectionId);
+                playbackGroup.RemoveJoinedConnection(connectionId);
+            }
+        }
+
         public bool ListenToGroup(Guid groupId, ListenerDto listener)
         {
             var retrievedGroup = _playbackGroups.TryGetValue(groupId, out var playbackGroup);
