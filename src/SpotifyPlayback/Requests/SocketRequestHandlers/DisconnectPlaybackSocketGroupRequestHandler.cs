@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
@@ -14,7 +15,7 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
         }
         public Task HandleAsync(DisconnectPlaybackGroupRequest request, SocketConnection socketConnection)
         {
-            _playbackGroupCollection.RemoveJoinedConnectionFromGroup(socketConnection.ConnectionId);
+            _playbackGroupCollection.RemoveJoinedConnectionFromGroup(socketConnection.ConnectionId, request.ConnectedGroupId);
 
             // TODO: pause spotify player for user once it's implemented
             
@@ -24,5 +25,6 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
 
     public class DisconnectPlaybackGroupRequest : IPlaybackRequest
     {
+        public Guid ConnectedGroupId { get; set; }
     }
 }

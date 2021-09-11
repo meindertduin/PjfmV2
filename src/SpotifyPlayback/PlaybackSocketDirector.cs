@@ -113,6 +113,28 @@ namespace SpotifyPlayback
             await SendMessageToConnections(message, connections);
         }
 
+        public bool SetSocketConnectedGroupId(Guid connectionId, Guid groupId)
+        {
+            if (Connections.TryGetValue(connectionId, out var socketConnection))
+            {
+                socketConnection.SetConnectedPlaybackGroupId(groupId);
+                return true;
+            }
+            
+            return false;
+        }
+
+        public bool ClearSocketConnectedGroupId(Guid connectionId)
+        {
+            if (Connections.TryGetValue(connectionId, out var socketConnection))
+            {
+                socketConnection.ClearConnectedPlaybackGroupId();
+                return true;
+            }
+
+            return false;
+        }
+
         private async Task SendMessageToConnections<T>(SocketMessage<T> message,
             IEnumerable<SocketConnection> socketConnections)
         {

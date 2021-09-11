@@ -12,16 +12,14 @@ namespace SpotifyPlayback
     public class SpotifyPlaybackHostedService : IHostedService, IDisposable
     {
         private readonly IServiceProvider _services;
-        private readonly ISocketDirector _socketDirector;
         private ISpotifyPlaybackController _spotifyPlaybackController = null!;
         private IPlaybackGroupCollection _playbackGroupCollection = null!;
         private Timer? _playbackTimer;
         private IPlaybackScheduledTrackQueue _playbackScheduledTrackQueue = null!;
 
-        public SpotifyPlaybackHostedService(IServiceProvider services, ISocketDirector socketDirector)
+        public SpotifyPlaybackHostedService(IServiceProvider services)
         {
             _services = services;
-            _socketDirector = socketDirector;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)

@@ -91,18 +91,13 @@ namespace SpotifyPlayback.Services
             return false;
         }
 
-        public bool RemoveJoinedConnectionFromGroup(Guid connectionId)
+        public bool RemoveJoinedConnectionFromGroup(Guid connectionId, Guid groupId)
         {
-            // TODO: This is highly inefficient on larger scale, but will work for now In the future we might be needing
-            // to think of saving the groupId where the user is connected with somewhere
-            foreach (var playbackGroup in _playbackGroups.Values)
+            if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
             {
-                if (playbackGroup.ContainsJoinedConnectionId(connectionId))
-                {
-                    return playbackGroup.RemoveJoinedConnection(connectionId);
-                }
+                return playbackGroup.RemoveJoinedConnection(connectionId);
             }
-
+            
             return false;
         }
 
