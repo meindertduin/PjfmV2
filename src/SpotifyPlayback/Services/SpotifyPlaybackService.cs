@@ -69,5 +69,16 @@ namespace SpotifyPlayback.Services
                 await _spotifyPlaybackClient.PausePlayer(accessTokenResult.AccessToken);
             }
         }
+
+        public async Task<IEnumerable<DeviceDto>> GetUserDevices(string userId)
+        {
+            var accessTokenResult = await _spotifyTokenService.GetUserSpotifyAccessToken(userId);
+            if (accessTokenResult.IsSuccessful)
+            {
+                return await _spotifyPlaybackClient.GetPlaybackDevices(accessTokenResult.AccessToken);
+            }
+
+            return Enumerable.Empty<DeviceDto>();
+        }
     }
 }

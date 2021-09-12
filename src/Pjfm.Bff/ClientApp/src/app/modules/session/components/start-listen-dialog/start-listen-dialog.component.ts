@@ -67,9 +67,7 @@ export class StartListenDialogComponent implements OnInit {
   onPlayClicked(): void {
     const deviceId = this.deviceIdFormControl.value as string;
     if (deviceId != null && deviceId) {
-      this._playbackClient.play(deviceId, this.groupId).subscribe(() => {
-        console.log('success');
-      });
+      this._playbackClient.play(deviceId, this.groupId).subscribe(() => {});
     }
   }
 }

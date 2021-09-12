@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Api.Controllers.Base;
 using Pjfm.Api.Models.Spotify;
-using Pjfm.Application.Spotify;
+using SpotifyPlayback.Interfaces;
 
 namespace Pjfm.Api.Controllers
 {
@@ -13,11 +13,11 @@ namespace Pjfm.Api.Controllers
     [Route("api/spotify")]
     public class SpotifyController : PjfmController
     {
-        private readonly ISpotifyService _spotifyService;
+        private readonly ISpotifyPlaybackService _spotifyPlaybackService;
 
-        public SpotifyController(IPjfmControllerContext pjfmContext, ISpotifyService spotifyService) : base(pjfmContext)
+        public SpotifyController(IPjfmControllerContext pjfmContext, ISpotifyPlaybackService spotifyPlaybackService) : base(pjfmContext)
         {
-            _spotifyService = spotifyService;
+            _spotifyPlaybackService = spotifyPlaybackService;
         }
 
         [HttpGet("tracks/update")]
@@ -30,7 +30,7 @@ namespace Pjfm.Api.Controllers
         [ProducesResponseType(typeof(GetDevicesResponse), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetUserPlaybackDevices()
         {
-            var devices = await _spotifyService.GetUserDevices(PjfmPrincipal.Id);
+            var devices = await _spotifyPlaybackService.GetUserDevices(PjfmPrincipal.Id);
 
             var deviceResponse = new GetDevicesResponse();
             var deviceModels = new List<DeviceModel>();

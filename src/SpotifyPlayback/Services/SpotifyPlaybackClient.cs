@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -11,7 +13,7 @@ namespace SpotifyPlayback.Services
 {
     public class SpotifyPlaybackClient : ISpotifyPlaybackClient
     {
-        private static HttpClient _httpClient = new HttpClient();
+        private static HttpClient _httpClient = new();
         private static readonly string _spotifyApiBaseUrl = "https://api.spotify.com/v1";
 
         public async Task<bool> PlayTrackForUser(string accessToken, SpotifyPlayRequestDto content, string deviceId)
@@ -39,6 +41,22 @@ namespace SpotifyPlayback.Services
 
             return response.IsSuccessStatusCode;
         }
+
+        public async Task<IEnumerable<DeviceDto>> GetPlaybackDevices(string accessToken)
+        {
+            var requestMessage = CreateBaseSpotifyRequestMessage(HttpMethod.Get, "/me/player/devices", accessToken);
+            var response = await _httpClient.SendAsync(requestMessage);
+            if (response.IsSuccessStatusCode)
+            {
+                var devicesResult = JsonConvert.DeserializeObject<SpotifyPlaybackDevicesResponse>(await response.Content.ReadAsStringAsync(), SpotifyApiHelpers.GetSpotifySerializerSettings());
+                if (devicesResult != null)
+                {
+                    return devicesResult.Devices;
+                }
+            }
+            
+            return Enumerable.Empty<DeviceDto>();
+        }
         
         private HttpRequestMessage CreateBaseSpotifyRequestMessage(HttpMethod method, string url, string? accessToken)
         {
@@ -50,5 +68,10 @@ namespace SpotifyPlayback.Services
 
             return requestMessage;
         }
+    }
+
+    public class SpotifyPlaybackDevicesResponse
+    {
+        public IEnumerable<DeviceDto> Devices { get; set; }
     }
 }
