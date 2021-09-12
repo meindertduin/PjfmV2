@@ -78,6 +78,8 @@ export class SessionComponent implements OnInit, OnDestroy {
   }
 
   pauseClicked(): void {
-    this._playbackClient.stop().subscribe();
+    this._playbackClient.stop().subscribe(() => {
+      this._playbackService.setPlaybackIsActive(false);
+    });
   }
 }
