@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Pjfm.Common;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
 using SpotifyPlayback.Models.DataTransferObjects;
@@ -35,22 +36,36 @@ namespace SpotifyPlayback.Services
             return groupId;
         }
 
-        public async Task<PlaybackScheduledTracks> GetGroupNewTrack(Guid groupId)
+        public async Task<PlaybackScheduledTrack> GetGroupNewTrack(Guid groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);
             var groupTrack = await playbackGroup.GetNextTrack();
             
-            return new PlaybackScheduledTracks()
+            return new PlaybackScheduledTrack()
             {
                 SpotifyTrack = groupTrack,
                 GroupId = groupId,
             };
         }
 
-        public IEnumerable<string> GetGroupUserIds(Guid groupId)
+        public IEnumerable<ListenerDto> GetGroupListeners(Guid groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);
-            return playbackGroup.GetGroupListenerIds();
+            return playbackGroup.GetGroupListeners();
+        }
+
+        public IEnumerable<Guid> GetGroupJoinedConnectionIds(Guid groupId)
+        {
+            var playbackGroup = GetPlaybackGroup(groupId);
+            return playbackGroup.GetJoinedConnectionIds();
+        }
+
+        public PlaybackGroupDto GetPlaybackGroupInfo(Guid groupId)
+        {
+            var playbackGroup = GetPlaybackGroup(groupId);
+            Guard.NotNull(playbackGroup, nameof(playbackGroup));
+
+            return playbackGroup.GetPlaybackGroupInfo();
         }
 
         public IEnumerable<PlaybackGroupDto> GetPlaybackGroupsInfo()
@@ -65,7 +80,47 @@ namespace SpotifyPlayback.Services
             return groupsData;
         }
 
-        public bool JoinGroup(Guid groupId, ListenerDto listener)
+        public bool JoinGroup(Guid groupId, Guid connectionId)
+        {
+            var retrievedGroup = _playbackGroups.TryGetValue(groupId, out var playbackGroup);
+            if (retrievedGroup)
+            {
+                return playbackGroup!.AddJoinedConnectionId(connectionId);
+            }
+
+            return false;
+        }
+
+        public bool RemoveJoinedConnectionFromGroup(Guid connectionId, Guid groupId)
+        {
+            if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
+            {
+                return playbackGroup.RemoveJoinedConnection(connectionId);
+            }
+            
+            return false;
+        }
+
+        public bool RemoveListenerFromGroup(Guid connectionId, Guid groupId)
+        {
+            if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
+            {
+                return playbackGroup.RemoveListener(connectionId);
+            }
+            
+            return false;
+        }
+
+        public void ClearConnectionFromGroup(Guid connectionId, Guid groupId)
+        {
+            if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
+            {
+                playbackGroup.RemoveListener(connectionId);
+                playbackGroup.RemoveJoinedConnection(connectionId);
+            }
+        }
+
+        public bool ListenToGroup(Guid groupId, ListenerDto listener)
         {
             var retrievedGroup = _playbackGroups.TryGetValue(groupId, out var playbackGroup);
             if (retrievedGroup)
@@ -75,22 +130,6 @@ namespace SpotifyPlayback.Services
 
             return false;
         }
-
-        public bool RemoveUserFromGroup(ListenerDto listener)
-        {
-            // TODO: This is highly inefficient on larger scale, but will work for now In the future we might be needing
-            // to think of saving the groupId where the user is connected with somewhere
-            foreach (var playbackGroup in _playbackGroups.Values)
-            {
-                if (playbackGroup.ContainsListeners(listener))
-                {
-                    return playbackGroup.RemoveListener(listener);
-                }
-            }
-
-            return false;
-        }
-
         private IPlaybackGroup GetPlaybackGroup(Guid groupId)
         {
             if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))

@@ -1,24 +1,28 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
-using SpotifyPlayback.Requests.Handlers;
+using SpotifyPlayback.Requests.SocketRequestHandlers;
 
 namespace SpotifyPlayback
 {
     public class PlaybackSocketDirector : ISocketDirector
     {
         private readonly IPlaybackRequestDispatcher _playbackRequestDispatcher;
+        private readonly ISocketRequestHandler _socketRequestHandler;
         private static readonly ConcurrentDictionary<Guid, SocketConnection> Connections = new();
+        private static readonly ConcurrentDictionary<string, Guid> UserConnectionIdMap = new();
 
-        public PlaybackSocketDirector(IPlaybackRequestDispatcher playbackRequestDispatcher)
+        public PlaybackSocketDirector(IPlaybackRequestDispatcher playbackRequestDispatcher, ISocketRequestHandler socketRequestHandler)
         {
             _playbackRequestDispatcher = playbackRequestDispatcher;
+            _socketRequestHandler = socketRequestHandler;
         }
         
         public async Task HandleSocketConnection(WebSocket socket, HttpContext context)
@@ -26,20 +30,23 @@ namespace SpotifyPlayback
             var socketConnection = new SocketConnection(socket, context, Guid.NewGuid());
             if (Connections.TryAdd(socketConnection.ConnectionId, socketConnection))
             {
-                var playbackInfo = await _playbackRequestDispatcher.HandlePlaybackRequest(new GetPlaybackInfoRequest());
-                var response = new PlaybackSocketMessage<GetPlaybackInfoRequestResult>()
+                if (socketConnection.Principal.IsAuthenticated())
                 {
-                    Body = playbackInfo,
-                    MessageType = MessageType.Playback,
-                    ContentType = PlaybackMessageContentType.PlaybackUpdate,
+                    UserConnectionIdMap.TryAdd(socketConnection.Principal.Id, socketConnection.ConnectionId);
+                }
+                
+                var response = new PlaybackSocketMessage<int>()
+                {
+                    MessageType = MessageType.ConnectionEstablished,
                 };
+
                 await socketConnection.SendMessage(response.GetBytes());
                 
                 await socketConnection.PollConnection((result, buffer) =>
                 {
                     if (result.MessageType == WebSocketMessageType.Text)
                     {
-                        // TODO: handle message or maybe delete receiving messages in the future
+                        _socketRequestHandler.HandleSocketRequest(buffer, socketConnection);
                     }
                 });
 
@@ -54,13 +61,19 @@ namespace SpotifyPlayback
             {
                 if (socketConnection.Principal.IsAuthenticated())
                 {
-                    await _playbackRequestDispatcher.HandlePlaybackRequest(new DisconnectPlaybackGroupRequest()
-                    {
-                        UserId = socketConnection.Principal.Id,
-                    });
+                    await _playbackRequestDispatcher.HandlePlaybackSocketRequest(new DisconnectPlaybackGroupRequest(), socketConnection);
                 }
 
+                RemoveUserFromConnectionIdMap(socketConnection);
                 RemoveSocket(socketConnection.ConnectionId);
+            }
+        }
+
+        private void RemoveUserFromConnectionIdMap(SocketConnection socketConnection)
+        {
+            if (socketConnection.Principal.IsAuthenticated())
+            {
+                UserConnectionIdMap.Remove(socketConnection.Principal.Id, out _);
             }
         }
 
@@ -72,6 +85,18 @@ namespace SpotifyPlayback
         public IEnumerable<SocketConnection> GetSocketConnections()
         {
             return Connections.Values;
+        }
+
+        public bool TryGetUserSocketConnection(string userId, [MaybeNullWhen(false)] out SocketConnection socketConnection)
+        {
+            var hasFoundConnectionId = UserConnectionIdMap.TryGetValue(userId, out var connectionId);
+            if (!hasFoundConnectionId)
+            {
+                socketConnection = null;
+                return false;
+            }
+            var hasFoundSocketConnection = Connections.TryGetValue(connectionId, out socketConnection);
+            return hasFoundSocketConnection;
         }
 
         public async Task BroadCastMessage<T>(SocketMessage<T> message)
@@ -86,6 +111,28 @@ namespace SpotifyPlayback
                 .Select(c => c.Value);
             
             await SendMessageToConnections(message, connections);
+        }
+
+        public bool SetSocketConnectedGroupId(Guid connectionId, Guid groupId)
+        {
+            if (Connections.TryGetValue(connectionId, out var socketConnection))
+            {
+                socketConnection.SetConnectedPlaybackGroupId(groupId);
+                return true;
+            }
+            
+            return false;
+        }
+
+        public bool ClearSocketConnectedGroupId(Guid connectionId)
+        {
+            if (Connections.TryGetValue(connectionId, out var socketConnection))
+            {
+                socketConnection.ClearConnectedPlaybackGroupId();
+                return true;
+            }
+
+            return false;
         }
 
         private async Task SendMessageToConnections<T>(SocketMessage<T> message,

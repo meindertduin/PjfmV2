@@ -1,18 +1,36 @@
 <div class="container">
   <section class="playback">
-    <div class="playback-info">
+    <div class="playback-info" *ngIf="loadedPlaybackData != null">
       <div class="image-container">
         <img src="/assets/images/album-cover.jpg" alt="album cover" />
       </div>
       <div class="track-info-container">
         <div class="currently-playing-title">Now playing:</div>
-        <a class="track-title">[ Book of spells ]</a>
-        <a class="artist-title">[ Ian taylor ]</a>
+        <a class="track-title">[ {{loadedPlaybackData.currentlyPlayingTrack.title}} ]</a>
+        <a class="artist-title">[ {{loadedPlaybackData.currentlyPlayingTrack.artists | artistsPipe}} ]</a>
       </div>
     </div>
-    <div class="playback-controls-container">
-      <pjfm-track-progression-bar [startTimeMs]="0" [trackDurationMs]="10000"></pjfm-track-progression-bar>
-      <pjfm-playback-buttons></pjfm-playback-buttons>
+    <div class="playback-controls-container" *ngIf="loadedPlaybackData != null">
+      <pjfm-track-progression-bar
+        [startTimeMs]="trackStartTimeMs"
+        [trackDurationMs]="loadedPlaybackData.currentlyPlayingTrack.trackDurationMs"
+      ></pjfm-track-progression-bar>
+      <div class="playback-buttons">
+        <button class="control-button">
+          <span class="icon" [inlineSVG]="'assets/icons/search.svg'"></span>
+        </button>
+        <button class="control-button" (click)="playClicked()" *ngIf="!playbackIsActive; else pausePlaybackButton">
+          <span class="icon" [inlineSVG]="'assets/icons/play-arrow.svg'"></span>
+        </button>
+        <ng-template #pausePlaybackButton>
+          <button class="control-button" (click)="pauseClicked()" *ngIf="playbackIsActive; else pausePlaybackButton">
+            <span class="icon" [inlineSVG]="'assets/icons/pause.svg'"></span>
+          </button>
+        </ng-template>
+        <button class="control-button">
+          <span class="icon" [inlineSVG]="'assets/icons/skip.svg'"></span>
+        </button>
+      </div>
     </div>
   </section>
   <section class="playback-queue">
@@ -22,3 +40,9 @@
     </div>
   </section>
 </div>
+<pjfm-start-listen-dialog
+  *ngIf="loadedPlaybackData != null"
+  [showDialog]="showStartListenDialog"
+  (closeDialog)="showStartListenDialog = false"
+  [groupId]="loadedPlaybackData.groupId"
+></pjfm-start-listen-dialog>

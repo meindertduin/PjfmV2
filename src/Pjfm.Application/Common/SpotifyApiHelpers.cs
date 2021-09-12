@@ -8,12 +8,13 @@ namespace Pjfm.Application.Common
     {
         public static JsonSerializerSettings GetSpotifySerializerSettings()
         {
-            return new JsonSerializerSettings()
+            return new()
             {
                 ContractResolver = new CustomContractResolver()
                 {
-                    NamingStrategy = new SnakeCaseNamingStrategy()
-                }
+                    NamingStrategy = new SnakeCaseNamingStrategy(),
+                },
+                Formatting = Formatting.Indented,
             };
         }
     }

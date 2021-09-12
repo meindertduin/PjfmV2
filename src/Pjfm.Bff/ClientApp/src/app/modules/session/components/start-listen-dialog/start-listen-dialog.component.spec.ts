@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PlaybackButtonsComponent } from './playback-buttons.component';
+import { StartListenDialogComponent } from './start-listen-dialog.component';
 
-describe('PlaybackButtonsComponent', () => {
-  let component: PlaybackButtonsComponent;
-  let fixture: ComponentFixture<PlaybackButtonsComponent>;
+describe('StartListenDialogComponent', () => {
+  let component: StartListenDialogComponent;
+  let fixture: ComponentFixture<StartListenDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PlaybackButtonsComponent ]
+      declarations: [ StartListenDialogComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PlaybackButtonsComponent);
+    fixture = TestBed.createComponent(StartListenDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

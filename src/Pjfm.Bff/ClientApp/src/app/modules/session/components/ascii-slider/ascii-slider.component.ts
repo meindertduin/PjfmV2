@@ -29,8 +29,6 @@ export class AsciiSliderComponent implements AfterViewInit, OnChanges {
   @HostListener('window:resize')
   onResize(): void {
     this.setLoadingBar();
-    console.log(this.loadingBar.length);
-    console.log(this.container.nativeElement.offsetWidth);
   }
 
   ngAfterViewInit(): void {

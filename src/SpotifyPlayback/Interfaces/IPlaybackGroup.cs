@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.SpotifyTrack;
 using SpotifyPlayback.Models.DataTransferObjects;
+using SpotifyPlayback.Models.Socket;
 
 namespace SpotifyPlayback.Interfaces
 {
@@ -10,11 +11,15 @@ namespace SpotifyPlayback.Interfaces
     {
         Guid GroupId { get; }
         string GroupName { get; }
-        Task<SpotifyTrack> GetNextTrack();
-        IEnumerable<string> GetGroupListenerIds();
+        Task<SpotifyTrackDto> GetNextTrack();
+        IEnumerable<ListenerDto> GetGroupListeners();
+        IEnumerable<Guid> GetJoinedConnectionIds();
         bool AddListener(ListenerDto listener);
-        bool RemoveListener(ListenerDto listener);
+        bool AddJoinedConnectionId(Guid connectionId);
+        bool RemoveJoinedConnection(Guid connectionId);
+        bool RemoveListener(Guid connectionId);
         bool ContainsListeners(ListenerDto listener);
+        bool ContainsJoinedConnectionId(Guid connectionId);
         bool HasListeners();
         PlaybackGroupDto GetPlaybackGroupInfo();
     }

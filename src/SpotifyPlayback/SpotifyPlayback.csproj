@@ -8,11 +8,13 @@
     <ItemGroup>
       <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
-      <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+      <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+      <PackageReference Include="SpotifyAPI.Web" Version="6.2.1" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\Domain\Domain.csproj" />
+      <ProjectReference Include="..\Pjfm.Application\Pjfm.Application.csproj" />
       <ProjectReference Include="..\Pjfm.Common\Pjfm.Common.csproj" />
       <ProjectReference Include="..\Pjfm.Infrastructure\Pjfm.Infrastructure.csproj" />
     </ItemGroup>

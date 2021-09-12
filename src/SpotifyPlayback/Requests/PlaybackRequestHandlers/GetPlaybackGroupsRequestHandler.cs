@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models.DataTransferObjects;
 
-namespace SpotifyPlayback.Requests.Handlers
+namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 {
     public class
         GetPlaybackGroupsRequestHandler : IPlaybackRequestHandler<GetPlaybackGroupsRequest,
@@ -19,7 +19,6 @@ namespace SpotifyPlayback.Requests.Handlers
         public Task<GetPlaybackGroupsRequestResult> HandleAsync(GetPlaybackGroupsRequest request)
         {
             return Task.FromResult(new GetPlaybackGroupsRequestResult()
-
             {
                 PlaybackGroups = _playbackGroupCollection.GetPlaybackGroupsInfo(),
             });

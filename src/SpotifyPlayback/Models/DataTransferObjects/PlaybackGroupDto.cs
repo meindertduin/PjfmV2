@@ -1,5 +1,5 @@
 using System;
-using Domain.SpotifyTrack;
+using SpotifyPlayback.Models.Socket;
 
 namespace SpotifyPlayback.Models.DataTransferObjects
 {
@@ -7,7 +7,7 @@ namespace SpotifyPlayback.Models.DataTransferObjects
     {
         public Guid GroupId { get; set; } 
         public string GroupName { get; set; } = null!;
-        public SpotifyTrack? CurrentlyPlayingTrack { get; set; }
+        public SpotifyTrackDto? CurrentlyPlayingTrack { get; set; }
         public int ListenersCount { get; set; }
     }
 }

@@ -1,0 +1,14 @@
+<div class="container">
+  <div class="dialog">
+    <div class="dialog-header-container">
+      <ng-content select="[title]"></ng-content>
+      <button class="close-button" (click)="onCloseDialogClick()">[ X ]</button>
+    </div>
+    <div class="dialog-content-container">
+      <ng-content select="[content]"></ng-content>
+    </div>
+    <div class="dialog-footer-container">
+      <ng-content select="[footer]"></ng-content>
+    </div>
+  </div>
+</div>

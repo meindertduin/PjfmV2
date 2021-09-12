@@ -1,15 +1,19 @@
 using System;
+using Pjfm.Common.Authentication;
 
 namespace SpotifyPlayback.Models.DataTransferObjects
 {
     public class ListenerDto
     {
-        public string UserId { get; set; }
+        public IPjfmPrincipal Principal { get; set; }
         public Guid ConnectionId { get; set; }
-        public ListenerDto(string userId, Guid connectionId)
+        public string DeviceId { get; set; }
+
+        public ListenerDto(Guid connectionId, IPjfmPrincipal principal, string deviceId)
         {
-            UserId = userId;
             ConnectionId = connectionId;
+            Principal = principal;
+            DeviceId = deviceId;
         }
     }
 }

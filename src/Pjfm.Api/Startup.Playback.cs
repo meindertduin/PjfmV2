@@ -12,8 +12,12 @@ namespace Pjfm.Api
         private void ConfigurePlayback(IServiceCollection services)
         {
             services.AddTransient<IPlaybackRequestDispatcher, PlaybackRequestDispatcher>();
-            services.AddTransient<IPlaybackScheduledTaskQueue, PlaybackScheduledTaskQueue>();
+            services.AddTransient<IPlaybackScheduledTrackQueue, PlaybackScheduledTrackQueue>();
             services.AddTransient<IPlaybackQueue, PlaybackQueue>();
+            services.AddTransient<ISpotifyPlaybackClient, SpotifyPlaybackClient>();
+            services.AddTransient<ISpotifyPlaybackService, SpotifyPlaybackService>();
+            services.AddTransient<ISpotifyPlaybackController, SpotifyPlaybackController>();
+            services.AddTransient<ISocketRequestHandler, SocketRequestHandler>();
             
             services.AddSingleton<ISocketDirector, PlaybackSocketDirector>();
             services.AddSingleton<IPlaybackGroupCollection, PlaybackGroupCollection>();
@@ -26,10 +30,15 @@ namespace Pjfm.Api
                     .AddClasses(p => p.AssignableTo(typeof(IPlaybackRequestHandler<,>)))
                     .AsClosedTypeOf(typeof(IPlaybackRequestHandler<,>))
                     .WithTransientLifetime();
-
+                
                 a.FromAssemblies(typeof(SpotifyPlaybackHostedService).Assembly)
                     .AddClasses(p => p.AssignableTo(typeof(IPlaybackRequestHandler<>)))
                     .AsClosedTypeOf(typeof(IPlaybackRequestHandler<>))
+                    .WithTransientLifetime();
+
+                a.FromAssemblies(typeof(SpotifyPlaybackHostedService).Assembly)
+                    .AddClasses(p => p.AssignableTo(typeof(IPlaybackSocketRequestHandler<>)))
+                    .AsClosedTypeOf(typeof(IPlaybackSocketRequestHandler<>))
                     .WithTransientLifetime();
             });
         }

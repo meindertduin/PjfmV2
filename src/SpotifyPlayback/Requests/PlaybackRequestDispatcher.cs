@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using SpotifyPlayback.Interfaces;
+using SpotifyPlayback.Models;
 
 namespace SpotifyPlayback.Requests
 {
@@ -13,11 +14,17 @@ namespace SpotifyPlayback.Requests
         {
             _serviceProvider = serviceProvider;
         }
-        
-        public Task HandlePlaybackRequest<TRequest>(TRequest command) where TRequest : IPlaybackRequest
+
+        public Task HandlePlaybackSocketRequest<TRequest>(TRequest request, SocketConnection connection) where TRequest : IPlaybackRequest
+        {
+            var handler = _serviceProvider.GetRequiredService<IPlaybackSocketRequestHandler<TRequest>>();
+            return handler.HandleAsync(request, connection);
+        }
+
+        public Task HandlePlaybackRequest<TRequest>(TRequest request) where TRequest : IPlaybackRequest
         {
             var handler = _serviceProvider.GetRequiredService<IPlaybackRequestHandler<TRequest>>();
-            return handler.HandleAsync(command);
+            return handler.HandleAsync(request);
         }
 
         public Task<TResult> HandlePlaybackRequest<TResult>(IPlaybackRequest<TResult> request)
