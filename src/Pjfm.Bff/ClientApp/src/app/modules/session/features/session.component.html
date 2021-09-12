@@ -19,9 +19,14 @@
         <button class="control-button">
           <span class="icon" [inlineSVG]="'assets/icons/search.svg'"></span>
         </button>
-        <button class="control-button" (click)="playClicked()">
+        <button class="control-button" (click)="playClicked()" *ngIf="!playbackIsActive; else pausePlaybackButton">
           <span class="icon" [inlineSVG]="'assets/icons/play-arrow.svg'"></span>
         </button>
+        <ng-template #pausePlaybackButton>
+          <button class="control-button" (click)="pauseClicked()" *ngIf="playbackIsActive; else pausePlaybackButton">
+            <span class="icon" [inlineSVG]="'assets/icons/pause.svg'"></span>
+          </button>
+        </ng-template>
         <button class="control-button">
           <span class="icon" [inlineSVG]="'assets/icons/skip.svg'"></span>
         </button>

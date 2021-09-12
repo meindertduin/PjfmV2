@@ -41,6 +41,8 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
                     PlaybackRequestResult.Fail<PlayPlaybackForUserRequestResult>("Failed to join as listener."));
             }
 
+            _socketDirector.SetSocketConnectedGroupId(socketConnection.ConnectionId, request.GroupId);
+
             var groupInfo = _playbackGroupCollection.GetPlaybackGroupInfo(request.GroupId);
             if (groupInfo.CurrentlyPlayingTrack != null)
             {

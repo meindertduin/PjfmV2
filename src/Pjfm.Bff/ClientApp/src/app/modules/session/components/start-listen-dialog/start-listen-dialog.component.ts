@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { requiredValidator } from '../../../../core/utils/custom-form-validators';
 import { DeviceModel, PlaybackClient, SpotifyClient } from '../../../../core/services/api-client.service';
+import { PlaybackService } from '../../../../shared/services/playback.service';
 
 @Component({
   selector: 'pjfm-start-listen-dialog',
@@ -27,6 +28,7 @@ export class StartListenDialogComponent implements OnInit {
     private readonly _formBuilder: FormBuilder,
     private readonly _spotifyClient: SpotifyClient,
     private readonly _playbackClient: PlaybackClient,
+    private readonly _playbackService: PlaybackService,
   ) {}
 
   ngOnInit(): void {
@@ -67,7 +69,9 @@ export class StartListenDialogComponent implements OnInit {
   onPlayClicked(): void {
     const deviceId = this.deviceIdFormControl.value as string;
     if (deviceId != null && deviceId) {
-      this._playbackClient.play(deviceId, this.groupId).subscribe(() => {});
+      this._playbackClient.play(deviceId, this.groupId).subscribe(() => {
+        this._playbackService.setPlaybackIsActive(true);
+      });
     }
   }
 }

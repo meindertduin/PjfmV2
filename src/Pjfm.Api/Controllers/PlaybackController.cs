@@ -45,7 +45,7 @@ namespace Pjfm.Api.Controllers
             {
                 return Forbid();
             }
-            
+
             var playResult = await _playbackRequestDispatcher.HandlePlaybackRequest(new PlayPlaybackForUserRequest()
             {
                 DeviceId = deviceId,
@@ -58,6 +58,15 @@ namespace Pjfm.Api.Controllers
             {
                 // log result
             }
+
+            return Ok();
+        }
+
+        [HttpPut("stop")]
+        public async Task<IActionResult> Stop()
+        {
+            await _playbackRequestDispatcher.HandlePlaybackRequest(new StopPlaybackForUserRequest()
+                {UserId = PjfmPrincipal.Id});
 
             return Ok();
         }

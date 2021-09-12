@@ -21,6 +21,12 @@ namespace SpotifyPlayback.Requests
             return handler.HandleAsync(request, connection);
         }
 
+        public Task HandlePlaybackRequest<TRequest>(TRequest request) where TRequest : IPlaybackRequest
+        {
+            var handler = _serviceProvider.GetRequiredService<IPlaybackRequestHandler<TRequest>>();
+            return handler.HandleAsync(request);
+        }
+
         public Task<TResult> HandlePlaybackRequest<TResult>(IPlaybackRequest<TResult> request)
         {
             var handlerType = typeof(IPlaybackRequestHandler<,>).MakeGenericType(request.GetType(), typeof(TResult));

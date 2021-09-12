@@ -3,6 +3,8 @@ import { ApiSocketClientService, PlaybackUpdateMessageBody } from '../../../core
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { PlaybackService } from '../../../shared/services/playback.service';
+import { PlaybackClient } from '../../../core/services/api-client.service';
 
 @Component({
   selector: 'pjfm-session',
@@ -14,12 +16,19 @@ export class SessionComponent implements OnInit, OnDestroy {
   loadedPlaybackData: PlaybackUpdateMessageBody | null = null;
   trackStartTimeMs = 0;
   showStartListenDialog = false;
+  playbackIsActive!: boolean;
 
-  constructor(private readonly _apiSocketClient: ApiSocketClientService, private readonly _activatedRoute: ActivatedRoute) {}
+  constructor(
+    private readonly _apiSocketClient: ApiSocketClientService,
+    private readonly _activatedRoute: ActivatedRoute,
+    private readonly _playbackService: PlaybackService,
+    private readonly _playbackClient: PlaybackClient,
+  ) {}
 
   ngOnInit(): void {
     this.connectToGroup();
     this.getPlaybackData();
+    this.getPlaybackIsActive();
   }
 
   private connectToGroup() {
@@ -50,6 +59,15 @@ export class SessionComponent implements OnInit, OnDestroy {
       });
   }
 
+  private getPlaybackIsActive() {
+    this._playbackService
+      .getPlaybackIsActive()
+      .pipe(takeUntil(this._destroyed$))
+      .subscribe((isActive) => {
+        this.playbackIsActive = isActive;
+      });
+  }
+
   ngOnDestroy(): void {
     this._destroyed$.complete();
     this._destroyed$.next();
@@ -57,5 +75,9 @@ export class SessionComponent implements OnInit, OnDestroy {
 
   playClicked(): void {
     this.showStartListenDialog = true;
+  }
+
+  pauseClicked(): void {
+    this._playbackClient.stop().subscribe();
   }
 }
