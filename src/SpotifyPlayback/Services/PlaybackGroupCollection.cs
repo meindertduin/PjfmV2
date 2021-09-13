@@ -24,16 +24,25 @@ namespace SpotifyPlayback.Services
 
         public Guid CreateNewPlaybackGroup(string groupName)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var playbackQueue = scope.ServiceProvider.GetRequiredService<IPlaybackQueue>();
+            var playbackQueue = GetNewPlaybackQueue();
             var groupId = Guid.NewGuid();
 
-            var playbackGroup = new PlaybackGroup(playbackQueue, groupId, groupName);
-
-            _playbackGroups.TryAdd(groupId, playbackGroup);
-
+            CreateAndAddPlaybackGroup(groupName, playbackQueue, groupId);
             PlaybackGroupCreatedEvent.Invoke(this, new PlaybackGroupCreatedEventArgs() { GroupId = groupId });
             return groupId;
+        }
+
+        private IPlaybackQueue GetNewPlaybackQueue()
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var playbackQueue = scope.ServiceProvider.GetRequiredService<IPlaybackQueue>();
+            return playbackQueue;
+        }
+        
+        private void CreateAndAddPlaybackGroup(string groupName, IPlaybackQueue? playbackQueue, Guid groupId)
+        {
+            var playbackGroup = new PlaybackGroup(playbackQueue, groupId, groupName);
+            _playbackGroups.TryAdd(groupId, playbackGroup);
         }
 
         public async Task<PlaybackScheduledTrack> GetGroupNewTrack(Guid groupId)

@@ -23,12 +23,28 @@ namespace SpotifyPlayback.Services
         
         public Task PlaySpotifyTrackForUsers(PlaybackScheduledTrack playbackScheduledTrack)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var spotifyPlaybackService = scope.ServiceProvider.GetRequiredService<ISpotifyPlaybackService>();
+            var spotifyPlaybackService = CreateSpotifyPlaybackService();
+
             var listeners = _playbackGroupCollection.GetGroupListeners(playbackScheduledTrack.GroupId);
-            var playbackGroupInfo = _playbackGroupCollection.GetPlaybackGroupInfo(playbackScheduledTrack.GroupId);
             var connectedIds = _playbackGroupCollection.GetGroupJoinedConnectionIds(playbackScheduledTrack.GroupId);
 
+            var playbackUpdateMessage = CreatePlaybackUpdateMessage(playbackScheduledTrack);
+
+            _socketDirector.BroadCastMessageOverConnections(playbackUpdateMessage, connectedIds);
+
+            return spotifyPlaybackService.PlayNextTrackForUsers(listeners.ToArray(), playbackScheduledTrack.SpotifyTrack.SpotifyTrackId);
+        }
+
+        private ISpotifyPlaybackService CreateSpotifyPlaybackService()
+        {
+            using var scope = _serviceProvider.CreateScope();
+            var spotifyPlaybackService = scope.ServiceProvider.GetRequiredService<ISpotifyPlaybackService>();
+            return spotifyPlaybackService;
+        }
+        
+        private SocketMessage<PlaybackUpdateMessageBody> CreatePlaybackUpdateMessage(PlaybackScheduledTrack playbackScheduledTrack)
+        {
+            var playbackGroupInfo = _playbackGroupCollection.GetPlaybackGroupInfo(playbackScheduledTrack.GroupId);
             var playbackUpdateMessage = new SocketMessage<PlaybackUpdateMessageBody>()
             {
                 MessageType = MessageType.PlaybackInfo,
@@ -39,10 +55,7 @@ namespace SpotifyPlayback.Services
                     GroupName = playbackGroupInfo.GroupName,
                 }
             };
-            
-            _socketDirector.BroadCastMessageOverConnections(playbackUpdateMessage, connectedIds);
-
-            return spotifyPlaybackService.PlayNextTrackForUsers(listeners.ToArray(), playbackScheduledTrack.SpotifyTrack.SpotifyTrackId);
+            return playbackUpdateMessage;
         }
 
         public Task PauseSpotifyPlayerUser()

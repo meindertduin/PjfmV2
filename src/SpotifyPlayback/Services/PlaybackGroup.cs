@@ -36,13 +36,13 @@ namespace SpotifyPlayback.Services
             
             Guard.NotNull(newTrack, nameof(newTrack));
             
-            SetCurrentNextTracks(newTrack);
+            SetCurrentAndNextTrack(newTrack);
             SetCurrentlyPlayingTrackStartTime();
 
             return newTrack;
         }
 
-        private void SetCurrentNextTracks(SpotifyTrackDto? newTrack)
+        private void SetCurrentAndNextTrack(SpotifyTrackDto? newTrack)
         {
             if (_currentlyPlayingTrack == null)
             {

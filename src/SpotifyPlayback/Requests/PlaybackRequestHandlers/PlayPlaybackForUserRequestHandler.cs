@@ -24,8 +24,7 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
         public Task<PlaybackRequestResult<PlayPlaybackForUserRequestResult>> HandleAsync(
             PlayPlaybackForUserRequest request)
         {
-            var retrievedConnectionId =
-                _socketDirector.TryGetUserSocketConnection(request.Principal.Id, out var socketConnection);
+            var retrievedConnectionId = _socketDirector.TryGetUserSocketConnection(request.Principal.Id, out var socketConnection);
             if (!retrievedConnectionId)
             {
                 return Task.FromResult(
@@ -37,8 +36,7 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
             var hasJoinedAsListener = _playbackGroupCollection.ListenToGroup(request.GroupId, newListener);
             if (!hasJoinedAsListener)
             {
-                return Task.FromResult(
-                    PlaybackRequestResult.Fail<PlayPlaybackForUserRequestResult>("Failed to join as listener."));
+                return Task.FromResult(PlaybackRequestResult.Fail<PlayPlaybackForUserRequestResult>("Failed to join as listener."));
             }
 
             _socketDirector.SetSocketConnectedGroupId(socketConnection.ConnectionId, request.GroupId);
