@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Pjfm.Common;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models.DataTransferObjects;
 using SpotifyPlayback.Models.Socket;
@@ -32,6 +33,8 @@ namespace SpotifyPlayback.Services
         public async Task<SpotifyTrackDto> GetNextTrack()
         {
             var newTrack = await _playbackQueue.GetNextSpotifyTrack();
+            
+            Guard.NotNull(newTrack, nameof(newTrack));
             
             SetCurrentNextTracks(newTrack);
             SetCurrentlyPlayingTrackStartTime();

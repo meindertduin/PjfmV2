@@ -33,7 +33,7 @@ namespace Pjfm.Common.Authentication
         private IEnumerable<UserRole> GetUserRollenValue(ClaimsPrincipal principal)
         {
             var userRoles = new List<UserRole>();
-            foreach (var rol in principal.FindAll(PjfmClaimTypes.Rol))
+            foreach (var rol in principal.FindAll(PjfmClaimTypes.Role))
             {
                 var parseSucceeded = Enum.TryParse(rol.Value, out UserRole castedRol);
                 if (parseSucceeded)
