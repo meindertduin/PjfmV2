@@ -34,6 +34,14 @@ namespace SpotifyPlayback
             }
         }
 
+        public IEnumerable<PlaybackScheduledTrack> GetScheduledTracks()
+        {
+            lock (_queueLock)
+            {
+                return _playbackScheduledTracks;
+            }
+        }
+
         public bool RemovePlaybackScheduledTrack(Guid groupId)
         {
             lock (_queueLock)
