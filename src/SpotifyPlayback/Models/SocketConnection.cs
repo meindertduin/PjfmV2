@@ -4,10 +4,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Pjfm.Common.Authentication;
+using SpotifyPlayback.Interfaces;
 
 namespace SpotifyPlayback.Models
 {
-    public class SocketConnection
+    public class SocketConnection : ISocketConnection
     {
         private WebSocket _webSocket;
         private HttpContext _context;

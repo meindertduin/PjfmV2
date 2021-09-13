@@ -12,8 +12,8 @@ namespace SpotifyPlayback.Interfaces
     {
         Task HandleSocketConnection(WebSocket socket, HttpContext context);
         bool RemoveSocket(Guid connectionId);
-        IEnumerable<SocketConnection> GetSocketConnections();
-        bool TryGetUserSocketConnection(string userId, [MaybeNullWhen(false)] out SocketConnection socketConnection);
+        IEnumerable<ISocketConnection> GetSocketConnections();
+        bool TryGetUserSocketConnection(string userId, [MaybeNullWhen(false)] out ISocketConnection socketConnection);
         Task BroadCastMessage<T>(SocketMessage<T> message);
         Task BroadCastMessageOverConnections<T>(SocketMessage<T> message, IEnumerable<Guid> connectionIds);
         bool SetSocketConnectedGroupId(Guid connectionId, Guid groupId);

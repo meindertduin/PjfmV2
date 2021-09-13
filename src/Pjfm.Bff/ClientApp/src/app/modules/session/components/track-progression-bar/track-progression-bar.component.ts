@@ -9,6 +9,7 @@ export class TrackProgressionBarComponent implements OnInit, OnChanges {
   @Input() trackDurationMs!: number;
   @Input() startTimeMs = 0;
 
+  // eslint-disable-next-line
   private _currentInterval!: any;
 
   currentTimeMs!: number;

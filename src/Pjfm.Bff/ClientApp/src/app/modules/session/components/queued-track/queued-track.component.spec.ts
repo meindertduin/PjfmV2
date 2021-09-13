@@ -8,9 +8,8 @@ describe('QueuedTrackComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ QueuedTrackComponent ]
-    })
-    .compileComponents();
+      declarations: [QueuedTrackComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

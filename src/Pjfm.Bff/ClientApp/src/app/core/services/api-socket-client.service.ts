@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { WebSocketSubject } from 'rxjs/internal-compatibility';
 import { webSocket } from 'rxjs/webSocket';
 import { MessageType } from '../models/api-socket-message';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { ApiSocketRequest, RequestType } from '../models/api-socket-request';
 import { TrackTerm } from './api-client.service';
 
@@ -25,11 +25,12 @@ export class ApiSocketClientService {
       (message) => {
         this.handleIncomingMessage(message as PlaybackMessage<unknown>);
       },
-      (error) => {
+      () => {
         // TODO: add a way of logging application errors
-        console.log(error);
       },
-      () => this.onComplete(),
+      () => {
+        // Todo: add onComplete
+      },
     );
   }
 
@@ -73,8 +74,6 @@ export class ApiSocketClientService {
 
     this.socket.next(groupConnectionRequest);
   }
-
-  onComplete(): void {}
 }
 
 interface JoinPlaybackGroupSocketRequest {

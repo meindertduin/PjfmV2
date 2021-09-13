@@ -1,11 +1,7 @@
 <div class="container">
   <pjfm-ascii-slider [percentage]="trackPercentage"></pjfm-ascii-slider>
   <div class="time-labels-container">
-    <div class="time-label">
-      {{currentTimeMs | convertMsToTime}}
-    </div>
-    <div class="time-label">
-      {{trackDurationMs | convertMsToTime}}
-    </div>
+    <div class="time-label">{{currentTimeMs | convertMsToTime}}</div>
+    <div class="time-label">{{trackDurationMs | convertMsToTime}}</div>
   </div>
 </div>

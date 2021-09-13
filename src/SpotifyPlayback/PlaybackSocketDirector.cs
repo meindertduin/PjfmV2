@@ -16,7 +16,7 @@ namespace SpotifyPlayback
     {
         private readonly IPlaybackRequestDispatcher _playbackRequestDispatcher;
         private readonly ISocketRequestHandler _socketRequestHandler;
-        private static readonly ConcurrentDictionary<Guid, SocketConnection> Connections = new();
+        private static readonly ConcurrentDictionary<Guid, ISocketConnection> Connections = new();
         private static readonly ConcurrentDictionary<string, Guid> UserConnectionIdMap = new();
 
         public PlaybackSocketDirector(IPlaybackRequestDispatcher playbackRequestDispatcher, ISocketRequestHandler socketRequestHandler)
@@ -82,12 +82,12 @@ namespace SpotifyPlayback
             return Connections.Remove(connectionId, out _);
         }
 
-        public IEnumerable<SocketConnection> GetSocketConnections()
+        public IEnumerable<ISocketConnection> GetSocketConnections()
         {
             return Connections.Values;
         }
 
-        public bool TryGetUserSocketConnection(string userId, [MaybeNullWhen(false)] out SocketConnection socketConnection)
+        public bool TryGetUserSocketConnection(string userId, [MaybeNullWhen(false)] out ISocketConnection socketConnection)
         {
             var hasFoundConnectionId = UserConnectionIdMap.TryGetValue(userId, out var connectionId);
             if (!hasFoundConnectionId)
@@ -136,7 +136,7 @@ namespace SpotifyPlayback
         }
 
         private async Task SendMessageToConnections<T>(SocketMessage<T> message,
-            IEnumerable<SocketConnection> socketConnections)
+            IEnumerable<ISocketConnection> socketConnections)
         {
             var messageBytes = message.GetBytes();
             var sendMessageTasks = new List<Task>();
