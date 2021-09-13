@@ -51,7 +51,7 @@ namespace SpotifyPlayback.Services
             return getSpotifyTracksAmount;
         }
         
-        private void AddSpotifyTracksToQueue(List<SpotifyTrack>? spotifyTracks)
+        private void AddSpotifyTracksToQueue(List<SpotifyTrack> spotifyTracks)
         {
             foreach (var spotifyTrack in spotifyTracks)
             {

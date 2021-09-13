@@ -39,7 +39,7 @@ namespace SpotifyPlayback.Services
             return playbackQueue;
         }
         
-        private void CreateAndAddPlaybackGroup(string groupName, IPlaybackQueue? playbackQueue, Guid groupId)
+        private void CreateAndAddPlaybackGroup(string groupName, IPlaybackQueue playbackQueue, Guid groupId)
         {
             var playbackGroup = new PlaybackGroup(playbackQueue, groupId, groupName);
             _playbackGroups.TryAdd(groupId, playbackGroup);

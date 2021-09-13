@@ -61,9 +61,9 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
     public class PlayPlaybackForUserRequest : IPlaybackRequest<PlaybackRequestResult<PlayPlaybackForUserRequestResult>>
     {
         public Guid GroupId { get; set; }
-        public string DeviceId { get; set; }
-        public IPjfmPrincipal Principal { get; set; }
-        public string SpotifyAccessToken { get; set; }
+        public string DeviceId { get; set; } = null!;
+        public IPjfmPrincipal Principal { get; set; } = null!;
+        public string SpotifyAccessToken { get; set; } = null!;
     }
 
     public class PlayPlaybackForUserRequestResult

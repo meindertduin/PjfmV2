@@ -5,7 +5,7 @@ namespace SpotifyPlayback.Requests
     {
         public bool IsSuccessful { get; set; }
         public string Message { get; set; } = null!;
-        public T Result { get; set; }
+        public T Result { get; set; } = default!;
     }
 
     public static class PlaybackRequestResult
