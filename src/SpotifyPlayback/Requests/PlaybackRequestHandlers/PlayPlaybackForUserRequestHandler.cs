@@ -9,22 +9,23 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
     public class PlayPlaybackForUserRequestHandler : IPlaybackRequestHandler<PlayPlaybackForUserRequest,
         PlaybackRequestResult<PlayPlaybackForUserRequestResult>>
     {
-        private readonly ISocketDirector _socketDirector;
         private readonly IPlaybackGroupCollection _playbackGroupCollection;
         private readonly ISpotifyPlaybackService _spotifyPlaybackService;
+        private readonly ISocketConnectionCollection _socketConnectionCollection;
 
-        public PlayPlaybackForUserRequestHandler(ISocketDirector socketDirector,
-            IPlaybackGroupCollection playbackGroupCollection, ISpotifyPlaybackService spotifyPlaybackService)
+        public PlayPlaybackForUserRequestHandler(IPlaybackGroupCollection playbackGroupCollection,
+            ISpotifyPlaybackService spotifyPlaybackService, ISocketConnectionCollection socketConnectionCollection)
         {
-            _socketDirector = socketDirector;
             _playbackGroupCollection = playbackGroupCollection;
             _spotifyPlaybackService = spotifyPlaybackService;
+            _socketConnectionCollection = socketConnectionCollection;
         }
 
         public Task<PlaybackRequestResult<PlayPlaybackForUserRequestResult>> HandleAsync(
             PlayPlaybackForUserRequest request)
         {
-            var retrievedConnectionId = _socketDirector.TryGetUserSocketConnection(request.Principal.Id, out var socketConnection);
+            var retrievedConnectionId =
+                _socketConnectionCollection.TryGetUserSocketConnection(request.Principal.Id, out var socketConnection);
             if (!retrievedConnectionId)
             {
                 return Task.FromResult(
@@ -36,15 +37,17 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
             var hasJoinedAsListener = _playbackGroupCollection.ListenToGroup(request.GroupId, newListener);
             if (!hasJoinedAsListener)
             {
-                return Task.FromResult(PlaybackRequestResult.Fail<PlayPlaybackForUserRequestResult>("Failed to join as listener."));
+                return Task.FromResult(
+                    PlaybackRequestResult.Fail<PlayPlaybackForUserRequestResult>("Failed to join as listener."));
             }
 
-            _socketDirector.SetSocketConnectedGroupId(socketConnection.ConnectionId, request.GroupId);
+            _socketConnectionCollection.SetSocketConnectedGroupId(socketConnection.ConnectionId, request.GroupId);
 
             var groupInfo = _playbackGroupCollection.GetPlaybackGroupInfo(request.GroupId);
             if (groupInfo.CurrentlyPlayingTrack != null)
             {
-                var trackStartTimeMs = (DateTime.Now - groupInfo.CurrentlyPlayingTrack.TrackStartDate).TotalMilliseconds;
+                var trackStartTimeMs =
+                    (DateTime.Now - groupInfo.CurrentlyPlayingTrack.TrackStartDate).TotalMilliseconds;
                 _spotifyPlaybackService.PlayTrackForUser(newListener, groupInfo.CurrentlyPlayingTrack.SpotifyTrackId,
                     request.SpotifyAccessToken, (int) trackStartTimeMs);
             }

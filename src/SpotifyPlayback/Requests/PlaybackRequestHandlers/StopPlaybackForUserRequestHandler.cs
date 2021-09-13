@@ -6,21 +6,21 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 {
     public class StopPlaybackForUserRequestHandler : IPlaybackRequestHandler<StopPlaybackForUserRequest>
     {
-        private readonly ISocketDirector _socketDirector;
         private readonly ISpotifyPlaybackService _spotifyPlaybackService;
         private readonly IPlaybackGroupCollection _playbackGroupCollection;
+        private readonly ISocketConnectionCollection _socketConnectionCollection;
 
-        public StopPlaybackForUserRequestHandler(ISocketDirector socketDirector,
-            ISpotifyPlaybackService spotifyPlaybackService, IPlaybackGroupCollection playbackGroupCollection)
+        public StopPlaybackForUserRequestHandler(ISpotifyPlaybackService spotifyPlaybackService, IPlaybackGroupCollection playbackGroupCollection,
+            ISocketConnectionCollection socketConnectionCollection)
         {
-            _socketDirector = socketDirector;
             _spotifyPlaybackService = spotifyPlaybackService;
             _playbackGroupCollection = playbackGroupCollection;
+            _socketConnectionCollection = socketConnectionCollection;
         }
 
         public Task HandleAsync(StopPlaybackForUserRequest request)
         {
-            if (!_socketDirector.TryGetUserSocketConnection(request.UserId, out var socketConnection))
+            if (!_socketConnectionCollection.TryGetUserSocketConnection(request.UserId, out var socketConnection))
             {
                 throw new NullReferenceException();
             }
@@ -30,8 +30,8 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
             {
                 _playbackGroupCollection.RemoveListenerFromGroup(socketConnection.ConnectionId, userGroupId.Value);
                 _spotifyPlaybackService.PausePlaybackForUser(request.UserId);
-                _socketDirector.ClearSocketConnectedGroupId(socketConnection.ConnectionId);
-                
+                _socketConnectionCollection.ClearSocketConnectedGroupId(socketConnection.ConnectionId);
+
                 return Task.CompletedTask;
             }
 
