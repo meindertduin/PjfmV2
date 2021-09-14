@@ -45,6 +45,7 @@
 
 .raised-button {
   visibility: hidden;
+  position: relative;
 
   span {
     position: relative;
@@ -61,6 +62,38 @@
     &:active {
       top: 3px;
       box-shadow: none;
+    }
+  }
+
+  &__yellow {
+    span {
+      color: $color-yellow;
+      border-color: $color-yellow;
+      box-shadow: 0 3px 0 0 lighten($color-yellow, 3);
+    }
+  }
+
+  &__orange {
+    span {
+      color: $color-orange;
+      border-color: $color-orange;
+      box-shadow: 0 3px 0 0 lighten($color-orange, 3);
+    }
+  }
+
+  &__warning {
+    span {
+      color: $color-warning;
+      border-color: $color-warning;
+      box-shadow: 0 3px 0 0 lighten($color-warning, 3);
+    }
+  }
+
+  &__danger {
+    span {
+      color: $color-danger;
+      border-color: $color-danger;
+      box-shadow: 0 3px 0 0 lighten($color-danger, 3);
     }
   }
 }
