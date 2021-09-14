@@ -60,13 +60,13 @@ namespace SpotifyPlayback
         {
             Task.Run(async () =>
             {
-                var newTrack = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
-                var nextNewTrack = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
+                var firstTrack = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
+                var secondTrack = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
                 
-                nextNewTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(nextNewTrack.SpotifyTrack.TrackDurationMs);
-                // nextNewTrack.DueTime = DateTime.Now + TimeSpan.FromSeconds(5);
+                secondTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(secondTrack.SpotifyTrack.TrackDurationMs);
                 
-                await PlayScheduledTrack(newTrack);
+                _playbackScheduledTrackQueue.AddPlaybackScheduledTrack(secondTrack);
+                await _spotifyPlaybackController.PlaySpotifyTrackForUsers(firstTrack);
             });
         }
 
@@ -74,7 +74,7 @@ namespace SpotifyPlayback
         {
             var groupNewTrack = await _playbackGroupCollection.GetGroupNewTrack(playbackScheduledTrack.GroupId);
             groupNewTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(groupNewTrack.SpotifyTrack.TrackDurationMs);
-            // groupNewTrack.DueTime = DateTime.Now + TimeSpan.FromSeconds(5);
+            
             _playbackScheduledTrackQueue.AddPlaybackScheduledTrack(groupNewTrack);
             await _spotifyPlaybackController.PlaySpotifyTrackForUsers(playbackScheduledTrack);
         }
