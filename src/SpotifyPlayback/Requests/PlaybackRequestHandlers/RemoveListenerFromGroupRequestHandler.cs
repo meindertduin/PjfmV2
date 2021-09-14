@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using SpotifyPlayback.Interfaces;
-using SpotifyPlayback.Models;
 
 namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 {

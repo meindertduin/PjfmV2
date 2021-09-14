@@ -31,6 +31,7 @@ namespace Pjfm.Application.Authentication
                 if (refreshResponse.IsSuccessful)
                 {
                     _userTokenService.StoreUserSpotifyAccessToken(userId, refreshResponse.Result.AccessToken, refreshResponse.Result.ExpiresIn);
+                    spotifyAccessToken = refreshResponse.Result.AccessToken;
                 }
                 else
                 {
