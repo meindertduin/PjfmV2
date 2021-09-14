@@ -16,9 +16,6 @@ namespace SpotifyPlayback
         private readonly IPlaybackRequestDispatcher _playbackRequestDispatcher;
         private readonly ISocketRequestHandler _socketRequestHandler;
         private readonly ISocketConnectionCollection _socketConnectionCollection;
-        private static readonly ConcurrentDictionary<Guid, ISocketConnection> Connections = new();
-        private static readonly ConcurrentDictionary<string, Guid> UserConnectionIdMap = new();
-
         public PlaybackSocketDirector(IPlaybackRequestDispatcher playbackRequestDispatcher, ISocketRequestHandler socketRequestHandler, ISocketConnectionCollection socketConnectionCollection)
         {
             _playbackRequestDispatcher = playbackRequestDispatcher;
@@ -29,11 +26,11 @@ namespace SpotifyPlayback
         public async Task HandleSocketConnection(WebSocket socket, HttpContext context)
         {
             var socketConnection = new SocketConnection(socket, context, Guid.NewGuid());
-            if (Connections.TryAdd(socketConnection.ConnectionId, socketConnection))
+            if (_socketConnectionCollection.TryAddSocket(socketConnection.ConnectionId, socketConnection))
             {
                 if (socketConnection.Principal.IsAuthenticated())
                 {
-                    UserConnectionIdMap.TryAdd(socketConnection.Principal.Id, socketConnection.ConnectionId);
+                    _socketConnectionCollection.TryAddUserToConnectionIdMap(socketConnection.Principal.Id, socketConnection.ConnectionId);
                 }
                 
                 var response = new PlaybackSocketMessage<int>()
@@ -73,16 +70,15 @@ namespace SpotifyPlayback
 
         public async Task BroadCastMessage<T>(SocketMessage<T> message)
         {
-            await SendMessageToConnections(message, Connections.Values);
+            var socketConnections = _socketConnectionCollection.GetSocketConnections();
+            await SendMessageToConnections(message, socketConnections);
         }
 
         public async Task BroadCastMessageOverConnections<T>(SocketMessage<T> message, IEnumerable<Guid> connectionIds)
         {
-            var connections = Connections
-                .Where(c => connectionIds.Contains(c.Key))
-                .Select(c => c.Value);
+            var socketConnections = _socketConnectionCollection.GetSocketConnections(connectionIds);
             
-            await SendMessageToConnections(message, connections);
+            await SendMessageToConnections(message, socketConnections);
         }
 
         private async Task SendMessageToConnections<T>(SocketMessage<T> message,

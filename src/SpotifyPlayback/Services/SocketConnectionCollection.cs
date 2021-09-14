@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
 
@@ -11,13 +12,23 @@ namespace SpotifyPlayback.Services
     {
         private static readonly ConcurrentDictionary<Guid, ISocketConnection> Connections = new();
         private static readonly ConcurrentDictionary<string, Guid> UserConnectionIdMap = new();
-        
+
+        public bool TryAddUserToConnectionIdMap(string userId, Guid connectionId)
+        {
+            return UserConnectionIdMap.TryAdd(userId, connectionId);
+        }
+
         public void RemoveUserFromConnectionIdMap(SocketConnection socketConnection)
         {
             if (socketConnection.Principal.IsAuthenticated())
             {
                 UserConnectionIdMap.Remove(socketConnection.Principal.Id, out _);
             }
+        }
+
+        public bool TryAddSocket(Guid connectionId, SocketConnection socketConnection)
+        {
+            return Connections.TryAdd(connectionId, socketConnection);
         }
 
         public bool RemoveSocket(Guid connectionId)
@@ -28,6 +39,13 @@ namespace SpotifyPlayback.Services
         public IEnumerable<ISocketConnection> GetSocketConnections()
         {
             return Connections.Values;
+        }
+
+        public IEnumerable<ISocketConnection> GetSocketConnections(IEnumerable<Guid> connectionIds)
+        {
+            return Connections.Where(x => connectionIds.Contains(x.Key))
+                .Select(x => x.Value)
+                .AsEnumerable();
         }
 
         public bool TryGetUserSocketConnection(string userId, [MaybeNullWhen(false)] out ISocketConnection socketConnection)

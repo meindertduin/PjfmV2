@@ -19,4 +19,9 @@
       <ProjectReference Include="..\Pjfm.Infrastructure\Pjfm.Infrastructure.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Enums" />
+      <Folder Include="Exceptions" />
+    </ItemGroup>
+
 </Project>
