@@ -43,6 +43,28 @@
   }
 }
 
+.raised-button {
+  visibility: hidden;
+
+  span {
+    position: relative;
+    visibility: visible;
+    outline: none;
+    user-select: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    background: $color-dark;
+    border: 2px solid $color-purple;
+    box-shadow: 0 3px 0 0 lighten($color-purple, 3);
+    color: $color-purple;
+
+    &:active {
+      top: 3px;
+      box-shadow: none;
+    }
+  }
+}
+
 .ripple:before {
   content: '';
   position: absolute;
