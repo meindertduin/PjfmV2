@@ -60,13 +60,8 @@ namespace SpotifyPlayback
         {
             Task.Run(async () =>
             {
-                var firstTrack = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
-                var secondTrack = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
-                
-                secondTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(firstTrack.SpotifyTrack.TrackDurationMs);
-                
-                _playbackScheduledTrackQueue.AddPlaybackScheduledTrack(secondTrack);
-                await _spotifyPlaybackController.PlaySpotifyTrackForUsers(firstTrack);
+                var nextTrack = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
+                await PlayScheduledTrack(nextTrack);
             });
         }
 
