@@ -83,21 +83,6 @@
   }
 
   .control-button {
-    background: $color-dark;
-    border: 2px solid $color-purple;
-    color: $color-purple;
-    padding: 5px 10px;
-    cursor: pointer;
-
-    background: linear-gradient(to top, midnightblue, midnightblue 50%, $color-dark 50%);
-    background-size: 100% 200%;
-    background-position: 100% 0;
-    transition: background-position 275ms ease;
-
-    &:hover {
-      background-position: 100% 100%;
-    }
-
     &:nth-child(1) {
       margin-right: 10px;
     }
@@ -108,12 +93,6 @@
 
     &:nth-child(3) {
       margin-left: 10px;
-    }
-
-    .icon {
-      display: block;
-      width: 20px;
-      height: 20px;
     }
   }
 }
