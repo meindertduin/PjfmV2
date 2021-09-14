@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { TrackProgressionBarComponent } from './track-progression-bar.component';
+import { ConvertMsToTimePipe } from '../../pipes/convert-ms-to-time.pipe';
 
 describe('TrackProgressionBarComponent', () => {
   let component: TrackProgressionBarComponent;
@@ -8,9 +9,9 @@ describe('TrackProgressionBarComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TrackProgressionBarComponent ]
-    })
-    .compileComponents();
+      declarations: [TrackProgressionBarComponent, ConvertMsToTimePipe],
+      imports: [],
+    }).compileComponents();
   });
 
   beforeEach(() => {

@@ -21,22 +21,19 @@ namespace SpotifyPlayback.Services
         public Task HandleSocketRequest(byte[] buffer, SocketConnection socketConnection)
         {
             var json = Encoding.UTF8.GetString(buffer);
-            var serializedObject =
-                JsonConvert.DeserializeObject<SocketRequest<dynamic>>(json);
+            var serializedObject = JsonConvert.DeserializeObject<SocketRequest<dynamic>>(json);
 
-            // TODO: handle badRequests accordingly
             if (serializedObject == null)
             {
                 return Task.CompletedTask;
             }
 
-            switch (serializedObject.RequestType)
+            return serializedObject.RequestType switch
             {
-                case RequestType.ConnectToGroup:
-                    return SendRequestThroughDispatcher<JoinPlaybackGroupSocketRequest>(serializedObject.Body, socketConnection);
-                default:
-                    throw new ArgumentOutOfRangeException();
-            }
+                RequestType.ConnectToGroup => SendRequestThroughDispatcher<JoinPlaybackGroupSocketRequest>(
+                    serializedObject.Body, socketConnection),
+                _ => throw new ArgumentOutOfRangeException()
+            };
         }
 
         private Task SendRequestThroughDispatcher<T>(JObject request, SocketConnection socketConnection)

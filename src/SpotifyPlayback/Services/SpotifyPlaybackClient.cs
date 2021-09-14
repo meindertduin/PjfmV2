@@ -72,6 +72,6 @@ namespace SpotifyPlayback.Services
 
     public class SpotifyPlaybackDevicesResponse
     {
-        public IEnumerable<DeviceDto> Devices { get; set; }
+        public IEnumerable<DeviceDto> Devices { get; set; } = null!;
     }
 }

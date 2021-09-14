@@ -71,6 +71,7 @@ export class StartListenDialogComponent implements OnInit {
     if (deviceId != null && deviceId) {
       this._playbackClient.play(deviceId, this.groupId).subscribe(() => {
         this._playbackService.setPlaybackIsActive(true);
+        this.closeDialog.emit();
       });
     }
   }

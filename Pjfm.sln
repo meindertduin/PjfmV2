@@ -14,6 +14,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pjfm.Application", "src\Pjf
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SpotifyPlayback", "src\SpotifyPlayback\SpotifyPlayback.csproj", "{C93A274B-7BE0-4392-97A9-72FD728756F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pjfm.SpotifyPlayback.Test", "tests\Pjfm.SpotifyPlayback.Test\Pjfm.SpotifyPlayback.Test.csproj", "{9B05491C-3EE4-45FB-91F8-94343DC82185}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pjfm.Testing", "tests\Pjfm.Testing\Pjfm.Testing.csproj", "{B6C043F5-7D44-4649-A002-EF2FA116D925}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,5 +52,13 @@ Global
 		{C93A274B-7BE0-4392-97A9-72FD728756F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C93A274B-7BE0-4392-97A9-72FD728756F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C93A274B-7BE0-4392-97A9-72FD728756F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B05491C-3EE4-45FB-91F8-94343DC82185}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B05491C-3EE4-45FB-91F8-94343DC82185}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B05491C-3EE4-45FB-91F8-94343DC82185}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B05491C-3EE4-45FB-91F8-94343DC82185}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B6C043F5-7D44-4649-A002-EF2FA116D925}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B6C043F5-7D44-4649-A002-EF2FA116D925}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B6C043F5-7D44-4649-A002-EF2FA116D925}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B6C043F5-7D44-4649-A002-EF2FA116D925}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

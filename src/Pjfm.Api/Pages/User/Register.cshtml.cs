@@ -34,7 +34,7 @@ namespace Pjfm.Api.Pages.User
             {
                 var claimsAddResult = await userManager.AddClaimsAsync(newUser, new[]
                 {
-                    new Claim(PjfmClaimTypes.Rol, UserRole.User.ToString()),
+                    new Claim(PjfmClaimTypes.Role, UserRole.User.ToString()),
                     new Claim(PjfmClaimTypes.UserId, newUser.Id),
                 });
 
