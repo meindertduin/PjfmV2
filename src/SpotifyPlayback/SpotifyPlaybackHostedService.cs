@@ -63,7 +63,7 @@ namespace SpotifyPlayback
                 var firstTrack = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
                 var secondTrack = await _playbackGroupCollection.GetGroupNewTrack(eventArgs.GroupId);
                 
-                secondTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(secondTrack.SpotifyTrack.TrackDurationMs);
+                secondTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(firstTrack.SpotifyTrack.TrackDurationMs);
                 
                 _playbackScheduledTrackQueue.AddPlaybackScheduledTrack(secondTrack);
                 await _spotifyPlaybackController.PlaySpotifyTrackForUsers(firstTrack);
@@ -73,7 +73,7 @@ namespace SpotifyPlayback
         private async Task PlayScheduledTrack(PlaybackScheduledTrack playbackScheduledTrack)
         {
             var groupNewTrack = await _playbackGroupCollection.GetGroupNewTrack(playbackScheduledTrack.GroupId);
-            groupNewTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(groupNewTrack.SpotifyTrack.TrackDurationMs);
+            groupNewTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(playbackScheduledTrack.SpotifyTrack.TrackDurationMs);
             
             _playbackScheduledTrackQueue.AddPlaybackScheduledTrack(groupNewTrack);
             await _spotifyPlaybackController.PlaySpotifyTrackForUsers(playbackScheduledTrack);
