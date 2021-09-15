@@ -1,8 +1,5 @@
 <div class="container">
-  <select class="dropdown">
-    <option class="dropdown-option">Lorem ipsum dolor.</option>
-    <option class="dropdown-option">Lorem ipsum dolor.</option>
-    <option class="dropdown-option">Lorem ipsum dolor.</option>
-    <option class="dropdown-option">[ Lorem ipsum dolor. ]</option>
+  <select class="dropdown" [formControlName]="binding">
+    <ng-content select="[options]"></ng-content>
   </select>
 </div>

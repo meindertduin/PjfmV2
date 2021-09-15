@@ -46,8 +46,10 @@
 .raised-button {
   visibility: hidden;
   position: relative;
+  padding: 0;
 
   span {
+    display: block;
     position: relative;
     visibility: visible;
     outline: none;

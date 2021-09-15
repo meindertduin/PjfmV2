@@ -5,13 +5,17 @@
   <ng-container content>
     <div class="container">
       <form [formGroup]="listenSettingsFormGroup">
-        <select formControlName="deviceId">
-          <option *ngFor="let device of devices" [ngValue]="device.deviceId">{{device.deviceName}}</option>
-        </select>
+        <pjfm-drop-down binding="deviceId">
+          <ng-container options>
+            <option *ngFor="let device of devices" [ngValue]="device.deviceId">{{device.deviceName}}</option>
+          </ng-container>
+        </pjfm-drop-down>
       </form>
     </div>
   </ng-container>
   <ng-container footer>
-    <button class="raised-button" (click)="onPlayClicked()"><span>Play</span></button>
+    <div class="button-container">
+      <button class="raised-button" (click)="onPlayClicked()"><span>Play</span></button>
+    </div>
   </ng-container>
 </pjfm-base-bottom-sheet>

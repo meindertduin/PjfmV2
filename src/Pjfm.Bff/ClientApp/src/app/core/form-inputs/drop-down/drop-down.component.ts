@@ -1,15 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'pjfm-drop-down',
   templateUrl: './drop-down.component.html',
-  styleUrls: ['./drop-down.component.scss']
+  styleUrls: ['./drop-down.component.scss'],
 })
-export class DropDownComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit(): void {
-  }
-
+export class DropDownComponent {
+  @Input() binding!: string;
 }
