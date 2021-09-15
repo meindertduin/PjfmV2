@@ -24,13 +24,6 @@ $dialog-footer-height: 80px;
     height: $dialog-header-height;
     justify-content: space-between;
     align-items: center;
-
-    .close-button {
-      color: white;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-    }
   }
 
   .dialog-content-container {

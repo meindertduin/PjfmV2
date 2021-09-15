@@ -1,0 +1,47 @@
+@import "variables";
+
+.dropdown {
+  background: $color-dark;
+  padding: 10px 10px;
+  color: $color-purple;
+  appearance: none;
+  border: 2px solid $color-purple;
+  box-shadow: 1px 1px 1px 1px $color-purple;
+  position: relative;
+  transition: .25s all ease;
+  font-size: 16px;
+
+  &::-ms-expand {
+    display: none;
+  }
+
+  &:hover {
+    color: $color-yellow;
+  }
+
+  .dropdown-option {
+    padding: 5px 10px;
+    border-top: 1px solid $white;
+    color: $color-purple;
+
+    &:hover {
+      
+    }
+  }
+}
+
+.container {
+  color: $color-purple;
+
+  &:after {
+    content: '\25BC';
+    position: relative;
+    right: 25px;
+    transition: .25s all ease;
+    pointer-events: none;
+  }
+
+  &:hover {
+    color: $color-yellow;
+  }
+}
