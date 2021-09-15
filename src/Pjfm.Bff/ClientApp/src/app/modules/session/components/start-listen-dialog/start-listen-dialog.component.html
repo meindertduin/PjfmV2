@@ -15,7 +15,8 @@
   </ng-container>
   <ng-container footer>
     <div class="button-container">
-      <button class="raised-button" (click)="onPlayClicked()"><span>Play</span></button>
+      <button class="raised-button raised-button__danger" (click)="onCloseDialog()"><span>Cancel</span></button>
+      <button class="raised-button raised-button__warning" (click)="onPlayClicked()"><span>Play</span></button>
     </div>
   </ng-container>
 </pjfm-base-bottom-sheet>
