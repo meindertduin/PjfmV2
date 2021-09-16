@@ -8,6 +8,11 @@
   transition: .25s all ease;
   position: relative;
 
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
   &:hover {
     color: $color-yellow;
     background: lighten($color-dark, 6);

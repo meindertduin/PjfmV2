@@ -5,11 +5,9 @@
   <ng-container content>
     <div class="container">
       <form [formGroup]="listenSettingsFormGroup">
-        <pjfm-drop-down binding="deviceId">
-          <ng-container options>
-            <option *ngFor="let device of devices" [ngValue]="device.deviceId">{{device.deviceName}}</option>
-          </ng-container>
-        </pjfm-drop-down>
+        <pjfm-select formControlName="deviceId" placeHolder="Choose a device">
+          <pjfm-select-option *ngFor="let device of devices" [value]="device.deviceId">{{device.deviceName}}</pjfm-select-option>
+        </pjfm-select>
       </form>
     </div>
   </ng-container>

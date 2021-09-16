@@ -1,7 +1,11 @@
 @import "variables";
 
 .container {
+  width: 100%;
+  position: relative;
+
   .select {
+    position: relative;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -13,13 +17,13 @@
     appearance: none;
     border: 2px solid $color-purple;
     box-shadow: 1px 1px 1px 1px $color-purple;
-    position: relative;
     transition: .25s all ease;
     font-size: 16px;
 
-    &::-ms-expand {
-      display: none;
-    }
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 
     &:hover {
       color: $color-yellow;
@@ -34,4 +38,8 @@
 .select-options-container {
   padding: 5px 0;
   border: 1px solid $color-purple;
+  width: inherit;
+  position: absolute;
+  display: inline;
+  z-index: 10;
 }
