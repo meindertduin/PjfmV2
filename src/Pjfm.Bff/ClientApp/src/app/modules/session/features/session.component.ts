@@ -1,10 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
 import { ApiSocketClientService, PlaybackUpdateMessageBody } from '../../../core/services/api-socket-client.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { PlaybackService } from '../../../shared/services/playback.service';
 import { PlaybackClient } from '../../../core/services/api-client.service';
+import { DialogService } from '../../../shared/services/dialog.service';
+import { StartListenDialogComponent } from '../components/start-listen-dialog/start-listen-dialog.component';
 
 @Component({
   selector: 'pjfm-session',
@@ -23,12 +25,17 @@ export class SessionComponent implements OnInit, OnDestroy {
     private readonly _activatedRoute: ActivatedRoute,
     private readonly _playbackService: PlaybackService,
     private readonly _playbackClient: PlaybackClient,
+    private readonly _viewContainerRef: ViewContainerRef,
+    private readonly _dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
     this.connectToGroup();
     this.getPlaybackData();
     this.getPlaybackIsActive();
+
+    this._dialogService.setRootViewContainer(this._viewContainerRef);
+    this._dialogService.openDialog(StartListenDialogComponent);
   }
 
   private connectToGroup() {

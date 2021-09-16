@@ -10,7 +10,6 @@ import { PlaybackService } from '../../../../shared/services/playback.service';
   styleUrls: ['./start-listen-dialog.component.scss'],
 })
 export class StartListenDialogComponent implements OnInit {
-  @Input() showDialog = false;
   @Input() groupId!: string;
   @Output() closeDialog = new EventEmitter();
 
