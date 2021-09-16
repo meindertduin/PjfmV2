@@ -1,7 +1,7 @@
 <div class="container">
   <div class="select" (click)="onSelectClick()">
     <div class="value-container">
-      <span>This is the value</span>
+      <span>{{textValue != null ? textValue : placeHolder }}</span>
     </div>
     <div class="select-arrow">&#8595;</div>
   </div>
