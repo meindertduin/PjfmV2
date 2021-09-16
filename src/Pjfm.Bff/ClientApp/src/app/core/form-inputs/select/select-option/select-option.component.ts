@@ -7,7 +7,7 @@ import { Component, Input, EventEmitter, ElementRef, AfterViewInit } from '@angu
 })
 export class SelectOptionComponent implements AfterViewInit {
   @Input() value: unknown;
-  clickEvent = new EventEmitter<SelectClickEvent>();
+  clickEvent = new EventEmitter<SelectOptionClickEvent>();
 
   private textValue!: string;
 
@@ -30,7 +30,7 @@ export class SelectOptionComponent implements AfterViewInit {
   }
 }
 
-export interface SelectClickEvent {
+export interface SelectOptionClickEvent {
   value: unknown;
   textValue: string;
 }

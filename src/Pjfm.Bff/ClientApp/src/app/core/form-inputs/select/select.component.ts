@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ContentChildren, forwardRef, Input, OnDestroy, QueryList } from '@angular/core';
-import { SelectOptionComponent } from './select-option/select-option.component';
+import { SelectOptionClickEvent, SelectOptionComponent } from './select-option/select-option.component';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
@@ -41,13 +41,21 @@ export class SelectComponent implements AfterViewInit, OnDestroy, ControlValueAc
   }
 
   ngAfterViewInit(): void {
+    this.setOptionsOnClickEvent();
+  }
+
+  private setOptionsOnClickEvent() {
     this.options.toArray().forEach((option) => {
       option.clickEvent.pipe(takeUntil(this._destroyed$)).subscribe((event) => {
-        this.textValue = event.textValue;
-        this.showOptions = false;
-        this.setValue(event.value);
+        this.onOptionClick(event);
       });
     });
+  }
+
+  private onOptionClick(event: SelectOptionClickEvent): void {
+    this.textValue = event.textValue;
+    this.showOptions = false;
+    this.setValue(event.value);
   }
 
   ngOnDestroy(): void {
