@@ -1,0 +1,37 @@
+@import "variables";
+
+.container {
+  .select {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    cursor: pointer;
+
+    background: $color-dark;
+    padding: 5px 10px;
+    color: $color-purple;
+    appearance: none;
+    border: 2px solid $color-purple;
+    box-shadow: 1px 1px 1px 1px $color-purple;
+    position: relative;
+    transition: .25s all ease;
+    font-size: 16px;
+
+    &::-ms-expand {
+      display: none;
+    }
+
+    &:hover {
+      color: $color-yellow;
+    }
+
+    .select-arrow {
+      margin: 0 0 0 10px;
+    }
+  }
+}
+
+.select-options-container {
+  padding: 5px 0;
+  border: 1px solid $color-purple;
+}
