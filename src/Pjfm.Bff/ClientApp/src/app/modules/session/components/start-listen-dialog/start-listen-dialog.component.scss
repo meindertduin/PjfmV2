@@ -1,17 +1,18 @@
 .container {
-  padding: 10px 15px;
+  padding: 10px 15px 30px 15px;
+  display: flex;
+  justify-content: center;
+
 
   .form-container {
-    pjfm-select {
-      width: 80%;
-    }
+    width: 80%;
   }
 }
 
 .button-container {
   padding: 0 15px;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   flex-direction: row;
 
   button {
