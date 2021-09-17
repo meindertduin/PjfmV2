@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import { PlaybackService } from '../../../shared/services/playback.service';
 import { PlaybackClient } from '../../../core/services/api-client.service';
 import { DialogService } from '../../../shared/services/dialog.service';
-import { StartListenDialogComponent } from '../components/start-listen-dialog/start-listen-dialog.component';
+import { StartListenDialogComponent, StartListenDialogData } from '../components/start-listen-dialog/start-listen-dialog.component';
 
 @Component({
   selector: 'pjfm-session',
@@ -35,7 +35,6 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.getPlaybackIsActive();
 
     this._dialogService.setRootViewContainer(this._viewContainerRef);
-    this._dialogService.openDialog(StartListenDialogComponent, { x: 'x' });
   }
 
   private connectToGroup() {
@@ -81,7 +80,15 @@ export class SessionComponent implements OnInit, OnDestroy {
   }
 
   playClicked(): void {
+    if (this.loadedPlaybackData?.groupId == null) {
+      return;
+    }
+
     this.showStartListenDialog = true;
+    const dialogData: StartListenDialogData = {
+      groupId: this.loadedPlaybackData.groupId,
+    };
+    this._dialogService.openDialog(StartListenDialogComponent, dialogData);
   }
 
   pauseClicked(): void {

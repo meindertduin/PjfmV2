@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { requiredValidator } from '../../../../core/utils/custom-form-validators';
 import { DeviceModel, PlaybackClient, SpotifyClient } from '../../../../core/services/api-client.service';
@@ -11,11 +11,9 @@ import { DialogRef, PJFM_DIALOG_DATA, PJFM_DIALOG_REF } from '../../../../shared
   styleUrls: ['./start-listen-dialog.component.scss'],
 })
 export class StartListenDialogComponent implements OnInit {
-  @Input() groupId!: string;
-  @Output() closeDialog = new EventEmitter();
-
   listenSettingsFormGroup!: FormGroup;
   devices: DeviceModel[] = [];
+
   private readonly _devicesSort = (a: DeviceModel, b: DeviceModel): number => {
     if (a.isActive) return -1;
     if (b.isActive) return 1;
@@ -29,12 +27,11 @@ export class StartListenDialogComponent implements OnInit {
     private readonly _spotifyClient: SpotifyClient,
     private readonly _playbackClient: PlaybackClient,
     private readonly _playbackService: PlaybackService,
-    @Inject(PJFM_DIALOG_DATA) private readonly data: unknown,
+    @Inject(PJFM_DIALOG_DATA) private readonly _dialogData: StartListenDialogData,
     @Inject(PJFM_DIALOG_REF) private readonly _dialogRef: DialogRef,
   ) {}
 
   ngOnInit(): void {
-    this._dialogRef.closeDialog(this.data);
     this.createFormGroup();
     this.loadDevices();
   }
@@ -65,17 +62,21 @@ export class StartListenDialogComponent implements OnInit {
     });
   }
 
-  onCloseDialog(): void {
-    this.closeDialog.emit();
+  closeDialog(): void {
+    this._dialogRef.closeDialog(undefined);
   }
 
   onPlayClicked(): void {
     const deviceId = this.deviceIdFormControl.value as string;
     if (deviceId != null && deviceId) {
-      this._playbackClient.play(deviceId, this.groupId).subscribe(() => {
+      this._playbackClient.play(deviceId, this._dialogData.groupId).subscribe(() => {
         this._playbackService.setPlaybackIsActive(true);
-        this.closeDialog.emit();
+        this.closeDialog();
       });
     }
   }
+}
+
+export interface StartListenDialogData {
+  groupId: string;
 }

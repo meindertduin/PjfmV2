@@ -1,6 +1,16 @@
-import { AfterViewInit, Component, ContentChildren, forwardRef, Input, OnDestroy, QueryList } from '@angular/core';
+import {
+  AfterContentChecked,
+  AfterContentInit,
+  AfterViewInit,
+  Component,
+  ContentChildren,
+  forwardRef,
+  Input,
+  OnDestroy,
+  QueryList,
+} from '@angular/core';
 import { SelectOptionClickEvent, SelectOptionComponent } from './select-option/select-option.component';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
@@ -17,7 +27,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   ],
 })
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-function, @typescript-eslint/explicit-module-boundary-types */
-export class SelectComponent implements AfterViewInit, OnDestroy, ControlValueAccessor {
+export class SelectComponent implements OnDestroy, ControlValueAccessor, AfterContentInit {
   showOptions = false;
   textValue?: string;
 
@@ -25,6 +35,8 @@ export class SelectComponent implements AfterViewInit, OnDestroy, ControlValueAc
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onChange = (_: any) => {};
   onTouched = () => {};
+
+  private clickSubscriptions: Subscription[] = [];
 
   setValue(value: any) {
     this.value = value;
@@ -40,15 +52,29 @@ export class SelectComponent implements AfterViewInit, OnDestroy, ControlValueAc
     this.showOptions = !this.showOptions;
   }
 
-  ngAfterViewInit(): void {
+  ngAfterContentInit(): void {
     this.setOptionsOnClickEvent();
   }
 
   private setOptionsOnClickEvent() {
+    this.options.changes.pipe(takeUntil(this._destroyed$)).subscribe(() => {
+      this.unsubscribeFromCurrentClickEvents();
+      this.subscribeToUpdatedContentClickEvents();
+    });
+  }
+
+  private unsubscribeFromCurrentClickEvents() {
+    this.clickSubscriptions.forEach((subscription) => {
+      subscription.unsubscribe();
+    });
+  }
+
+  private subscribeToUpdatedContentClickEvents() {
     this.options.toArray().forEach((option) => {
-      option.clickEvent.pipe(takeUntil(this._destroyed$)).subscribe((event) => {
+      const subscription = option.clickEvent.pipe(takeUntil(this._destroyed$)).subscribe((event) => {
         this.onOptionClick(event);
       });
+      this.clickSubscriptions.push(subscription);
     });
   }
 
