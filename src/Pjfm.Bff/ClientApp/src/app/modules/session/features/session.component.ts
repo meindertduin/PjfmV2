@@ -92,9 +92,12 @@ export class SessionComponent implements OnInit, OnDestroy {
   }
 
   private openDialog(dialogData: StartListenDialogData) {
-    this._dialogService.openDialog(StartListenDialogComponent, dialogData).subscribe(() => {
-      this._playDialogOpen = false;
-    });
+    this._dialogService
+      .openDialog(StartListenDialogComponent, dialogData)
+      .pipe(takeUntil(this._destroyed$))
+      .subscribe(() => {
+        this._playDialogOpen = false;
+      });
   }
 
   pauseClicked(): void {

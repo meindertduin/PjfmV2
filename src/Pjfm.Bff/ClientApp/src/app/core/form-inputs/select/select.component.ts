@@ -4,10 +4,13 @@ import {
   AfterViewInit,
   Component,
   ContentChildren,
+  ElementRef,
   forwardRef,
+  HostListener,
   Input,
   OnDestroy,
   QueryList,
+  ViewChild,
 } from '@angular/core';
 import { SelectOptionClickEvent, SelectOptionComponent } from './select-option/select-option.component';
 import { Subject, Subscription } from 'rxjs';
@@ -27,9 +30,10 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   ],
 })
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-function, @typescript-eslint/explicit-module-boundary-types */
-export class SelectComponent implements OnDestroy, ControlValueAccessor, AfterContentInit {
+export class SelectComponent implements OnDestroy, ControlValueAccessor, AfterContentInit, AfterViewInit {
   showOptions = false;
   textValue?: string;
+  optionsWidth = 0;
 
   value: any;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -37,6 +41,7 @@ export class SelectComponent implements OnDestroy, ControlValueAccessor, AfterCo
   onTouched = () => {};
 
   private clickSubscriptions: Subscription[] = [];
+  private _componentViewInitialized = false;
 
   setValue(value: any) {
     this.value = value;
@@ -45,11 +50,28 @@ export class SelectComponent implements OnDestroy, ControlValueAccessor, AfterCo
 
   @Input() placeHolder = '';
   @ContentChildren(SelectOptionComponent) options!: QueryList<SelectOptionComponent>;
+  @ViewChild('select') select!: ElementRef;
+
+  @HostListener('window:resize')
+  onResize(): void {
+    if (this._componentViewInitialized) {
+      this.setOptionsWidth();
+    }
+  }
 
   private readonly _destroyed$ = new Subject();
 
   onSelectClick(): void {
     this.showOptions = !this.showOptions;
+  }
+
+  ngAfterViewInit(): void {
+    this._componentViewInitialized = true;
+    this.setOptionsWidth();
+  }
+
+  private setOptionsWidth(): void {
+    this.optionsWidth = this.select.nativeElement.offsetWidth;
   }
 
   ngAfterContentInit(): void {

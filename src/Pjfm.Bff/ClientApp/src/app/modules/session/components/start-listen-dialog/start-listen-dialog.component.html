@@ -4,11 +4,13 @@
   </ng-container>
   <ng-container content>
     <div class="container">
-      <form [formGroup]="listenSettingsFormGroup">
-        <pjfm-select formControlName="deviceId" placeHolder="Choose a device">
-          <pjfm-select-option *ngFor="let device of devices" [value]="device.deviceId">{{device.deviceName}}</pjfm-select-option>
-        </pjfm-select>
-      </form>
+      <div class="form-container">
+        <form [formGroup]="listenSettingsFormGroup">
+          <pjfm-select formControlName="deviceId" placeHolder="Choose a device">
+            <pjfm-select-option *ngFor="let device of devices" [value]="device.deviceId">{{device.deviceName}}</pjfm-select-option>
+          </pjfm-select>
+        </form>
+      </div>
     </div>
   </ng-container>
   <ng-container footer>

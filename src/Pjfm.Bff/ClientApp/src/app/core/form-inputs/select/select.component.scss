@@ -1,8 +1,7 @@
 @import "variables";
 
 .container {
-  width: 100%;
-  position: relative;
+  width: inherit;
 
   .select {
     position: relative;
@@ -38,8 +37,9 @@
 .select-options-container {
   padding: 5px 0;
   border: 1px solid $color-purple;
-  width: inherit;
+  background: $color-dark;
   position: absolute;
   display: inline;
   z-index: 10;
+  width: inherit;
 }

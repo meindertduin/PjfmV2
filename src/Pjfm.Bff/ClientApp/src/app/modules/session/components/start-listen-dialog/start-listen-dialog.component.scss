@@ -1,5 +1,11 @@
 .container {
   padding: 10px 15px;
+
+  .form-container {
+    pjfm-select {
+      width: 80%;
+    }
+  }
 }
 
 .button-container {
