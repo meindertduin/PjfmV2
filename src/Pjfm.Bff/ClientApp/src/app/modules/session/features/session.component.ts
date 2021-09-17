@@ -35,7 +35,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.getPlaybackIsActive();
 
     this._dialogService.setRootViewContainer(this._viewContainerRef);
-    this._dialogService.openDialog(StartListenDialogComponent);
+    this._dialogService.openDialog(StartListenDialogComponent, { x: 'x' });
   }
 
   private connectToGroup() {
@@ -76,8 +76,8 @@ export class SessionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._destroyed$.complete();
     this._destroyed$.next();
+    this._destroyed$.complete();
   }
 
   playClicked(): void {

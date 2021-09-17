@@ -59,8 +59,8 @@ export class SelectComponent implements AfterViewInit, OnDestroy, ControlValueAc
   }
 
   ngOnDestroy(): void {
-    this._destroyed$.complete();
     this._destroyed$.next();
+    this._destroyed$.complete();
   }
 
   registerOnChange(fn: (_: any) => void): void {

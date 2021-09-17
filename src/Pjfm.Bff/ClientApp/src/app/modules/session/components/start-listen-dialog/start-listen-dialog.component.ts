@@ -1,8 +1,9 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { requiredValidator } from '../../../../core/utils/custom-form-validators';
 import { DeviceModel, PlaybackClient, SpotifyClient } from '../../../../core/services/api-client.service';
 import { PlaybackService } from '../../../../shared/services/playback.service';
+import { DialogRef, PJFM_DIALOG_DATA, PJFM_DIALOG_REF } from '../../../../shared/services/dialog.service';
 
 @Component({
   selector: 'pjfm-start-listen-dialog',
@@ -28,9 +29,12 @@ export class StartListenDialogComponent implements OnInit {
     private readonly _spotifyClient: SpotifyClient,
     private readonly _playbackClient: PlaybackClient,
     private readonly _playbackService: PlaybackService,
+    @Inject(PJFM_DIALOG_DATA) private readonly data: unknown,
+    @Inject(PJFM_DIALOG_REF) private readonly _dialogRef: DialogRef,
   ) {}
 
   ngOnInit(): void {
+    this._dialogRef.closeDialog(this.data);
     this.createFormGroup();
     this.loadDevices();
   }

@@ -1,11 +1,10 @@
-import { Component, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { RouteData } from './shared/models/route-data';
 import { RouteDataService } from './shared/services/route-data.service';
 import { ApiSocketClientService } from './core/services/api-socket-client.service';
-import { DialogService } from './shared/services/dialog.service';
 
 @Component({
   selector: 'pjfm-root',
@@ -46,7 +45,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._destroyed$.complete();
     this._destroyed$.next();
+    this._destroyed$.complete();
   }
 }
