@@ -20,6 +20,8 @@ export class SessionComponent implements OnInit, OnDestroy {
   showStartListenDialog = false;
   playbackIsActive!: boolean;
 
+  private _playDialogOpen = false;
+
   constructor(
     private readonly _apiSocketClient: ApiSocketClientService,
     private readonly _activatedRoute: ActivatedRoute,
@@ -80,15 +82,19 @@ export class SessionComponent implements OnInit, OnDestroy {
   }
 
   playClicked(): void {
-    if (this.loadedPlaybackData?.groupId == null) {
+    if (this.loadedPlaybackData?.groupId == null || this._playDialogOpen) {
       return;
     }
 
+    this._playDialogOpen = true;
     this.showStartListenDialog = true;
-    const dialogData: StartListenDialogData = {
-      groupId: this.loadedPlaybackData.groupId,
-    };
-    this._dialogService.openDialog(StartListenDialogComponent, dialogData);
+    this.openDialog({ groupId: this.loadedPlaybackData.groupId });
+  }
+
+  private openDialog(dialogData: StartListenDialogData) {
+    this._dialogService.openDialog(StartListenDialogComponent, dialogData).subscribe(() => {
+      this._playDialogOpen = false;
+    });
   }
 
   pauseClicked(): void {
