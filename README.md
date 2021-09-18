@@ -30,3 +30,20 @@ The frontend can be run with the command ``npm start`` in the ClientApp director
 ### Running the backend
 The backend can be run with the command ``dotnet watch run`` in the Api project folder.
 
+## Adding Entity Framework migrations
+
+Migrations can be added with the dotnet ef CLI from the ./src/Pjfm.Api. If you dont have the dotnet ef
+CLI, you can view how to download and use the tool [here](https://docs.microsoft.com/en-us/ef/core/cli/dotnet).
+
+Command used for new PjfmContext migration:
+
+```dotnet ef --startup-project .\Pjfm.Api.csproj  migrations add {Migration name} -c PjfmContext -o Migrations/Application  --project ..\Pjfm.Infrastructure\Pjfm.Infrastructure.csproj```
+
+Command used for new ConfigurationDbContext migration:
+
+```dotnet ef --startup-project .\Pjfm.Api.csproj  migrations add InitialIdentityServerConfigurationDbContext -c ConfigurationDbContext -o Migrations/IdentityServer/ConfigurationDbContext  --project ..\Pjfm.Infrastructure\Pjfm.Infrastructure.csproj```
+
+Command used for new PersistedGrantDbContext migration:
+
+``dotnet ef --startup-project .\Pjfm.Api.csproj  migrations add InitialIdentityServerConfigurationDbContext -c ConfigurationDbContext -o Migrations/IdentityServer/ConfigurationDbContext  --project ..\Pjfm.Infrastructure\Pjfm.Infrastructure.csproj
+``
