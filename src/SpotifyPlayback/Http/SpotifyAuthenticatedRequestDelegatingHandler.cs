@@ -21,7 +21,7 @@ namespace SpotifyPlayback.Http
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            var typedRequest = (DelegatingRequestMessage) request;
+            var typedRequest = Guard.IsType<HttpRequestMessage, DelegatingRequestMessage>(request);
             var userId = typedRequest.GetDelegatingParam("userId");
             
             Guard.NotNullOrEmpty(userId, nameof(userId));

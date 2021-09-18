@@ -33,5 +33,15 @@ namespace Pjfm.Common
 
             return value;
         }
+
+        public static TResult IsType<T, TResult>(T value) where T : class
+        {
+            if (value is TResult result)
+            {
+                return result;
+            }
+
+            throw new ArgumentException("Argument value not of right type.");
+        }
     }
 }
