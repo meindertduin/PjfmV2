@@ -23,7 +23,7 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
             if (groupInfo.CurrentlyPlayingTrack != null)
             {
                 var trackStartTimeMs = (DateTime.Now - groupInfo.CurrentlyPlayingTrack.TrackStartDate).TotalMilliseconds;
-                _spotifyPlaybackService.PlayTrackForUser(request.NewListener, groupInfo.CurrentlyPlayingTrack.SpotifyTrackId, request.SpotifyAccessToken, (int) trackStartTimeMs);
+                _spotifyPlaybackService.PlayTrackForUser(request.NewListener, groupInfo.CurrentlyPlayingTrack.SpotifyTrackId, (int) trackStartTimeMs);
             }
             
             var hasJoinedAsListener = _playbackGroupCollection.ListenToGroup(request.GroupId, request.NewListener);
@@ -40,7 +40,6 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
     {
         public Guid GroupId { get; set; } = default!;
         public ListenerDto NewListener { get; set; } = null!;
-        public string SpotifyAccessToken { get; set; } = null!;
     }
 
     public class AddListenerToGroupRequestResult
