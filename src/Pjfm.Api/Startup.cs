@@ -1,9 +1,12 @@
 using System;
+using Domain.ApplicationUser;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Pjfm.Api.Authentication;
 using SpotifyPlayback;
 
 namespace Pjfm.Api
@@ -25,6 +28,8 @@ namespace Pjfm.Api
             ConfigureInfrastructure(services);
             ConfigureAuthentication(services);
             ConfigurePlayback(services);
+
+            services.AddTransient<PjfmSignInManager>();
 
             services.AddCors(options =>
             {

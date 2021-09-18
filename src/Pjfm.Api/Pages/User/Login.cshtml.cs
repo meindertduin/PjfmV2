@@ -1,9 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Domain.ApplicationUser;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
+using Pjfm.Api.Authentication;
 
 namespace Pjfm.Api.Pages.Gebruiker
 {
@@ -17,7 +19,7 @@ namespace Pjfm.Api.Pages.Gebruiker
         }
 
         public async Task<IActionResult> OnPost([FromServices] IConfiguration configuration,
-            [FromServices] SignInManager<IdentityUser> signInManager, [FromServices] UserManager<IdentityUser> userManager)
+            [FromServices] PjfmSignInManager signInManager, [FromServices] UserManager<ApplicationUser> userManager)
         {
             if (ModelState.IsValid == false)
             {
