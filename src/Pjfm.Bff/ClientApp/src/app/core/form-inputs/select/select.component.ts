@@ -34,6 +34,7 @@ export class SelectComponent implements OnDestroy, ControlValueAccessor, AfterCo
   showOptions = false;
   textValue?: string;
   optionsWidth = 0;
+  @Input() default?: any;
 
   value: any;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
