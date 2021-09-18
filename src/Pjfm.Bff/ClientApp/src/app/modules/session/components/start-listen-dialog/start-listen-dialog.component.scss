@@ -1,0 +1,25 @@
+.container {
+  padding: 10px 15px 30px 15px;
+  display: flex;
+  justify-content: center;
+
+
+  .form-container {
+    width: 80%;
+  }
+}
+
+.button-container {
+  padding: 0 15px;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+
+  button {
+    width: 40%;
+
+    &:first-child {
+      margin-right: 10px;
+    }
+  }
+}

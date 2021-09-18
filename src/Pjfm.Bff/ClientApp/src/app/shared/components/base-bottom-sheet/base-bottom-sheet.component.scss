@@ -1,7 +1,7 @@
 @import "variables";
 
 $dialog-header-height: 40px;
-$dialog-footer-height: 80px;
+$dialog-footer-height: 50px;
 
 .container {
   position: fixed;
@@ -9,10 +9,17 @@ $dialog-footer-height: 80px;
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  background: $color-secondary;
+  background: $color-primary;
   color: $white;
   max-height: 90vh;
   border-radius: 30px 30px 0 0;
+  z-index: 1010;
+
+  @media (min-width: $breakpoint-m) {
+    width: 800px;
+    bottom: 40%;
+    border-radius: 20px;
+  }
 
   .dialog {
     padding: 5px 10px 5px 10px;
@@ -24,13 +31,6 @@ $dialog-footer-height: 80px;
     height: $dialog-header-height;
     justify-content: space-between;
     align-items: center;
-
-    .close-button {
-      color: white;
-      background: transparent;
-      border: none;
-      cursor: pointer;
-    }
   }
 
   .dialog-content-container {
@@ -41,4 +41,19 @@ $dialog-footer-height: 80px;
   .dialog-footer-container {
     height: $dialog-footer-height;
   }
+}
+
+.overlay {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 1000;
+  background: black;
+  opacity: .6;
+  top: 0;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }

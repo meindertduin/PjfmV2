@@ -1,0 +1,42 @@
+@import "variables";
+
+.option-container {
+  padding: 5px 10px 5px 25px;
+  background: $color-dark;
+  font-size: 14px;
+  cursor: pointer;
+  transition: .25s all ease;
+  position: relative;
+
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  &:hover {
+    color: $color-yellow;
+    background: lighten($color-dark, 6);
+
+    &:after {
+      content: '🠖';
+      left: 5px;
+      top: 2px;
+      position: absolute;
+      transition: .25s all ease;
+      animation: flickering .8s infinite;
+      -webkit-animation: flickering 1s infinite;
+    }
+  }
+}
+
+@keyframes flickering {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

@@ -1,17 +1,23 @@
-<pjfm-base-bottom-sheet *ngIf="showDialog" (closeDialog)="onCloseDialog()">
+<pjfm-base-bottom-sheet (closeDialog)="closeDialog()">
   <ng-container title>
     <h4 class="has-no-margin">Set play time</h4>
   </ng-container>
   <ng-container content>
     <div class="container">
-      <form [formGroup]="listenSettingsFormGroup">
-        <select formControlName="deviceId">
-          <option *ngFor="let device of devices" [ngValue]="device.deviceId">{{device.deviceName}}</option>
-        </select>
-      </form>
+      <div class="form-container">
+        <form [formGroup]="listenSettingsFormGroup">
+          <p>Choose a device:</p>
+          <pjfm-select formControlName="deviceId" placeHolder="Choose a device">
+            <pjfm-select-option *ngFor="let device of devices" [value]="device.deviceId">{{device.deviceName}}</pjfm-select-option>
+          </pjfm-select>
+        </form>
+      </div>
     </div>
   </ng-container>
   <ng-container footer>
-    <button (click)="onPlayClicked()">Play</button>
+    <div class="button-container">
+      <button class="raised-button raised-button__danger" (click)="closeDialog()"><span>Cancel</span></button>
+      <button class="raised-button raised-button__warning" (click)="onPlayClicked()"><span>Play</span></button>
+    </div>
   </ng-container>
 </pjfm-base-bottom-sheet>

@@ -1,0 +1,195 @@
+@import "variables";
+
+
+.flat-button {
+  position: relative;
+
+  background: $color-dark;
+  border: 2px solid $color-purple;
+  color: $color-purple;
+  padding: 5px 10px;
+  cursor: pointer;
+
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+  text-decoration: none;
+  overflow: hidden;
+  -webkit-transition: all 1s ease-in;
+  transition: all 1s ease-in;
+
+  &__yellow {
+    color: $color-yellow;
+    border-color: $color-yellow;
+  }
+
+  &__orange {
+    color: $color-orange;
+    border-color: $color-orange;
+  }
+
+  &__warning {
+    color: $color-warning;
+    border-color: $color-warning;
+  }
+
+  &__danger {
+    color: $color-danger;
+    border-color: $color-danger;
+  }
+
+  .icon {
+    display: block;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.raised-button {
+  visibility: hidden;
+  position: relative;
+  padding: 0;
+
+  span {
+    display: block;
+    position: relative;
+    visibility: visible;
+    outline: none;
+    user-select: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    background: $color-dark;
+    border: 2px solid $color-purple;
+    box-shadow: 0 3px 0 0 lighten($color-purple, 3);
+    color: $color-purple;
+
+    &:active {
+      top: 3px;
+      box-shadow: none;
+    }
+  }
+
+  &__yellow {
+    span {
+      color: $color-yellow;
+      border-color: $color-yellow;
+      box-shadow: 0 3px 0 0 lighten($color-yellow, 3);
+    }
+  }
+
+  &__orange {
+    span {
+      color: $color-orange;
+      border-color: $color-orange;
+      box-shadow: 0 3px 0 0 lighten($color-orange, 3);
+    }
+  }
+
+  &__warning {
+    span {
+      color: $color-warning;
+      border-color: $color-warning;
+      box-shadow: 0 3px 0 0 lighten($color-warning, 3);
+    }
+  }
+
+  &__danger {
+    span {
+      color: $color-danger;
+      border-color: $color-danger;
+      box-shadow: 0 3px 0 0 lighten($color-danger, 3);
+    }
+  }
+}
+
+.icon-button {
+  position: relative;
+  background: transparent;
+  color: $color-purple;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  text-decoration: none;
+  overflow: hidden;
+  -webkit-transition: all 1s ease-in;
+  transition: all 1s ease-in;
+
+  &__yellow {
+    color: $color-yellow;
+    border-color: $color-yellow;
+  }
+
+  &__orange {
+    color: $color-orange;
+    border-color: $color-orange;
+  }
+
+  &__warning {
+    color: $color-warning;
+    border-color: $color-warning;
+  }
+
+  &__danger {
+    color: $color-danger;
+    border-color: $color-danger;
+  }
+
+  .icon {
+    display: block;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.ripple:before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-color: currentColor;
+  visibility: hidden;
+  z-index: 2;
+}
+.ripple:not(:active):before {
+  -webkit-animation: ripple 1s cubic-bezier(0, 0, 0.2, 1);
+  animation: ripple 1s cubic-bezier(0, 0, 0.2, 1);
+  -webkit-transition: visibility 1s step-end;
+  transition: visibility 1s step-end;
+}
+.ripple:active:before {
+  visibility: visible;
+}
+
+@-webkit-keyframes ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: .5;
+  }
+  100% {
+    width: 150px;
+    height: 150px;
+    opacity: 0;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: .5;
+  }
+  100% {
+    width: 150px;
+    height: 150px;
+    opacity: 0;
+  }
+}

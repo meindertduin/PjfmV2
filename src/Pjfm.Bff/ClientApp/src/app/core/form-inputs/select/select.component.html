@@ -1,0 +1,11 @@
+<div class="container">
+  <div class="select" (click)="onSelectClick()" #select>
+    <div class="value-container">
+      <span>{{textValue != null ? textValue : placeHolder }}</span>
+    </div>
+    <div class="select-arrow">&#8595;</div>
+  </div>
+  <div class="select-options-container" *ngIf="showOptions" [ngStyle]="{ 'width.px': optionsWidth }">
+    <ng-content></ng-content>
+  </div>
+</div>

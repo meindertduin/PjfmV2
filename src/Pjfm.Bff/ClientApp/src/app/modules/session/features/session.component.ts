@@ -1,10 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
 import { ApiSocketClientService, PlaybackUpdateMessageBody } from '../../../core/services/api-socket-client.service';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { PlaybackService } from '../../../shared/services/playback.service';
 import { PlaybackClient } from '../../../core/services/api-client.service';
+import { DialogService } from '../../../shared/services/dialog.service';
+import { StartListenDialogComponent, StartListenDialogData } from '../components/start-listen-dialog/start-listen-dialog.component';
 
 @Component({
   selector: 'pjfm-session',
@@ -18,17 +20,23 @@ export class SessionComponent implements OnInit, OnDestroy {
   showStartListenDialog = false;
   playbackIsActive!: boolean;
 
+  private _playDialogOpen = false;
+
   constructor(
     private readonly _apiSocketClient: ApiSocketClientService,
     private readonly _activatedRoute: ActivatedRoute,
     private readonly _playbackService: PlaybackService,
     private readonly _playbackClient: PlaybackClient,
+    private readonly _viewContainerRef: ViewContainerRef,
+    private readonly _dialogService: DialogService,
   ) {}
 
   ngOnInit(): void {
     this.connectToGroup();
     this.getPlaybackData();
     this.getPlaybackIsActive();
+
+    this._dialogService.setRootViewContainer(this._viewContainerRef);
   }
 
   private connectToGroup() {
@@ -69,12 +77,27 @@ export class SessionComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this._destroyed$.complete();
     this._destroyed$.next();
+    this._destroyed$.complete();
   }
 
   playClicked(): void {
+    if (this.loadedPlaybackData?.groupId == null || this._playDialogOpen) {
+      return;
+    }
+
+    this._playDialogOpen = true;
     this.showStartListenDialog = true;
+    this.openDialog({ groupId: this.loadedPlaybackData.groupId });
+  }
+
+  private openDialog(dialogData: StartListenDialogData) {
+    this._dialogService
+      .openDialog(StartListenDialogComponent, dialogData)
+      .pipe(takeUntil(this._destroyed$))
+      .subscribe(() => {
+        this._playDialogOpen = false;
+      });
   }
 
   pauseClicked(): void {

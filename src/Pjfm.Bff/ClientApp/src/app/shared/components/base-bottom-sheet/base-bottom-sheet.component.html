@@ -2,7 +2,7 @@
   <div class="dialog">
     <div class="dialog-header-container">
       <ng-content select="[title]"></ng-content>
-      <button class="close-button" (click)="onCloseDialogClick()">[ X ]</button>
+      <button class="icon-button" (click)="onCloseDialogClick()">[ X ]</button>
     </div>
     <div class="dialog-content-container">
       <ng-content select="[content]"></ng-content>
@@ -12,3 +12,4 @@
     </div>
   </div>
 </div>
+<div class="overlay"></div>
