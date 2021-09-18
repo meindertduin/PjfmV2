@@ -21,6 +21,11 @@ export class SelectOptionComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.setInnerText();
+  }
+
+  private setInnerText() {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     const innerText = this._elementRef.nativeElement.innerText as string | undefined;
     if (innerText == null) {
       this.textValue = '';

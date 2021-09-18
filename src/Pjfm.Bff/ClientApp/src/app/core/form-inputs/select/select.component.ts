@@ -1,5 +1,4 @@
 import {
-  AfterContentChecked,
   AfterContentInit,
   AfterViewInit,
   Component,
@@ -72,6 +71,7 @@ export class SelectComponent implements OnDestroy, ControlValueAccessor, AfterCo
   }
 
   private setOptionsWidth(): void {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     this.optionsWidth = this.select.nativeElement.offsetWidth;
   }
 
