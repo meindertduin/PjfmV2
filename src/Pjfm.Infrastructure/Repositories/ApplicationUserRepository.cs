@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.ApplicationUser;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace Pjfm.Infrastructure.Repositories
 {
@@ -14,7 +15,7 @@ namespace Pjfm.Infrastructure.Repositories
         {
             _pjfmContext = pjfmContext;
         }
-        
+
         public Task<int> SetUserLastLoginDate(string userName)
         {
             var user = _pjfmContext.Users.FirstOrDefault(x => x.UserName == userName);
@@ -24,6 +25,11 @@ namespace Pjfm.Infrastructure.Repositories
             }
 
             return _pjfmContext.SaveChangesAsync();
+        }
+
+        public Task<List<ApplicationUser>> GetApplicationUsersSinceLastLogin(DateTime date)
+        {
+            return _pjfmContext.Users.Where(x => x.LastLoginDate > date).ToListAsync();
         }
     }
 }
