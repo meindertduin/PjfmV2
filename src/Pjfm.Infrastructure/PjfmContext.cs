@@ -25,7 +25,8 @@ namespace Pjfm.Infrastructure
         {
             builder.ApplyConfiguration(new SpotifyTrackMap());
             builder.ApplyConfiguration(new SpotifyUserDataMap());
-            
+            builder.ApplyConfiguration(new ApplicationUserMap());
+
             base.OnModelCreating(builder);
         }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
 namespace Domain.ApplicationUser
@@ -10,5 +11,8 @@ namespace Domain.ApplicationUser
         }
 
         public virtual DateTime? LastLoginDate { get; set; }
+        public ICollection<SpotifyTrack.SpotifyTrack> SpotifyTracks { get; set; } = null!;
+        public SpotifyUserData.SpotifyUserData SpotifyUserData { get; set; } = null!;
+        public bool SpotifyAuthenticated { get; set; }
     }
 }
