@@ -1,5 +1,6 @@
 using System.Text;
 using System.Threading.Tasks;
+using Domain.ApplicationUser;
 using Domain.SpotifyUserData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -20,17 +21,20 @@ namespace Pjfm.Api.Controllers
         private readonly ISpotifyAuthenticationService _spotifyAuthenticationService;
         private readonly ISpotifyUserDataRepository _spotifyUserDataRepository;
         private readonly IUserTokenService _userTokenService;
+        private readonly IApplicationUserRepository _applicationUserRepository;
         private readonly ISpotifyTrackService _spotifyTrackService;
 
         public SpotifyAuthenticationController(IPjfmControllerContext pjfmContext,
             ISpotifyAuthenticationService spotifyAuthenticationService,
             ISpotifyUserDataRepository spotifyUserDataRepository,
             IUserTokenService userTokenService,
+            IApplicationUserRepository applicationUserRepository,
             ISpotifyTrackService spotifyTrackService) : base(pjfmContext)
         {
             _spotifyAuthenticationService = spotifyAuthenticationService;
             _spotifyUserDataRepository = spotifyUserDataRepository;
             _userTokenService = userTokenService;
+            _applicationUserRepository = applicationUserRepository;
             _spotifyTrackService = spotifyTrackService;
         }
 
@@ -60,8 +64,9 @@ namespace Pjfm.Api.Controllers
             if (requestResult.IsSuccessful)
             {
                 await _spotifyUserDataRepository.SetUserRefreshToken(PjfmPrincipal.Id ,requestResult.Result.RefreshToken);
+                await _applicationUserRepository.SetUserSpotifyAuthenticated(PjfmPrincipal.Id, true);
+                
                 _userTokenService.StoreUserSpotifyAccessToken(PjfmPrincipal.Id, requestResult.Result.AccessToken, requestResult.Result.ExpiresIn);
-
                 await _spotifyTrackService.SetUserSpotifyTracks(PjfmPrincipal.Id);
             }
 

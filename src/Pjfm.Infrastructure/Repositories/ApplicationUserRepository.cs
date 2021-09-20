@@ -24,5 +24,16 @@ namespace Pjfm.Infrastructure.Repositories
 
             return _pjfmContext.SaveChangesAsync();
         }
+
+        public Task SetUserSpotifyAuthenticated(string userId, bool spotifyAuthenticated)
+        {
+            var user = _pjfmContext.Users.FirstOrDefault(x => x.Id == userId);
+            if (user != null)
+            {
+                user.SpotifyAuthenticated = spotifyAuthenticated;
+            }
+
+            return _pjfmContext.SaveChangesAsync();
+        }
     }
 }
