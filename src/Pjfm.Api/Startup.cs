@@ -40,7 +40,7 @@ namespace Pjfm.Api
                     builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
                 });
             });
-            
+
             services.AddControllers();
             services.AddRazorPages();
             services.AddSwaggerDocument(options => options.Title = "Pjfm.Api");
@@ -65,6 +65,8 @@ namespace Pjfm.Api
 
             app.UseRouting();
             app.UseCors();
+            
+            app.UseStaticFiles();
 
             app.UseWebSockets(new WebSocketOptions()
             {
