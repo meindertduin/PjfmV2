@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -18,9 +19,9 @@ namespace SpotifyPlayback.Services
         private static HttpClient _httpClient = null!;
         private static readonly string _spotifyApiBaseUrl = "https://api.spotify.com/v1";
 
-        public SpotifyPlaybackClient(ISpotifyTokenService userTokenService)
+        public SpotifyPlaybackClient(ISpotifyTokenService userTokenService, IServiceProvider serviceProvider)
         {
-            _httpClient = new HttpClient(new SpotifyAuthenticatedRequestDelegatingHandler(userTokenService));
+            _httpClient = new HttpClient(new SpotifyAuthenticatedRequestDelegatingHandler(userTokenService, serviceProvider));
         }
         
         public async Task<bool> PlayTrackForUser(string userId, SpotifyPlayRequestDto content, string deviceId)

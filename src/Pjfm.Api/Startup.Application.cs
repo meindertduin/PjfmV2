@@ -18,6 +18,7 @@ namespace Pjfm.Api
             serviceCollection.AddTransient<ISpotifyTrackService, SpotifyTrackService>();
             serviceCollection.AddTransient<ISpotifyTokenService, SpotifyTokenService>();
             serviceCollection.AddTransient<IApplicationUserService, ApplicationUserService>();
+            serviceCollection.AddTransient<ISpotifyAuthenticationRevoker, SpotifyAuthenticationRevoker>();
 
             serviceCollection.AddSingleton<IUserTokenService, UserTokenService>();
 

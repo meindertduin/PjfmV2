@@ -37,6 +37,18 @@ namespace Pjfm.Infrastructure.Repositories
             await _pjfmContext.SaveChangesAsync();
         }
 
+        public async Task RemoveUserSpotifyTracks(string userId)
+        {
+            var spotifyTracks = await _pjfmContext.SpotifyTracks
+                .Where(x => x.UserId == userId)
+                .AsNoTracking()
+                .ToListAsync();
+            
+            _pjfmContext.SpotifyTracks.RemoveRange(spotifyTracks);
+
+            await _pjfmContext.SaveChangesAsync();
+        }
+
         public Task<List<SpotifyTrack>> GetRandomUserSpotifyTracks(IEnumerable<string> userIds, IEnumerable<TrackTerm> terms, int amount)
         {
             return _pjfmContext.SpotifyTracks
