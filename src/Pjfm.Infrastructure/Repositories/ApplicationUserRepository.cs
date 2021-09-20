@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.ApplicationUser;
-using Microsoft.EntityFrameworkCore;
 
 namespace Pjfm.Infrastructure.Repositories
 {
@@ -25,11 +23,6 @@ namespace Pjfm.Infrastructure.Repositories
             }
 
             return _pjfmContext.SaveChangesAsync();
-        }
-
-        public Task<List<ApplicationUser>> GetApplicationUsersSinceLastLogin(DateTime date)
-        {
-            return _pjfmContext.Users.Where(x => x.LastLoginDate > date).ToListAsync();
         }
     }
 }

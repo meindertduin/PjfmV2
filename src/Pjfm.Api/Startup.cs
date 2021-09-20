@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pjfm.Api.Authentication;
+using Pjfm.Api.HostedServices;
 using SpotifyPlayback;
 
 namespace Pjfm.Api
@@ -30,6 +31,7 @@ namespace Pjfm.Api
             ConfigurePlayback(services);
 
             services.AddTransient<PjfmSignInManager>();
+            services.AddHostedService<UpdateUserSpotifyTracksHostedService>();
 
             services.AddCors(options =>
             {

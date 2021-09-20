@@ -1,29 +1,52 @@
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Domain.ApplicationUser;
+using IdentityModel;
+using Microsoft.EntityFrameworkCore;
+using Pjfm.Infrastructure;
 
 namespace Pjfm.Application.ApplicationUser
 {
     public class ApplicationUserService : IApplicationUserService
     {
-        private readonly IApplicationUserRepository _applicationUserRepository;
+        private readonly PjfmContext _pjfmContext;
 
-        public ApplicationUserService(IApplicationUserRepository applicationUserRepository)
+        public ApplicationUserService(PjfmContext pjfmContext)
         {
-            _applicationUserRepository = applicationUserRepository;
+            _pjfmContext = pjfmContext;
         }
         
-        public async Task<IEnumerable<Domain.ApplicationUser.ApplicationUser>> GetApplicationUsersSinceLastLogin(
-            DateTime date)
+        public Task<List<GetApplicationUserResult>> GetApplicationUsers(
+            GetUsersRequest request)
         {
-            return await _applicationUserRepository.GetApplicationUsersSinceLastLogin(date);
+            var query = _pjfmContext.Users.AsQueryable();
+
+            if (request.Ids != null)
+            {
+                query = query.Where(x => request.Ids.Contains(x.Id));
+            }
+            if (request.SpotifyAuthenticated.HasValue)
+            {
+                query = query.Where(x => x.SpotifyAuthenticated == request.SpotifyAuthenticated);
+            }
+            if (request.SinceLastLoginDate.HasValue)
+            {
+                query = query.Where(x => x.LastLoginDate > request.SinceLastLoginDate);
+            }
+
+            return query.Select(x => new GetApplicationUserResult()
+            {
+                SpotifyAuthenticated = x.SpotifyAuthenticated,
+                UserName = x.UserName,
+                Id = x.Id,
+            }).AsNoTracking().ToListAsync();
         }
     }
 
     public interface IApplicationUserService
     {
-        public Task<IEnumerable<Domain.ApplicationUser.ApplicationUser>> GetApplicationUsersSinceLastLogin(
-            DateTime date);
+        public Task<List<GetApplicationUserResult>> GetApplicationUsers(
+            GetUsersRequest request);
     }
 }

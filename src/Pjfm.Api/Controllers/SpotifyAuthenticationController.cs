@@ -62,7 +62,7 @@ namespace Pjfm.Api.Controllers
                 await _spotifyUserDataRepository.SetUserRefreshToken(PjfmPrincipal.Id ,requestResult.Result.RefreshToken);
                 _userTokenService.StoreUserSpotifyAccessToken(PjfmPrincipal.Id, requestResult.Result.AccessToken, requestResult.Result.ExpiresIn);
 
-                await _spotifyTrackService.UpdateUserSpotifyTracks(PjfmPrincipal.Id);
+                await _spotifyTrackService.SetUserSpotifyTracks(PjfmPrincipal.Id);
             }
 
             return Ok(code);
