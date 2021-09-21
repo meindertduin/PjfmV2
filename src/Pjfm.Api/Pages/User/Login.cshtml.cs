@@ -41,11 +41,11 @@ namespace Pjfm.Api.Pages.Gebruiker
     {
         public string ReturnUrl { get; set; } = null!;
 
-        [Required(ErrorMessage = "Verplicht veld")]
-        [DataType(DataType.EmailAddress, ErrorMessage = "Voer een geldig email in")]
+        [Required(ErrorMessage = "Field is required")]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Please fill in a valid Email address")]
         public string EmailAddress { get; set; } = null!;
 
-        [Required(ErrorMessage = "Verplicht veld")]
+        [Required(ErrorMessage = "Field is required")]
         [DataType(DataType.Password)]
         public string Password { get; set; } = null!;
     }

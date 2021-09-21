@@ -56,22 +56,22 @@ namespace Pjfm.Api.Pages.User
     {
         public string ReturnUrl { get; set; } = null!;
 
-        [Required(ErrorMessage = "veld is verplicht")]
-        [MaxLength(50, ErrorMessage = "gebruikersnaam te lang")]
+        [Required(ErrorMessage = "Field is required")]
+        [MaxLength(50, ErrorMessage = "Username is to long")]
         public string Username { get; set; } = null!;
 
-        [Required(ErrorMessage = "veld is verplicht")]
-        [DataType(DataType.EmailAddress, ErrorMessage = "Voer een geldig email address in")]
-        [MaxLength(200, ErrorMessage = "e-mailaddress te lang")]
+        [Required(ErrorMessage = "Field is required")]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Please fill in a valid Email address")]
+        [MaxLength(200, ErrorMessage = "Email address is to long")]
         public string Email { get; set; } = null!;
 
-        [Required(ErrorMessage = "veld is verplicht")]
+        [Required(ErrorMessage = "Field is required")]
         [DataType(DataType.Password)]
-        [Compare("ConfirmPassword", ErrorMessage = "Wachtwoorden zijn niet hetzelfde")]
+        [Compare("ConfirmPassword", ErrorMessage = "Passwords don't match")]
         public string Password { get; set; } = null!;
 
         [DataType(DataType.Password)]
-        [Required(ErrorMessage = "veld is verplicht")]
+        [Required(ErrorMessage = "Field is required")]
         public string ConfirmPassword { get; set; } = null!;
     }
 }
