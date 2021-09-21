@@ -25,8 +25,10 @@ export class AuthenticationClient {
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "https://localhost:5004";
     }
 
-    logout(): Observable<void> {
-        let url_ = this.baseUrl + "/api/authentication/logout";
+    logout(logoutId: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/authentication/logout?";
+        if (logoutId !== undefined && logoutId !== null)
+            url_ += "logoutId=" + encodeURIComponent("" + logoutId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -839,7 +841,8 @@ export interface IGetCurrentUserResponseModel {
 
 export enum UserRole {
     User = 0,
-    Dj = 1,
+    SpotifyAuth = 1,
+    Dj = 2,
 }
 
 export interface FileResponse {

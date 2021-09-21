@@ -1,9 +1,11 @@
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.ApplicationUser;
 using Domain.SpotifyUserData;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Pjfm.Api.Authentication;
@@ -11,6 +13,7 @@ using Pjfm.Api.Controllers.Base;
 using Pjfm.Application.Authentication;
 using Pjfm.Application.GebruikerNummer;
 using Pjfm.Application.Spotify;
+using Pjfm.Common.Authentication;
 
 namespace Pjfm.Api.Controllers
 {
@@ -22,6 +25,7 @@ namespace Pjfm.Api.Controllers
         private readonly ISpotifyUserDataRepository _spotifyUserDataRepository;
         private readonly IUserTokenService _userTokenService;
         private readonly IApplicationUserRepository _applicationUserRepository;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly ISpotifyTrackService _spotifyTrackService;
         private readonly StateValidator _stateValidator;
 
@@ -30,12 +34,14 @@ namespace Pjfm.Api.Controllers
             ISpotifyUserDataRepository spotifyUserDataRepository,
             IUserTokenService userTokenService,
             IApplicationUserRepository applicationUserRepository,
+            UserManager<ApplicationUser> userManager,
             ISpotifyTrackService spotifyTrackService) : base(pjfmContext)
         {
             _spotifyAuthenticationService = spotifyAuthenticationService;
             _spotifyUserDataRepository = spotifyUserDataRepository;
             _userTokenService = userTokenService;
             _applicationUserRepository = applicationUserRepository;
+            _userManager = userManager;
             _spotifyTrackService = spotifyTrackService;
 
             _stateValidator = new StateValidator();
@@ -75,6 +81,13 @@ namespace Pjfm.Api.Controllers
                     requestResult.Result.RefreshToken);
                 await _applicationUserRepository.SetUserSpotifyAuthenticated(PjfmPrincipal.Id, true);
 
+                var user = await _userManager.GetUserAsync(HttpContext.User);
+                
+                await _userManager.AddClaimsAsync(user, new[]
+                {
+                    new Claim(PjfmClaimTypes.Role, UserRole.SpotifyAuth.ToString()),
+                });
+                
                 _userTokenService.StoreUserSpotifyAccessToken(PjfmPrincipal.Id, requestResult.Result.AccessToken,
                     requestResult.Result.ExpiresIn);
                 await _spotifyTrackService.SetUserSpotifyTracks(PjfmPrincipal.Id);
