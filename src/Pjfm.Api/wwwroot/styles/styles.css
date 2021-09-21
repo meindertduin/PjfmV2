@@ -94,13 +94,15 @@ a {
 }
 
 .login-form {
-  position: relative;
+  position: static;
   z-index: 200;
   background: #00303e;
   color: #46f127;
   padding: 20px;
   border-radius: 10px;
   width: 80%;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 @media (min-width: 787px) {
   .login-form {

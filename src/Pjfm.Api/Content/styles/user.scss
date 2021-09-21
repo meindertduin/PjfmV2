@@ -79,13 +79,15 @@ a {
 }
 
 .login-form {
-  position: relative;
+  position: static;
   z-index: 200;
   background: $color-secondary;
   color: $color-yellow;
   padding: 20px;
   border-radius: 10px;
   width: 80%;
+  max-height: 80vh;
+  overflow-y: auto;
   
   @media (min-width: $breakpoint-m) {
     width: 400px;
