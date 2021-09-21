@@ -17,8 +17,8 @@ namespace Pjfm.Infrastructure.TableMappings
             builder.Property(s => s.SpotifyTrackId).HasMaxLength(50).IsRequired();
             builder.Property(s => s.UserId).HasMaxLength(50);
             builder.Property(s => s.Artists).HasConversion(
-                v => string.Join(',', v),
-                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    v => string.Join(',', v),
+                    v => v.Split(',', StringSplitOptions.RemoveEmptyEntries))
                 .HasMaxLength(255)
                 .IsRequired();
 
@@ -30,7 +30,7 @@ namespace Pjfm.Infrastructure.TableMappings
             // );
             //
             // builder.Property(s => s.Artists).Metadata.SetValueComparer(artistsValueComparer);
-            
+
             builder.Property(s => s.Title).HasMaxLength(255).IsRequired();
         }
     }

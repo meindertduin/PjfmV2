@@ -1,10 +1,12 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Domain.ApplicationUser;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Configuration;
+using Pjfm.Api.Authentication;
 using Pjfm.Common.Authentication;
 
 namespace Pjfm.Api.Pages.User
@@ -18,8 +20,8 @@ namespace Pjfm.Api.Pages.User
             Form = new RegisterForm() {ReturnUrl = configuration.GetValue<string>("ClientUrl")};
         }
 
-        public async Task<IActionResult> OnPost([FromServices] UserManager<IdentityUser> userManager,
-            [FromServices] SignInManager<IdentityUser> signInManager,
+        public async Task<IActionResult> OnPost([FromServices] UserManager<ApplicationUser> userManager,
+            [FromServices] PjfmSignInManager signInManager,
             [FromServices] IConfiguration configuration)
         {
             if (ModelState.IsValid == false)
@@ -27,7 +29,7 @@ namespace Pjfm.Api.Pages.User
                 return Page();
             }
 
-            var newUser = new IdentityUser(Form.Username) { Email = Form.Email };
+            var newUser = new ApplicationUser(Form.Username) { Email = Form.Email };
             var userCreateRequest = await userManager.CreateAsync(newUser, Form.Password);
 
             if (userCreateRequest.Succeeded)
@@ -40,6 +42,7 @@ namespace Pjfm.Api.Pages.User
 
                 if (claimsAddResult.Succeeded)
                 {
+                    await signInManager.PasswordSignInAsync(newUser.UserName, Form.Password, false, false);
                     var redirectUrl = configuration.GetValue<string>("ClientUrl"); 
                     return Redirect(redirectUrl);
                 }
@@ -53,22 +56,22 @@ namespace Pjfm.Api.Pages.User
     {
         public string ReturnUrl { get; set; } = null!;
 
-        [Required(ErrorMessage = "veld is verplicht")]
-        [MaxLength(50, ErrorMessage = "gebruikersnaam te lang")]
+        [Required(ErrorMessage = "Field is required")]
+        [MaxLength(50, ErrorMessage = "Username is to long")]
         public string Username { get; set; } = null!;
 
-        [Required(ErrorMessage = "veld is verplicht")]
-        [DataType(DataType.EmailAddress, ErrorMessage = "Voer een geldig email address in")]
-        [MaxLength(200, ErrorMessage = "e-mailaddress te lang")]
+        [Required(ErrorMessage = "Field is required")]
+        [DataType(DataType.EmailAddress, ErrorMessage = "Please fill in a valid Email address")]
+        [MaxLength(200, ErrorMessage = "Email address is to long")]
         public string Email { get; set; } = null!;
 
-        [Required(ErrorMessage = "veld is verplicht")]
+        [Required(ErrorMessage = "Field is required")]
         [DataType(DataType.Password)]
-        [Compare("ConfirmPassword", ErrorMessage = "Wachtwoorden zijn niet hetzelfde")]
+        [Compare("ConfirmPassword", ErrorMessage = "Passwords don't match")]
         public string Password { get; set; } = null!;
 
         [DataType(DataType.Password)]
-        [Required(ErrorMessage = "veld is verplicht")]
+        [Required(ErrorMessage = "Field is required")]
         public string ConfirmPassword { get; set; } = null!;
     }
 }

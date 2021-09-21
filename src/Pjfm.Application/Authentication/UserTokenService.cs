@@ -41,7 +41,7 @@ namespace Pjfm.Application.Authentication
 
             accessToken = userTokensData!.SpotifyAccessToken;
             
-            if (userTokensData.SpotifyAccessTokenValidUntil > DateTime.Today)
+            if (userTokensData.SpotifyAccessTokenValidUntil > DateTime.Now)
             {
                 return true;
             }

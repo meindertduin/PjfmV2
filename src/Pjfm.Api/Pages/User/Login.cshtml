@@ -7,33 +7,34 @@
 }
 
 <div class="login-container">
-    <div class="row justify-content-center align-content-center">
-        <div class="col-lg-4 col-md-6 col-sm-8 col-10 login-form">
-            <form method="post">
-                <input type="hidden" asp-for="Form.ReturnUrl" value="@Model.Form.ReturnUrl"/>
-                <div class="form-group">
-                    <a asp-page="/Account/Register" asp-route-returnUrl="@Model.Form.ReturnUrl" class="form-btn-link">Geen account, klik hier om je aan te melden</a>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label" for="emailForm">E-mailaddress</label>
-                    <span class="valSpan" asp-validation-for="Form.EmailAddress"></span>
-                    <input type="email" class="form-control" id="emailForm" placeholder="Uw e-mailaddress *" asp-for="Form.EmailAddress"/>
-                </div>
-                <div class="form-group">
-                    <label class="form-label" for="passwordForm">Watchwoord</label>
-                    <span class="valSpan" asp-validation-for="Form.Password"></span>
-                    <input type="password" class="form-control" id="passwordForm" placeholder="Uw watchwoord *" asp-for="Form.Password"/>
-                </div>
-                <div class="form-group">
-                    <div class="row justify-content-center">
-                        <input type="submit" class="btnSubmit" value="Login"/>
-                    </div>
-                </div>
-            </form>
+    <div class="login-form">
+        <div class="form-header">
+            <h2>Login</h2>
         </div>
+        <form method="post">
+            <input type="hidden" asp-for="Form.ReturnUrl" value="@Model.Form.ReturnUrl"/>
+            <div class="form-group">
+                <a asp-page="/user/register" asp-route-returnUrl="@Model.Form.ReturnUrl" class="form-btn-link">No account? Click here to sign up!</a>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="emailForm">E-mailaddress</label>
+                <span class="val-label" asp-validation-for="Form.EmailAddress"></span>
+                <input type="email" class="form-input" id="emailForm" placeholder="Email address ..." asp-for="Form.EmailAddress"/>
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="passwordForm">Watchwoord</label>
+                <span class="val-label" asp-validation-for="Form.Password"></span>
+                <input type="password" class="form-input" id="passwordForm" placeholder="Password ..." asp-for="Form.Password" autocomplete="off" />
+            </div>
+            <div class="form-group">
+                <div class="button-container">
+                    <button type="submit" class="raised-button raised-button__yellow" style="width: 80%">
+                        <span>Login</span>
+                    </button>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
-
-
-
+<div class="background"></div>

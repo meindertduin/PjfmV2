@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Domain.ApplicationUser;
 using IdentityServer4.EntityFramework.DbContexts;
 using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
@@ -20,7 +21,7 @@ namespace Pjfm.Api
         {
             services.AddHttpContextAccessor();
 
-            services.AddIdentity<IdentityUser, IdentityRole>(options =>
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
                 {
                     options.User.RequireUniqueEmail = true;
                     options.Password.RequireUppercase = false;
@@ -36,7 +37,7 @@ namespace Pjfm.Api
 
             var identityServiceBuilder = services.AddIdentityServer();
 
-            identityServiceBuilder.AddAspNetIdentity<IdentityUser>();
+            identityServiceBuilder.AddAspNetIdentity<ApplicationUser>();
 
             if (WebHostEnvironment.IsProduction())
             {

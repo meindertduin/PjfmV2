@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain;
+using Domain.ApplicationUser;
 using Domain.SpotifyTrack;
 using Domain.SpotifyUserData;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -10,7 +11,7 @@ using Pjfm.Infrastructure.TableMappings;
 
 namespace Pjfm.Infrastructure
 {
-    public class PjfmContext : IdentityDbContext, IPjfmContext
+    public class PjfmContext : IdentityDbContext<ApplicationUser>, IPjfmContext
     {
         public DbSet<SpotifyTrack> SpotifyTracks { get; private set; } = null!;
         public DbSet<SpotifyUserData> SpotifyUserData { get; private set; } = null!;
@@ -24,7 +25,8 @@ namespace Pjfm.Infrastructure
         {
             builder.ApplyConfiguration(new SpotifyTrackMap());
             builder.ApplyConfiguration(new SpotifyUserDataMap());
-            
+            builder.ApplyConfiguration(new ApplicationUserMap());
+
             base.OnModelCreating(builder);
         }
 

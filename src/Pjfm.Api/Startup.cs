@@ -1,9 +1,13 @@
 using System;
+using Domain.ApplicationUser;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Pjfm.Api.Authentication;
+using Pjfm.Api.HostedServices;
 using SpotifyPlayback;
 
 namespace Pjfm.Api
@@ -26,6 +30,9 @@ namespace Pjfm.Api
             ConfigureAuthentication(services);
             ConfigurePlayback(services);
 
+            services.AddTransient<PjfmSignInManager>();
+            services.AddHostedService<UpdateUserSpotifyTracksHostedService>();
+
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
@@ -33,7 +40,7 @@ namespace Pjfm.Api
                     builder.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
                 });
             });
-            
+
             services.AddControllers();
             services.AddRazorPages();
             services.AddSwaggerDocument(options => options.Title = "Pjfm.Api");
@@ -58,6 +65,8 @@ namespace Pjfm.Api
 
             app.UseRouting();
             app.UseCors();
+            
+            app.UseStaticFiles();
 
             app.UseWebSockets(new WebSocketOptions()
             {

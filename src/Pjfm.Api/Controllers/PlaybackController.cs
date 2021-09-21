@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Net;
 using System.Threading.Tasks;
-using IdentityModel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Api.Controllers.Base;
-using Pjfm.Application.Authentication;
 using SpotifyPlayback.Interfaces;
-using SpotifyPlayback.Models;
 using SpotifyPlayback.Models.DataTransferObjects;
 using SpotifyPlayback.Requests.PlaybackRequestHandlers;
 
@@ -20,20 +16,14 @@ namespace Pjfm.Api.Controllers
     public class PlaybackController : PjfmController
     {
         private readonly IPlaybackRequestDispatcher _playbackRequestDispatcher;
-        private readonly ISpotifyTokenService _spotifyTokenService;
         private readonly ISocketConnectionCollection _socketConnectionCollection;
-        private readonly IPlaybackGroupCollection _playbackGroupCollection;
 
-        public PlaybackController(IPjfmControllerContext pjfmContext,
-            IPlaybackRequestDispatcher playbackRequestDispatcher,
-            ISpotifyTokenService spotifyTokenService, ISocketConnectionCollection socketConnectionCollection,
-            IPlaybackGroupCollection playbackGroupCollection) : base(
+        public PlaybackController(IPjfmControllerContext pjfmContext, IPlaybackRequestDispatcher playbackRequestDispatcher,
+            ISocketConnectionCollection socketConnectionCollection) : base(
             pjfmContext)
         {
             _playbackRequestDispatcher = playbackRequestDispatcher;
-            _spotifyTokenService = spotifyTokenService;
             _socketConnectionCollection = socketConnectionCollection;
-            _playbackGroupCollection = playbackGroupCollection;
         }
 
         [HttpGet("groups")]
@@ -56,18 +46,11 @@ namespace Pjfm.Api.Controllers
                 return Conflict();
             }
 
-            var accessTokenResult = await _spotifyTokenService.GetUserSpotifyAccessToken(PjfmPrincipal.Id);
-            if (!accessTokenResult.IsSuccessful)
-            {
-                return Conflict();
-            }
-
             var newListener = new ListenerDto(socketConnection!.ConnectionId, PjfmPrincipal, deviceId);
             var result = await _playbackRequestDispatcher.HandlePlaybackRequest(new AddListenerToGroupRequest()
             {
                 GroupId = groupId, 
                 NewListener = newListener,
-                SpotifyAccessToken = accessTokenResult.AccessToken,
             });
 
             if (!result.IsSuccessful)

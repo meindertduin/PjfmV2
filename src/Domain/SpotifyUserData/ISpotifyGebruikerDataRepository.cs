@@ -7,6 +7,7 @@ namespace Domain.SpotifyUserData
         Task<SpotifyUserData> GetSpotifyUserData(string userId);
         Task<SpotifyUserData> GetSpotifyUserDataAsNoTracking(string userId);
         Task<string> GetUserRefreshToken(string userId);
+        Task RemoveUserSpotifyData(string userId);
         Task SetUserRefreshToken(string userId, string refreshToken);
     }
 }

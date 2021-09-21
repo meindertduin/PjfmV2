@@ -1,6 +1,17 @@
 <nav class="toolbar">
   <button *ngIf="isDetailPage" class="back-button" [routerLink]="'../'"><--</button>
-  <span class="title glow">This is PJFM</span>
+  <div class="toolbar-right-info" *ngIf="user == null; else userAuthenticatedInfo">
+    <a href="/user/login" class="flat-button flat-button__round flat-button__green ripple m-xs-x">Login</a>
+    <a href="/user/register" class="flat-button flat-button__round flat-button__blue ripple m-xs-x">Register</a>
+  </div>
+  <ng-template #userAuthenticatedInfo>
+    <div class="toolbar-right-info">
+      <div class="user-info">
+        <span class="m-xs-r user-name">{{user!.userName}}</span>
+      </div>
+      <a href="/user/logout" class="m-xs-l logout-link">[ logout ]</a>
+    </div>
+  </ng-template>
 </nav>
 <div class="view-container">
   <router-outlet></router-outlet>

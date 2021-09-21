@@ -7,7 +7,7 @@ namespace SpotifyPlayback.Interfaces
     public interface ISpotifyPlaybackService
     {
         Task PlayNextTrackForUsers(ListenerDto[] listeners, string trackId);
-        Task PlayTrackForUser(ListenerDto listener, string trackId, string spotifyAccessToken, int trackStartTimeMs);
+        Task PlayTrackForUser(ListenerDto listener, string trackId, int trackStartTimeMs);
         Task PausePlaybackForUser(string userId);
         Task<IEnumerable<DeviceDto>> GetUserDevices(string userId);
     }

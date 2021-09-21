@@ -1,4 +1,5 @@
 using System.Data;
+using Domain.ApplicationUser;
 using Domain.SpotifyTrack;
 using Domain.SpotifyUserData;
 using Microsoft.Data.SqlClient;
@@ -16,6 +17,7 @@ namespace Pjfm.Api
         {
             services.AddTransient<ISpotifyUserDataRepository, SpotifyUserDataRepository>();
             services.AddTransient<ISpotifyTrackRepository, SpotifyTrackRepository>();
+            services.AddTransient<IApplicationUserRepository, ApplicationUserRepository>();
             
             var connectionString = Configuration.GetValue<string>("ConnectionStrings:ApplicationDb");
 

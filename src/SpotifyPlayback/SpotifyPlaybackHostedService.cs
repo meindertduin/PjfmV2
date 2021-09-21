@@ -11,11 +11,11 @@ namespace SpotifyPlayback
 {
     public class SpotifyPlaybackHostedService : IHostedService, IDisposable
     {
-        private readonly IServiceProvider _services;
         private ISpotifyPlaybackController _spotifyPlaybackController = null!;
         private IPlaybackGroupCollection _playbackGroupCollection = null!;
         private Timer? _playbackTimer;
         private IPlaybackScheduledTrackQueue _playbackScheduledTrackQueue = null!;
+        private readonly IServiceProvider _services;
 
         public SpotifyPlaybackHostedService(IServiceProvider services)
         {
@@ -24,9 +24,11 @@ namespace SpotifyPlayback
 
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            _playbackGroupCollection = _services.GetRequiredService<IPlaybackGroupCollection>();
-            _playbackScheduledTrackQueue = _services.GetRequiredService<IPlaybackScheduledTrackQueue>();
-            _spotifyPlaybackController = _services.GetRequiredService<ISpotifyPlaybackController>();
+            using var scope = _services.CreateScope();
+            
+            _playbackGroupCollection = scope.ServiceProvider.GetRequiredService<IPlaybackGroupCollection>();
+            _playbackScheduledTrackQueue = scope.ServiceProvider.GetRequiredService<IPlaybackScheduledTrackQueue>();
+            _spotifyPlaybackController = scope.ServiceProvider.GetRequiredService<ISpotifyPlaybackController>();
             
             _playbackGroupCollection.PlaybackGroupCreatedEvent += AddNewGroupToScheduler;
             

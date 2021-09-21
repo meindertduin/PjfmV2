@@ -25,8 +25,10 @@ export class AuthenticationClient {
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "https://localhost:5004";
     }
 
-    logout(): Observable<void> {
-        let url_ = this.baseUrl + "/api/authentication/logout";
+    logout(logoutId: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/authentication/logout?";
+        if (logoutId !== undefined && logoutId !== null)
+            url_ += "logoutId=" + encodeURIComponent("" + logoutId) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -783,9 +785,9 @@ export interface IDeviceModel {
 }
 
 export class GetCurrentUserResponseModel implements IGetCurrentUserResponseModel {
-    userId?: string | undefined;
-    userName?: string | undefined;
-    roles?: UserRole[] | undefined;
+    userId!: string;
+    userName!: string;
+    roles!: UserRole[];
 
     constructor(data?: IGetCurrentUserResponseModel) {
         if (data) {
@@ -793,6 +795,9 @@ export class GetCurrentUserResponseModel implements IGetCurrentUserResponseModel
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
+        }
+        if (!data) {
+            this.roles = [];
         }
     }
 
@@ -829,14 +834,15 @@ export class GetCurrentUserResponseModel implements IGetCurrentUserResponseModel
 }
 
 export interface IGetCurrentUserResponseModel {
-    userId?: string | undefined;
-    userName?: string | undefined;
-    roles?: UserRole[] | undefined;
+    userId: string;
+    userName: string;
+    roles: UserRole[];
 }
 
 export enum UserRole {
     User = 0,
-    Dj = 1,
+    SpotifyAuth = 1,
+    Dj = 2,
 }
 
 export interface FileResponse {

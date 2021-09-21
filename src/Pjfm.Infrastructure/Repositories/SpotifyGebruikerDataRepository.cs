@@ -33,6 +33,18 @@ namespace Pjfm.Infrastructure.Repositories
                 .FirstOrDefaultAsync();
         }
 
+        public Task RemoveUserSpotifyData(string userId)
+        {
+            var spotifyUserData = _pjfmContext.SpotifyUserData.FirstOrDefault(x => x.UserId == userId);
+            if (spotifyUserData == null)
+            {
+                return Task.CompletedTask;
+            }
+            
+            _pjfmContext.SpotifyUserData.Remove(spotifyUserData);
+            return _pjfmContext.SaveChangesAsync();
+        }
+
         public async Task SetUserRefreshToken(string userId, string refreshToken)
         {
             var spotifyUserData = await GetSpotifyUserData(userId);
