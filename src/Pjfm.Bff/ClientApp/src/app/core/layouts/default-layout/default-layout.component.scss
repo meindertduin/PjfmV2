@@ -1,14 +1,20 @@
 @import "variables";
 
 
+$toolbar-height: 70px;
+
 .toolbar {
-  height: 70px;
+  height: $toolbar-height;
   background: $color-primary;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+  top: 0;
 
   .back-button {
     position: absolute;
@@ -52,5 +58,5 @@
   }
 }
 .view-container {
-  margin: 10px 5px;
+  margin: calc(#{$toolbar-height} + 20px) 5px 10px 5px;
 }
