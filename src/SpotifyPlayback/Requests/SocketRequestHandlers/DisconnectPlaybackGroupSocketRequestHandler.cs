@@ -19,10 +19,21 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
         public Task HandleAsync(DisconnectPlaybackGroupRequest request, SocketConnection socketConnection)
         {
             using var scope = _serviceProvider.CreateScope();
-            var spotifyPlaybackService = scope.ServiceProvider.GetRequiredService<ISpotifyPlaybackService>();
-            _playbackGroupCollection.ClearConnectionFromGroup(socketConnection.ConnectionId, request.ConnectedGroupId);
+
+            var groupId = socketConnection.GetConnectedPlaybackGroupId();
+            if (!groupId.HasValue)
+            {
+                return Task.CompletedTask;
+            }
             
-            spotifyPlaybackService.PausePlaybackForUser(socketConnection.Principal.Id);
+            var spotifyPlaybackService = scope.ServiceProvider.GetRequiredService<ISpotifyPlaybackService>();
+            var userWasListener = _playbackGroupCollection.RemoveListenerFromGroup(socketConnection.ConnectionId, groupId.Value);
+            _playbackGroupCollection.RemoveJoinedConnectionFromGroup(socketConnection.ConnectionId, groupId.Value);
+
+            if (userWasListener)
+            {
+                spotifyPlaybackService.PausePlaybackForUser(socketConnection.Principal.Id);
+            }
             
             return Task.CompletedTask;
         }
@@ -30,6 +41,5 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
 
     public class DisconnectPlaybackGroupRequest : IPlaybackRequest
     {
-        public Guid ConnectedGroupId { get; set; }
     }
 }
