@@ -5,13 +5,19 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DefaultLayoutModule } from './core/layouts/default-layout/default-layout.module';
 import { HttpClientModule } from '@angular/common/http';
-import { API_BASE_URL, PlaybackClient, SpotifyClient } from './core/services/api-client.service';
+import { API_BASE_URL, PlaybackClient, SpotifyClient, UserClient } from './core/services/api-client.service';
 import { FormBuilder } from '@angular/forms';
+import { UserService } from './shared/services/user.service';
 
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule, AppRoutingModule, DefaultLayoutModule, HttpClientModule],
-  providers: [PlaybackClient, SpotifyClient, { provide: API_BASE_URL, useValue: '' }, FormBuilder],
+  providers: [
+    PlaybackClient,
+    SpotifyClient,
+    { provide: API_BASE_URL, useValue: '' },
+    FormBuilder,
+    UserClient,
   bootstrap: [AppComponent],
 })
 export class AppModule {}

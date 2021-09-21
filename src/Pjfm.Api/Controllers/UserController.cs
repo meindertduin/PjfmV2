@@ -20,9 +20,9 @@ namespace Pjfm.Api.Controllers
         {
             var responseModel = new GetCurrentUserResponseModel()
             {
-                UserId = PjfmPrincipal?.Id,
-                Roles = PjfmPrincipal?.Roles,
-                UserName = PjfmPrincipal?.UserName,
+                UserId = PjfmPrincipal.Id,
+                Roles = PjfmPrincipal.Roles,
+                UserName = PjfmPrincipal.UserName,
             };
 
             return Ok(responseModel);

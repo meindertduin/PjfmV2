@@ -27,6 +27,13 @@ namespace Pjfm.Bff.Controllers
             return Challenge(props, "cookies", "oidc");
         }
 
+        [Route("register")]
+        public IActionResult Register()
+        {
+            var backendUrl = _configuration.GetValue<string>("BackendUrl");
+            return Redirect($"{backendUrl}/user/register");
+        }
+
         [Route("logout")]
         public async Task<IActionResult> Logout([FromQuery] string redirectUrl)
         {

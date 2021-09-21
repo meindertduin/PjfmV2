@@ -1,6 +1,13 @@
 <nav class="toolbar">
   <button *ngIf="isDetailPage" class="back-button" [routerLink]="'../'"><--</button>
-  <span class="title glow">This is PJFM</span>
+  <div class="auth-buttons-container" *ngIf="userAuthenticated != null">
+    <a href="/user/login" *ngIf="userAuthenticated === false" class="flat-button flat-button__round flat-button__green ripple m-xs-x"
+      >Login</a
+    >
+    <a href="/user/register" *ngIf="userAuthenticated === false" class="flat-button flat-button__round flat-button__blue ripple m-xs-x"
+      >Register</a
+    >
+  </div>
 </nav>
 <div class="view-container">
   <router-outlet></router-outlet>

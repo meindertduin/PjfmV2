@@ -783,9 +783,9 @@ export interface IDeviceModel {
 }
 
 export class GetCurrentUserResponseModel implements IGetCurrentUserResponseModel {
-    userId?: string | undefined;
-    userName?: string | undefined;
-    roles?: UserRole[] | undefined;
+    userId!: string;
+    userName!: string;
+    roles!: UserRole[];
 
     constructor(data?: IGetCurrentUserResponseModel) {
         if (data) {
@@ -793,6 +793,9 @@ export class GetCurrentUserResponseModel implements IGetCurrentUserResponseModel
                 if (data.hasOwnProperty(property))
                     (<any>this)[property] = (<any>data)[property];
             }
+        }
+        if (!data) {
+            this.roles = [];
         }
     }
 
@@ -829,9 +832,9 @@ export class GetCurrentUserResponseModel implements IGetCurrentUserResponseModel
 }
 
 export interface IGetCurrentUserResponseModel {
-    userId?: string | undefined;
-    userName?: string | undefined;
-    roles?: UserRole[] | undefined;
+    userId: string;
+    userName: string;
+    roles: UserRole[];
 }
 
 export enum UserRole {

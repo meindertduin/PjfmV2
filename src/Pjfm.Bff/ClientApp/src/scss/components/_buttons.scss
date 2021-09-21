@@ -21,6 +21,11 @@
     border-color: $color-yellow;
   }
 
+  &__green {
+    color: $color-green;
+    border-color: $color-green;
+  }
+
   &__orange {
     color: $color-orange;
     border-color: $color-orange;
@@ -34,6 +39,15 @@
   &__danger {
     color: $color-danger;
     border-color: $color-danger;
+  }
+
+  &__blue {
+    color: $color-blue;
+    border-color: $color-blue;
+  }
+
+  &__round {
+    border-radius: 20px;
   }
 
   .icon {
