@@ -19,11 +19,11 @@ $spacing-default-padding: 20px;
 }
 
 .m-0 {
-  margin: 0;
+  margin: 0 !important;
 }
 
 .p-0 {
-  padding: 0;
+  padding: 0 !important;
 }
 
 @each $name, $scale in $spacing-scales {

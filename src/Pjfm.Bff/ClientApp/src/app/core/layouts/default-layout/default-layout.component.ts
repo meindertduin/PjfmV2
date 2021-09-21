@@ -3,6 +3,7 @@ import { RouteDataService } from '../../../shared/services/route-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../../shared/services/user.service';
+import { GetCurrentUserResponseModel } from '../../services/api-client.service';
 
 @Component({
   selector: 'pjfm-default-layout',
@@ -13,7 +14,7 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
   private readonly _destroyed = new Subject();
 
   isDetailPage = false;
-  userAuthenticated?: boolean;
+  user?: GetCurrentUserResponseModel;
 
   constructor(private readonly _routeDataService: RouteDataService, private readonly _userService: UserService) {}
 
@@ -25,7 +26,7 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
         this.isDetailPage = isDetailPage;
       });
 
-    this.userAuthenticated = this._userService.isAuthenticated();
+    this.user = this._userService.getUser();
   }
 
   ngOnDestroy(): void {

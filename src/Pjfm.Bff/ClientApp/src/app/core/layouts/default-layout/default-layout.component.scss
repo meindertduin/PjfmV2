@@ -31,13 +31,19 @@
     }
   }
 
-  .auth-buttons-container {
+  .toolbar-right-info {
     right: 20px;
     position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: row;
+
+    .user-info {
+      display: flex;
+      flex-direction: row;
+      color: $color-yellow;
+    }
   }
 
   .title {
