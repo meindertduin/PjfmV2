@@ -1,7 +1,112 @@
-.has-no-margin {
+$spacing-directions: ('t', 'b', 'l', 'r');
+$spacing-scales: (
+  xs: 0.25,
+  s: 0.5,
+  d: 1,
+  m: 2,
+  l: 4,
+);
+
+$spacing-default-margin: 20px;
+$spacing-default-padding: 20px;
+
+.m {
+  margin: $spacing-default-margin;
+}
+
+.p {
+  padding: $spacing-default-margin;
+}
+
+.m-0 {
   margin: 0;
 }
 
-.has-no-padding {
+.p-0 {
   padding: 0;
+}
+
+@each $name, $scale in $spacing-scales {
+  .m-#{$name} {
+    margin: $spacing-default-margin * $scale;
+  }
+
+  .p-#{$name} {
+    padding: $spacing-default-padding * $scale;
+  }
+
+  .m-#{$name}-x {
+    margin: 0 $spacing-default-margin * $scale;
+  }
+
+  .p-#{$name}-x {
+    padding: 0 $spacing-default-padding * $scale;
+  }
+
+  .m-#{$name}-y {
+    margin: $spacing-default-margin * $scale 0;
+  }
+
+  .p-#{$name}-y {
+    padding: $spacing-default-padding * $scale 0;
+  }
+
+  @each $direction in $spacing-directions {
+    $css-direction: '';
+    @if ($direction == 't') {
+      $css-direction: 'top';
+    } @else if($direction == 'b') {
+      $css-direction: 'bottom';
+    } @else if ($direction == 'l') {
+      $css-direction: 'left';
+    } @else if ($direction == 'r') {
+      $css-direction: 'right';
+    }
+
+    .m-#{$name}-#{$direction} {
+      margin-#{$css-direction}: $spacing-default-margin * $scale;
+    }
+
+    .p-#{$name}-#{$direction} {
+      padding-#{$css-direction}: $spacing-default-padding * $scale;
+    }
+  }
+}
+
+
+@each $direction in $spacing-directions {
+  $css-direction: '';
+  @if ($direction == 't') {
+    $css-direction: 'top';
+  } @else if($direction == 'b') {
+    $css-direction: 'bottom';
+  } @else if ($direction == 'l') {
+    $css-direction: 'left';
+  } @else if ($direction == 'r') {
+    $css-direction: 'right';
+  }
+
+  .m-#{$direction} {
+    margin-#{$css-direction}: $spacing-default-margin;
+  }
+
+  .p-#{$direction} {
+    padding-#{$css-direction}: $spacing-default-padding;
+  }
+}
+
+.m-x {
+  margin: 0 $spacing-default-margin;
+}
+
+.m-y {
+  margin: $spacing-default-margin 0;
+}
+
+.p-x {
+  margin: 0 $spacing-default-padding;
+}
+
+.p-y {
+  margin: $spacing-default-padding 0;
 }
