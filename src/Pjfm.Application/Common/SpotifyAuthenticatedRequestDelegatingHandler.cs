@@ -9,7 +9,6 @@ using Pjfm.Application.Authentication;
 using Pjfm.Application.Spotify;
 using Pjfm.Common;
 using Pjfm.Common.Http;
-using SpotifyAPI.Web;
 
 namespace Pjfm.Application.Common
 {
@@ -37,7 +36,7 @@ namespace Pjfm.Application.Common
             var accessTokenResult = await _spotifyTokenService.GetUserSpotifyAccessToken(userId);
             if (!accessTokenResult.IsSuccessful)
             {
-                throw new APIException("Could not retrieve the user AccessToken");
+                throw new NullReferenceException("AccessToken is null");
             }
 
             typedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessTokenResult.AccessToken);
