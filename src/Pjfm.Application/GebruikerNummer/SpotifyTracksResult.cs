@@ -25,7 +25,7 @@ namespace Pjfm.Application.GebruikerNummer
         public string Id { get; set; } = null!;
         public IEnumerable<SpotifyTrackImageResult> Images { get; set; } = null!;
         public string Name { get; set; } = null!;
-        public DateTime ReleaseDate { get; set; }
+        public string ReleaseDate { get; set; }
     }
 
     public class SpotifyTrackArtistResult

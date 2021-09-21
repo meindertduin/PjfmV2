@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Domain.SpotifyTrack;
+using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Pjfm.Application.Authentication;
 using Pjfm.Application.Common;
@@ -13,19 +14,24 @@ namespace Pjfm.Application.GebruikerNummer
 {
     public class SpotifyTrackClient : ISpotifyTrackClient
     {
+        private readonly IConfiguration _configuration;
         private static HttpClient _client = null!;
 
-        public SpotifyTrackClient(ISpotifyTokenService spotifyTokenService, IServiceProvider serviceProvider)
+        public SpotifyTrackClient(ISpotifyTokenService spotifyTokenService, IServiceProvider serviceProvider, IConfiguration configuration)
         {
+            _configuration = configuration;
             _client = new HttpClient(
                 new SpotifyAuthenticatedRequestDelegatingHandler(spotifyTokenService, serviceProvider));
         }
         
         public async Task<SpotifyTracksResult> GetSpotifyTracks(SpotifyTrackRequest spotifyTrackRequest, string userId)
         {
-            var url = new StringBuilder($"/v1/me/top/tracks?time_range={ConvertTrackTermToTimeRangeString(spotifyTrackRequest.TrackTerm)}");
+            var url = new StringBuilder(_configuration["Spotify:ApiBaseUrl"]);
+            
+            url.Append($"/me/top/tracks?time_range={ConvertTrackTermToTimeRangeString(spotifyTrackRequest.TrackTerm)}");
             url.Append($"&limit={spotifyTrackRequest.PageSize}");
-            if (spotifyTrackRequest.PageSize > 1)
+            
+            if (spotifyTrackRequest.Page > 1)
             {
                 url.Append($"&offset={spotifyTrackRequest.Offset}");
             }
@@ -75,5 +81,6 @@ namespace Pjfm.Application.GebruikerNummer
 
     public interface ISpotifyTrackClient
     {
+        Task<SpotifyTracksResult> GetSpotifyTracks(SpotifyTrackRequest spotifyTrackRequest, string userId);
     }
 }
