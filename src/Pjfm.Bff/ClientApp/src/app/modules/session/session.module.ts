@@ -12,12 +12,22 @@ import { SharedModule } from '../../shared/shared.module';
 import { StartListenDialogComponent } from './components/start-listen-dialog/start-listen-dialog.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormInputsModule } from '../../core/form-inputs/form-inputs.module';
+import { NgxPermissionsModule } from 'ngx-permissions';
 
 const COMPONENTS = [SessionComponent, AsciiSliderComponent, TrackProgressionBarComponent, QueuedTrackComponent, StartListenDialogComponent];
 const PIPES = [ConvertMsToTimePipe];
 
 @NgModule({
   declarations: [COMPONENTS, PIPES],
-  imports: [CommonModule, SessionRoutingModule, InlineSVGModule, HttpClientModule, SharedModule, ReactiveFormsModule, FormInputsModule],
+  imports: [
+    CommonModule,
+    SessionRoutingModule,
+    InlineSVGModule,
+    HttpClientModule,
+    SharedModule,
+    ReactiveFormsModule,
+    FormInputsModule,
+    NgxPermissionsModule,
+  ],
 })
 export class SessionModule {}

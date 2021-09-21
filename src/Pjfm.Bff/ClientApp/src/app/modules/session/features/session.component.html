@@ -15,7 +15,7 @@
         [startTimeMs]="trackStartTimeMs"
         [trackDurationMs]="loadedPlaybackData.currentlyPlayingTrack.trackDurationMs"
       ></pjfm-track-progression-bar>
-      <div class="playback-buttons">
+      <div class="playback-buttons" *ngxPermissionsOnly="'spotifyAuthenticated'">
         <button class="flat-button ripple control-button">
           <span class="icon" [inlineSVG]="'assets/icons/search.svg'"></span>
         </button>

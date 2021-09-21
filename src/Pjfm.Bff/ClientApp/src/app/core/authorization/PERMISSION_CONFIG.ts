@@ -4,4 +4,7 @@ export interface PermissionConfig {
   [key: string]: UserRole[];
 }
 
-export const PERMISSION_CONFIG: PermissionConfig = {};
+export const PERMISSION_CONFIG: PermissionConfig = {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  spotifyAuthenticated: [UserRole.User, UserRole.SpotifyAuth],
+};
