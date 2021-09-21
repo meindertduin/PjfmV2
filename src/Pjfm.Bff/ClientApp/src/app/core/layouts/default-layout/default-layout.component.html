@@ -7,11 +7,9 @@
   <ng-template #userAuthenticatedInfo>
     <div class="toolbar-right-info">
       <div class="user-info">
-        <span class="m-xs-r">{{user!.userName}}</span>
-        <button class="icon-button p-0 ripple">
-          <span class="icon" [inlineSVG]="'assets/icons/account.svg'"></span>
-        </button>
+        <span class="m-xs-r user-name">{{user!.userName}}</span>
       </div>
+      <a href="/user/logout" class="m-xs-l logout-link">[ logout ]</a>
     </div>
   </ng-template>
 </nav>

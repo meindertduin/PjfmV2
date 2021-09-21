@@ -37,21 +37,6 @@ $toolbar-height: 70px;
     }
   }
 
-  .toolbar-right-info {
-    right: 20px;
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: row;
-
-    .user-info {
-      display: flex;
-      flex-direction: row;
-      color: $color-yellow;
-    }
-  }
-
   .title {
     color: $white;
     font-size: 30px;
@@ -59,4 +44,32 @@ $toolbar-height: 70px;
 }
 .view-container {
   margin: calc(#{$toolbar-height} + 20px) 5px 10px 5px;
+}
+
+.toolbar-right-info {
+  right: 20px;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+
+  .user-info {
+    display: flex;
+    flex-direction: row;
+    color: $color-yellow;
+    align-items: center;
+
+    .user-name {
+      font-size: 20px;
+      text-transform: capitalize;
+    }
+  }
+
+  .logout-link {
+    color: $color-red;
+    cursor: pointer;
+    font-size: 15px;
+    text-decoration: none;
+  }
 }
