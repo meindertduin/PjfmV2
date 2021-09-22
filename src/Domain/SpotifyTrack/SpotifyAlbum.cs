@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 
 namespace Domain.SpotifyTrack
 {
@@ -7,9 +6,10 @@ namespace Domain.SpotifyTrack
     {
         public int Id { get; set; }
         public string AlbumId { get; set; } = null!;
-        public ICollection<SpotifyAlbumImage> AlbumImages { get; set; } = null!;
+        public SpotifyAlbumImage AlbumImage { get; set; } = null!;
         public string Title { get; set; } = null!;
         public DateTime ReleaseDate { get; set; }
-        public ICollection<SpotifyTrack> SpotifyTracks { get; set; } = null!;
+        public int SpotifyTrackId { get; set; }
+        public SpotifyTrack SpotifyTrack { get; set; } = null!;
     }
 }

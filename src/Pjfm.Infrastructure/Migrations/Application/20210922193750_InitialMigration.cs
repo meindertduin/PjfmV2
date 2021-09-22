@@ -199,14 +199,14 @@ namespace Pjfm.Infrastructure.Migrations.Application
                     Url = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
                     Width = table.Column<int>(type: "int", nullable: false),
                     Height = table.Column<int>(type: "int", nullable: false),
-                    AlbumId = table.Column<int>(type: "int", nullable: false)
+                    SpotifyAlbumId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_SpotifyAlbumImage", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_SpotifyAlbumImage_SpotifyAlbum_AlbumId",
-                        column: x => x.AlbumId,
+                        name: "FK_SpotifyAlbumImage_SpotifyAlbum_SpotifyAlbumId",
+                        column: x => x.SpotifyAlbumId,
                         principalTable: "SpotifyAlbum",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -241,7 +241,7 @@ namespace Pjfm.Infrastructure.Migrations.Application
                         column: x => x.SpotifyAlbumId,
                         principalTable: "SpotifyAlbum",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -284,14 +284,16 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SpotifyAlbumImage_AlbumId",
+                name: "IX_SpotifyAlbumImage_SpotifyAlbumId",
                 table: "SpotifyAlbumImage",
-                column: "AlbumId");
+                column: "SpotifyAlbumId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SpotifyTrack_SpotifyAlbumId",
                 table: "SpotifyTrack",
-                column: "SpotifyAlbumId");
+                column: "SpotifyAlbumId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_SpotifyTrack_UserId",

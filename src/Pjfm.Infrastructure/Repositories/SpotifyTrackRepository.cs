@@ -55,6 +55,8 @@ namespace Pjfm.Infrastructure.Repositories
                 // TODO: add userIds
                 // .Where(s => userIds.Contains(s.userId))
                 .Where(s => terms.Contains(s.TrackTerm))
+                .Include(x => x.SpotifyAlbum)
+                .ThenInclude(x => x.AlbumImage)
                 .OrderBy(s => Guid.NewGuid())
                 .Take(amount)
                 .AsNoTracking()

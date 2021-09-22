@@ -10,8 +10,8 @@ using Pjfm.Infrastructure;
 namespace Pjfm.Infrastructure.Migrations.Application
 {
     [DbContext(typeof(PjfmContext))]
-    [Migration("20210922183722_InitialMigration")]
-    partial class InitialMigration
+    [Migration("20210922194718_CasecadeAlbumOnTrackDelete")]
+    partial class CasecadeAlbumOnTrackDelete
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -111,12 +111,18 @@ namespace Pjfm.Infrastructure.Migrations.Application
                     b.Property<DateTime>("ReleaseDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("SpotifyTrackId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SpotifyTrackId")
+                        .IsUnique();
 
                     b.ToTable("SpotifyAlbum");
                 });
@@ -128,10 +134,10 @@ namespace Pjfm.Infrastructure.Migrations.Application
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AlbumId")
+                    b.Property<int>("Height")
                         .HasColumnType("int");
 
-                    b.Property<int>("Height")
+                    b.Property<int>("SpotifyAlbumId")
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
@@ -144,7 +150,8 @@ namespace Pjfm.Infrastructure.Migrations.Application
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AlbumId");
+                    b.HasIndex("SpotifyAlbumId")
+                        .IsUnique();
 
                     b.ToTable("SpotifyAlbumImage");
                 });
@@ -163,9 +170,6 @@ namespace Pjfm.Infrastructure.Migrations.Application
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<int>("SpotifyAlbumId")
-                        .HasColumnType("int");
 
                     b.Property<string>("SpotifyTrackId")
                         .IsRequired()
@@ -189,8 +193,6 @@ namespace Pjfm.Infrastructure.Migrations.Application
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("SpotifyAlbumId");
 
                     b.HasIndex("UserId");
 
@@ -352,11 +354,22 @@ namespace Pjfm.Infrastructure.Migrations.Application
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("Domain.SpotifyTrack.SpotifyAlbum", b =>
+                {
+                    b.HasOne("Domain.SpotifyTrack.SpotifyTrack", "SpotifyTrack")
+                        .WithOne("SpotifyAlbum")
+                        .HasForeignKey("Domain.SpotifyTrack.SpotifyAlbum", "SpotifyTrackId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SpotifyTrack");
+                });
+
             modelBuilder.Entity("Domain.SpotifyTrack.SpotifyAlbumImage", b =>
                 {
                     b.HasOne("Domain.SpotifyTrack.SpotifyAlbum", "SpotifyAlbum")
-                        .WithMany("AlbumImages")
-                        .HasForeignKey("AlbumId")
+                        .WithOne("AlbumImage")
+                        .HasForeignKey("Domain.SpotifyTrack.SpotifyAlbumImage", "SpotifyAlbumId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -365,12 +378,6 @@ namespace Pjfm.Infrastructure.Migrations.Application
 
             modelBuilder.Entity("Domain.SpotifyTrack.SpotifyTrack", b =>
                 {
-                    b.HasOne("Domain.SpotifyTrack.SpotifyAlbum", "SpotifyAlbum")
-                        .WithMany("SpotifyTracks")
-                        .HasForeignKey("SpotifyAlbumId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("Domain.ApplicationUser.ApplicationUser", "ApplicationUser")
                         .WithMany("SpotifyTracks")
                         .HasForeignKey("UserId")
@@ -378,8 +385,6 @@ namespace Pjfm.Infrastructure.Migrations.Application
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
-
-                    b.Navigation("SpotifyAlbum");
                 });
 
             modelBuilder.Entity("Domain.SpotifyUserData.SpotifyUserData", b =>
@@ -454,9 +459,14 @@ namespace Pjfm.Infrastructure.Migrations.Application
 
             modelBuilder.Entity("Domain.SpotifyTrack.SpotifyAlbum", b =>
                 {
-                    b.Navigation("AlbumImages");
+                    b.Navigation("AlbumImage")
+                        .IsRequired();
+                });
 
-                    b.Navigation("SpotifyTracks");
+            modelBuilder.Entity("Domain.SpotifyTrack.SpotifyTrack", b =>
+                {
+                    b.Navigation("SpotifyAlbum")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

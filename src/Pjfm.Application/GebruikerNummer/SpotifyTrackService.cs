@@ -67,12 +67,12 @@ namespace Pjfm.Application.GebruikerNummer
                     {
                         AlbumId = s.Album.Id,
                         Title = s.Album.Name,
-                        AlbumImages = s.Album.Images.Select(i => new SpotifyAlbumImage()
+                        AlbumImage =  new SpotifyAlbumImage()
                         {
-                           Url = i.Url,
-                           Height = i.Height,
-                           Width = i.Width,
-                        }).ToList(),
+                           Url = s.Album.Images.FirstOrDefault(x => x.Width == 300)?.Url ?? string.Empty,
+                           Height = s.Album.Images.FirstOrDefault(x => x.Width == 300)?.Height ?? 0,
+                           Width = s.Album.Images.FirstOrDefault(x => x.Width == 300)?.Height ?? 0,
+                        },
                         // retrieve this from the release date
                         ReleaseDate = DateTime.Now,
                     }

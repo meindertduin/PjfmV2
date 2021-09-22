@@ -34,11 +34,10 @@ namespace Pjfm.Infrastructure.TableMappings
                 .IsRequired();
 
             builder.HasOne(s => s.SpotifyAlbum)
-                .WithMany(s => s.SpotifyTracks)
-                .HasForeignKey(s => s.SpotifyAlbumId)
+                .WithOne(s => s.SpotifyTrack)
                 .OnDelete(DeleteBehavior.Cascade)
                 .IsRequired();
-            
+                
             builder.Property(s => s.Title)
                 .HasMaxLength(256)
                 .IsRequired();

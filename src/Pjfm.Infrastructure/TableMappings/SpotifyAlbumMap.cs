@@ -17,16 +17,16 @@ namespace Pjfm.Infrastructure.TableMappings
             builder
                 .Property(s => s.Title)
                 .HasMaxLength(255).IsRequired();
-            
-            builder.HasMany(s => s.AlbumImages)
-                .WithOne(s => s.SpotifyAlbum)
-                .HasForeignKey(s => s.AlbumId)
-                .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasMany(x => x.SpotifyTracks)
+            builder.HasOne(x => x.AlbumImage)
+                .WithOne()
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
+
+            builder.HasOne(x => x.SpotifyTrack)
                 .WithOne(x => x.SpotifyAlbum)
-                .HasForeignKey(x => x.SpotifyAlbumId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Cascade)
+                .IsRequired();
         }
     }
 }

@@ -20,10 +20,9 @@ namespace Pjfm.Infrastructure.TableMappings
             
             builder.Property(x => x.Width)
                 .IsRequired();
-            
-            builder.HasOne(s => s.SpotifyAlbum)
-                .WithMany(s => s.AlbumImages)
-                .HasForeignKey(s => s.AlbumId)
+
+            builder.HasOne(x => x.SpotifyAlbum)
+                .WithOne(x => x.AlbumImage)
                 .OnDelete(DeleteBehavior.Cascade);
         }
     }

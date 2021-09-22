@@ -10,8 +10,8 @@ using Pjfm.Infrastructure;
 namespace Pjfm.Infrastructure.Migrations.Application
 {
     [DbContext(typeof(PjfmContext))]
-    [Migration("20210922190004_CascadeAlbumsOnDelete")]
-    partial class CascadeAlbumsOnDelete
+    [Migration("20210922193750_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -128,10 +128,10 @@ namespace Pjfm.Infrastructure.Migrations.Application
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("AlbumId")
+                    b.Property<int>("Height")
                         .HasColumnType("int");
 
-                    b.Property<int>("Height")
+                    b.Property<int>("SpotifyAlbumId")
                         .HasColumnType("int");
 
                     b.Property<string>("Url")
@@ -144,7 +144,8 @@ namespace Pjfm.Infrastructure.Migrations.Application
 
                     b.HasKey("Id");
 
-                    b.HasIndex("AlbumId");
+                    b.HasIndex("SpotifyAlbumId")
+                        .IsUnique();
 
                     b.ToTable("SpotifyAlbumImage");
                 });
@@ -190,7 +191,8 @@ namespace Pjfm.Infrastructure.Migrations.Application
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SpotifyAlbumId");
+                    b.HasIndex("SpotifyAlbumId")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -355,8 +357,8 @@ namespace Pjfm.Infrastructure.Migrations.Application
             modelBuilder.Entity("Domain.SpotifyTrack.SpotifyAlbumImage", b =>
                 {
                     b.HasOne("Domain.SpotifyTrack.SpotifyAlbum", "SpotifyAlbum")
-                        .WithMany("AlbumImages")
-                        .HasForeignKey("AlbumId")
+                        .WithOne("AlbumImage")
+                        .HasForeignKey("Domain.SpotifyTrack.SpotifyAlbumImage", "SpotifyAlbumId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -366,8 +368,8 @@ namespace Pjfm.Infrastructure.Migrations.Application
             modelBuilder.Entity("Domain.SpotifyTrack.SpotifyTrack", b =>
                 {
                     b.HasOne("Domain.SpotifyTrack.SpotifyAlbum", "SpotifyAlbum")
-                        .WithMany("SpotifyTracks")
-                        .HasForeignKey("SpotifyAlbumId")
+                        .WithOne("SpotifyTrack")
+                        .HasForeignKey("Domain.SpotifyTrack.SpotifyTrack", "SpotifyAlbumId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -454,9 +456,11 @@ namespace Pjfm.Infrastructure.Migrations.Application
 
             modelBuilder.Entity("Domain.SpotifyTrack.SpotifyAlbum", b =>
                 {
-                    b.Navigation("AlbumImages");
+                    b.Navigation("AlbumImage")
+                        .IsRequired();
 
-                    b.Navigation("SpotifyTracks");
+                    b.Navigation("SpotifyTrack")
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
