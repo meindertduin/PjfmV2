@@ -12,7 +12,7 @@ namespace SpotifyPlayback.Models.Socket
         public TrackTerm TrackTerm { get; set; }
         public int TrackDurationMs { get; set; }
         public DateTime TrackStartDate { get; set; }
-        public SpotifyAlbumDto SpotifyAlbum { get; set; }
+        public SpotifyAlbumDto SpotifyAlbum { get; set; } = null!;
     }
 
     public class SpotifyAlbumDto
