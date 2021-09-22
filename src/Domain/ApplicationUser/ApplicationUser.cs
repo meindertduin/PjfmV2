@@ -12,6 +12,7 @@ namespace Domain.ApplicationUser
 
         public virtual DateTime? LastLoginDate { get; set; }
         public ICollection<SpotifyTrack.SpotifyTrack> SpotifyTracks { get; set; } = null!;
+        public int SpotifyUserDataId { get; set; }
         public SpotifyUserData.SpotifyUserData SpotifyUserData { get; set; } = null!;
         public bool SpotifyAuthenticated { get; set; }
     }

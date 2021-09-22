@@ -63,6 +63,19 @@ namespace Pjfm.Application.GebruikerNummer
                     TrackTerm = trackTerm,
                     TrackDurationMs = s.DurationMs,
                     UserId = userId,
+                    SpotifyAlbum = new SpotifyAlbum()
+                    {
+                        AlbumId = s.Album.Id,
+                        Title = s.Album.Name,
+                        AlbumImages = s.Album.Images.Select(i => new SpotifyAlbumImage()
+                        {
+                           Url = i.Url,
+                           Height = i.Height,
+                           Width = i.Width,
+                        }).ToList(),
+                        // retrieve this from the release date
+                        ReleaseDate = DateTime.Now,
+                    }
                 }).ToArray() ?? Array.Empty<SpotifyTrack>());
             }
 

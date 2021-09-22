@@ -9,6 +9,8 @@ namespace Domain.SpotifyTrack
         public string Title { get; set; } = null!;
         public string UserId { get; set; } = null!;
         public ApplicationUser.ApplicationUser ApplicationUser { get; set; } = null!;
+        public int SpotifyAlbumId { get; set; }
+        public SpotifyAlbum SpotifyAlbum { get; set; } = null!;
         public string SpotifyTrackId { get; set; } = null!;
         public IEnumerable<string> Artists { get; set; } = null!;
         public TrackTerm TrackTerm { get; set; }

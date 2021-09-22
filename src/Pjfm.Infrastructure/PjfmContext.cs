@@ -15,6 +15,8 @@ namespace Pjfm.Infrastructure
     {
         public DbSet<SpotifyTrack> SpotifyTracks { get; private set; } = null!;
         public DbSet<SpotifyUserData> SpotifyUserData { get; private set; } = null!;
+        public DbSet<SpotifyAlbum> SpotifyAlbums { get; set; } = null!;
+        public DbSet<SpotifyAlbumImage> SpotifyAlbumImages { get; set; } = null!;
 
         public PjfmContext(DbContextOptions<PjfmContext> options) : base(options)
         {
@@ -26,6 +28,8 @@ namespace Pjfm.Infrastructure
             builder.ApplyConfiguration(new SpotifyTrackMap());
             builder.ApplyConfiguration(new SpotifyUserDataMap());
             builder.ApplyConfiguration(new ApplicationUserMap());
+            builder.ApplyConfiguration(new SpotifyAlbumMap());
+            builder.ApplyConfiguration(new SpotifyAlbumImageMap());
 
             base.OnModelCreating(builder);
         }

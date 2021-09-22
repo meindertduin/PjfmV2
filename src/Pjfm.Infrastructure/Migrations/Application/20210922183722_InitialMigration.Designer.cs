@@ -10,8 +10,8 @@ using Pjfm.Infrastructure;
 namespace Pjfm.Infrastructure.Migrations.Application
 {
     [DbContext(typeof(PjfmContext))]
-    [Migration("20210919175004_AddRelationsToApplicationUser")]
-    partial class AddRelationsToApplicationUser
+    [Migration("20210922183722_InitialMigration")]
+    partial class InitialMigration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -24,7 +24,8 @@ namespace Pjfm.Infrastructure.Migrations.Application
             modelBuilder.Entity("Domain.ApplicationUser.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
@@ -69,6 +70,12 @@ namespace Pjfm.Infrastructure.Migrations.Application
                     b.Property<string>("SecurityStamp")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool>("SpotifyAuthenticated")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("SpotifyUserDataId")
+                        .HasColumnType("int");
+
                     b.Property<bool>("TwoFactorEnabled")
                         .HasColumnType("bit");
 
@@ -89,6 +96,59 @@ namespace Pjfm.Infrastructure.Migrations.Application
                     b.ToTable("AspNetUsers");
                 });
 
+            modelBuilder.Entity("Domain.SpotifyTrack.SpotifyAlbum", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("AlbumId")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime>("ReleaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SpotifyAlbum");
+                });
+
+            modelBuilder.Entity("Domain.SpotifyTrack.SpotifyAlbumImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("AlbumId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Height")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("nvarchar(512)");
+
+                    b.Property<int>("Width")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AlbumId");
+
+                    b.ToTable("SpotifyAlbumImage");
+                });
+
             modelBuilder.Entity("Domain.SpotifyTrack.SpotifyTrack", b =>
                 {
                     b.Property<int>("Id")
@@ -104,6 +164,9 @@ namespace Pjfm.Infrastructure.Migrations.Application
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("SpotifyAlbumId")
+                        .HasColumnType("int");
+
                     b.Property<string>("SpotifyTrackId")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -111,8 +174,8 @@ namespace Pjfm.Infrastructure.Migrations.Application
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<int>("TrackDurationMs")
                         .HasColumnType("int");
@@ -126,6 +189,8 @@ namespace Pjfm.Infrastructure.Migrations.Application
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("SpotifyAlbumId");
 
                     b.HasIndex("UserId");
 
@@ -222,7 +287,7 @@ namespace Pjfm.Infrastructure.Migrations.Application
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
 
@@ -244,7 +309,7 @@ namespace Pjfm.Infrastructure.Migrations.Application
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.HasKey("LoginProvider", "ProviderKey");
 
@@ -256,7 +321,7 @@ namespace Pjfm.Infrastructure.Migrations.Application
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("RoleId")
                         .HasColumnType("nvarchar(450)");
@@ -271,7 +336,7 @@ namespace Pjfm.Infrastructure.Migrations.Application
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
                     b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("LoginProvider")
                         .HasColumnType("nvarchar(450)");
@@ -287,8 +352,25 @@ namespace Pjfm.Infrastructure.Migrations.Application
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("Domain.SpotifyTrack.SpotifyAlbumImage", b =>
+                {
+                    b.HasOne("Domain.SpotifyTrack.SpotifyAlbum", "SpotifyAlbum")
+                        .WithMany("AlbumImages")
+                        .HasForeignKey("AlbumId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SpotifyAlbum");
+                });
+
             modelBuilder.Entity("Domain.SpotifyTrack.SpotifyTrack", b =>
                 {
+                    b.HasOne("Domain.SpotifyTrack.SpotifyAlbum", "SpotifyAlbum")
+                        .WithMany("SpotifyTracks")
+                        .HasForeignKey("SpotifyAlbumId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.HasOne("Domain.ApplicationUser.ApplicationUser", "ApplicationUser")
                         .WithMany("SpotifyTracks")
                         .HasForeignKey("UserId")
@@ -296,6 +378,8 @@ namespace Pjfm.Infrastructure.Migrations.Application
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
+
+                    b.Navigation("SpotifyAlbum");
                 });
 
             modelBuilder.Entity("Domain.SpotifyUserData.SpotifyUserData", b =>
@@ -366,6 +450,13 @@ namespace Pjfm.Infrastructure.Migrations.Application
 
                     b.Navigation("SpotifyUserData")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.SpotifyTrack.SpotifyAlbum", b =>
+                {
+                    b.Navigation("AlbumImages");
+
+                    b.Navigation("SpotifyTracks");
                 });
 #pragma warning restore 612, 618
         }

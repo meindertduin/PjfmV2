@@ -25,7 +25,10 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 name: "AspNetUsers",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    LastLoginDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    SpotifyUserDataId = table.Column<int>(type: "int", nullable: false),
+                    SpotifyAuthenticated = table.Column<bool>(type: "bit", nullable: false),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -47,36 +50,18 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 });
 
             migrationBuilder.CreateTable(
-                name: "SpotifyTrack",
+                name: "SpotifyAlbum",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    AlbumId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    SpotifyTrackId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Artists = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    TrackTerm = table.Column<int>(type: "int", nullable: false),
-                    TrackDurationMs = table.Column<int>(type: "int", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SpotifyTrack", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SpotifyUserData",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SpotifyUserData", x => x.Id);
+                    table.PrimaryKey("PK_SpotifyAlbum", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -106,7 +91,7 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
@@ -128,7 +113,7 @@ namespace Pjfm.Infrastructure.Migrations.Application
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(50)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -145,7 +130,7 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 name: "AspNetUserRoles",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
@@ -169,7 +154,7 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 name: "AspNetUserTokens",
                 columns: table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -183,6 +168,80 @@ namespace Pjfm.Infrastructure.Migrations.Application
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SpotifyUserData",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RefreshToken = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpotifyUserData", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SpotifyUserData_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SpotifyAlbumImage",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Url = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: false),
+                    Width = table.Column<int>(type: "int", nullable: false),
+                    Height = table.Column<int>(type: "int", nullable: false),
+                    AlbumId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpotifyAlbumImage", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SpotifyAlbumImage_SpotifyAlbum_AlbumId",
+                        column: x => x.AlbumId,
+                        principalTable: "SpotifyAlbum",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SpotifyTrack",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    SpotifyAlbumId = table.Column<int>(type: "int", nullable: false),
+                    SpotifyTrackId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Artists = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    TrackTerm = table.Column<int>(type: "int", nullable: false),
+                    TrackDurationMs = table.Column<int>(type: "int", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpotifyTrack", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SpotifyTrack_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SpotifyTrack_SpotifyAlbum_SpotifyAlbumId",
+                        column: x => x.SpotifyAlbumId,
+                        principalTable: "SpotifyAlbum",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
@@ -225,6 +284,16 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SpotifyAlbumImage_AlbumId",
+                table: "SpotifyAlbumImage",
+                column: "AlbumId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SpotifyTrack_SpotifyAlbumId",
+                table: "SpotifyTrack",
+                column: "SpotifyAlbumId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SpotifyTrack_UserId",
                 table: "SpotifyTrack",
                 column: "UserId");
@@ -232,7 +301,8 @@ namespace Pjfm.Infrastructure.Migrations.Application
             migrationBuilder.CreateIndex(
                 name: "IX_SpotifyUserData_UserId",
                 table: "SpotifyUserData",
-                column: "UserId");
+                column: "UserId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -253,6 +323,9 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "SpotifyAlbumImage");
+
+            migrationBuilder.DropTable(
                 name: "SpotifyTrack");
 
             migrationBuilder.DropTable(
@@ -260,6 +333,9 @@ namespace Pjfm.Infrastructure.Migrations.Application
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "SpotifyAlbum");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
