@@ -2,7 +2,13 @@
   <ng-container title>
     <h4 class="m-0">Choose a track</h4>
   </ng-container>
-  <ng-container content> Nice this works </ng-container>
+  <ng-container content>
+    <div class="container">
+      <section class="search-track">
+        <pjfm-autocomplete></pjfm-autocomplete>
+      </section>
+    </div>
+  </ng-container>
   <ng-container footer>
     <button class="raised-button raised-button__danger" (click)="closeDialog()">
       <span>Cancel</span>
