@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using SpotifyPlayback.Models.Socket;
 
 namespace SpotifyPlayback.Models.DataTransferObjects
@@ -8,6 +9,7 @@ namespace SpotifyPlayback.Models.DataTransferObjects
         public Guid GroupId { get; set; } 
         public string GroupName { get; set; } = null!;
         public SpotifyTrackDto? CurrentlyPlayingTrack { get; set; }
+        public IEnumerable<SpotifyTrackDto> QueuedTracks { get; set; } = null!;
         public int ListenersCount { get; set; }
     }
 }
