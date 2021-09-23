@@ -105,7 +105,6 @@ export interface SpotifyAlbumDto {
   albumId: string;
   albumImage: AlbumImageDto;
   title: string;
-  // TODO: change this to proper date
   releaseDate: string;
 }
 

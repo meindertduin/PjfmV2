@@ -75,7 +75,7 @@ export class AuthenticationClient {
 @Injectable()
 export class PlaybackClient {
     private http: HttpClient;
-    private baseUrl: string;
+    private readonly baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
@@ -557,7 +557,7 @@ export class PlaybackGroupDto implements IPlaybackGroupDto {
         data["groupName"] = this.groupName;
         data["currentlyPlayingTrack"] = this.currentlyPlayingTrack ? this.currentlyPlayingTrack.toJSON() : <any>undefined;
         data["listenersCount"] = this.listenersCount;
-        return data; 
+        return data;
     }
 }
 
@@ -626,7 +626,7 @@ export class SpotifyTrackDto implements ISpotifyTrackDto {
         data["trackDurationMs"] = this.trackDurationMs;
         data["trackStartDate"] = this.trackStartDate ? this.trackStartDate.toISOString() : <any>undefined;
         data["spotifyAlbum"] = this.spotifyAlbum ? this.spotifyAlbum.toJSON() : <any>undefined;
-        return data; 
+        return data;
     }
 }
 
@@ -686,7 +686,7 @@ export class SpotifyAlbumDto implements ISpotifyAlbumDto {
         data["albumImage"] = this.albumImage ? this.albumImage.toJSON() : <any>undefined;
         data["title"] = this.title;
         data["releaseDate"] = this.releaseDate ? this.releaseDate.toISOString() : <any>undefined;
-        return data; 
+        return data;
     }
 }
 
@@ -731,7 +731,7 @@ export class SpotifyAlbumImageDto implements ISpotifyAlbumImageDto {
         data["url"] = this.url;
         data["width"] = this.width;
         data["height"] = this.height;
-        return data; 
+        return data;
     }
 }
 
@@ -781,7 +781,7 @@ export class ProblemDetails implements IProblemDetails {
         data["status"] = this.status;
         data["detail"] = this.detail;
         data["instance"] = this.instance;
-        return data; 
+        return data;
     }
 }
 
@@ -832,7 +832,7 @@ export class GetDevicesResponse implements IGetDevicesResponse {
             for (let item of this.devices)
                 data["devices"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -874,7 +874,7 @@ export class DeviceModel implements IDeviceModel {
         data["deviceId"] = this.deviceId;
         data["deviceName"] = this.deviceName;
         data["isActive"] = this.isActive;
-        return data; 
+        return data;
     }
 }
 
@@ -929,7 +929,7 @@ export class GetCurrentUserResponseModel implements IGetCurrentUserResponseModel
             for (let item of this.roles)
                 data["roles"].push(item);
         }
-        return data; 
+        return data;
     }
 }
 

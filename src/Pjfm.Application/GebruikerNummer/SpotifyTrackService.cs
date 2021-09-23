@@ -74,7 +74,7 @@ namespace Pjfm.Application.GebruikerNummer
                            Width = s.Album.Images.FirstOrDefault(x => x.Width == 300)?.Height ?? 0,
                         },
                         // retrieve this from the release date
-                        ReleaseDate = DateTime.Now,
+                        ReleaseDate = s.Album.ReleaseDate,
                     }
                 }).ToArray() ?? Array.Empty<SpotifyTrack>());
             }

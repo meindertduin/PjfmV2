@@ -20,7 +20,7 @@ namespace SpotifyPlayback.Models.Socket
         public string AlbumId { get; set; } = null!;
         public SpotifyAlbumImageDto AlbumImage { get; set; } = null!;
         public string Title { get; set; } = null!;
-        public DateTime ReleaseDate { get; set; }
+        public string ReleaseDate { get; set; } = null!;
     }
 
     public class SpotifyAlbumImageDto

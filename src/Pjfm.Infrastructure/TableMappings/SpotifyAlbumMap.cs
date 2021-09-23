@@ -14,6 +14,10 @@ namespace Pjfm.Infrastructure.TableMappings
                 .HasMaxLength(50)
                 .IsRequired();
 
+            builder.Property(s => s.ReleaseDate)
+                .HasMaxLength(50)
+                .IsRequired();
+
             builder
                 .Property(s => s.Title)
                 .HasMaxLength(255).IsRequired();

@@ -1,4 +1,3 @@
-using System;
 
 namespace Domain.SpotifyTrack
 {
@@ -8,7 +7,7 @@ namespace Domain.SpotifyTrack
         public string AlbumId { get; set; } = null!;
         public SpotifyAlbumImage AlbumImage { get; set; } = null!;
         public string Title { get; set; } = null!;
-        public DateTime ReleaseDate { get; set; }
+        public string ReleaseDate { get; set; } = null!;
         public int SpotifyTrackId { get; set; }
         public SpotifyTrack SpotifyTrack { get; set; } = null!;
     }
