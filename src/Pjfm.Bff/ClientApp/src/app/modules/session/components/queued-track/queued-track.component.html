@@ -1,9 +1,9 @@
 <div class="container">
   <div class="image-container">
-    <img src="assets/images/album-cover.jpg" alt="album cover" />
+    <img [src]="track.spotifyAlbum.albumImage.url" alt="album cover" />
   </div>
   <div class="track-info-container">
-    <a class="track-title">[ Book of spells ]</a>
-    <a class="artist-title">[ Ian taylor ]</a>
+    <a class="track-title">[ {{track.title}} ]</a>
+    <a class="artist-title">[ {{track.artists | artistsPipe}} ]</a>
   </div>
 </div>

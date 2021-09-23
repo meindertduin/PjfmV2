@@ -89,4 +89,5 @@ export interface PlaybackUpdateMessageBody {
   groupId: string;
   groupName: string;
   currentlyPlayingTrack: SpotifyTrackDto;
+  queuedTracks: SpotifyTrackDto[];
 }
