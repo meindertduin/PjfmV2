@@ -34,6 +34,11 @@ namespace SpotifyPlayback.Services
             return _spotifyTracks.Dequeue();
         }
 
+        public IEnumerable<SpotifyTrackDto> GetQueuedTracks(int amount)
+        {
+            return _spotifyTracks.Take(amount);
+        }
+
         private SpotifyTrackRepository CreateSpotifyTrackRepository()
         {
             var connectionString = _configuration.GetValue<string>("ConnectionStrings:ApplicationDb");

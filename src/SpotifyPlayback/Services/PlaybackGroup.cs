@@ -146,13 +146,31 @@ namespace SpotifyPlayback.Services
 
         public PlaybackGroupDto GetPlaybackGroupInfo()
         {
+            var queuedTracks = GetQueuedTracks();
+
+            _playbackQueue.GetQueuedTracks(9);
+
             return new()
             {
                 GroupId = GroupId,
                 GroupName = GroupName,
                 ListenersCount = _listeners.Count,
                 CurrentlyPlayingTrack = _currentlyPlayingTrack,
+                QueuedTracks = queuedTracks,
             };
+        }
+
+        private List<SpotifyTrackDto> GetQueuedTracks()
+        {
+            var queuedTracks = new List<SpotifyTrackDto>();
+
+            if (_nextTrack != null)
+            {
+                queuedTracks.Add(_nextTrack);
+                queuedTracks.AddRange(_playbackQueue.GetQueuedTracks(9));
+            }
+
+            return queuedTracks;
         }
     }
 }

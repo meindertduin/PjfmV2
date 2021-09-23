@@ -75,7 +75,7 @@ export class AuthenticationClient {
 @Injectable()
 export class PlaybackClient {
     private http: HttpClient;
-    private readonly baseUrl: string;
+    private baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
@@ -524,6 +524,7 @@ export class PlaybackGroupDto implements IPlaybackGroupDto {
     groupId!: string;
     groupName!: string;
     currentlyPlayingTrack?: SpotifyTrackDto | undefined;
+    queuedTracks!: SpotifyTrackDto[];
     listenersCount!: number;
 
     constructor(data?: IPlaybackGroupDto) {
@@ -533,6 +534,9 @@ export class PlaybackGroupDto implements IPlaybackGroupDto {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.queuedTracks = [];
+        }
     }
 
     init(_data?: any) {
@@ -540,6 +544,11 @@ export class PlaybackGroupDto implements IPlaybackGroupDto {
             this.groupId = _data["groupId"];
             this.groupName = _data["groupName"];
             this.currentlyPlayingTrack = _data["currentlyPlayingTrack"] ? SpotifyTrackDto.fromJS(_data["currentlyPlayingTrack"]) : <any>undefined;
+            if (Array.isArray(_data["queuedTracks"])) {
+                this.queuedTracks = [] as any;
+                for (let item of _data["queuedTracks"])
+                    this.queuedTracks!.push(SpotifyTrackDto.fromJS(item));
+            }
             this.listenersCount = _data["listenersCount"];
         }
     }
@@ -556,8 +565,13 @@ export class PlaybackGroupDto implements IPlaybackGroupDto {
         data["groupId"] = this.groupId;
         data["groupName"] = this.groupName;
         data["currentlyPlayingTrack"] = this.currentlyPlayingTrack ? this.currentlyPlayingTrack.toJSON() : <any>undefined;
+        if (Array.isArray(this.queuedTracks)) {
+            data["queuedTracks"] = [];
+            for (let item of this.queuedTracks)
+                data["queuedTracks"].push(item.toJSON());
+        }
         data["listenersCount"] = this.listenersCount;
-        return data;
+        return data; 
     }
 }
 
@@ -565,6 +579,7 @@ export interface IPlaybackGroupDto {
     groupId: string;
     groupName: string;
     currentlyPlayingTrack?: SpotifyTrackDto | undefined;
+    queuedTracks: SpotifyTrackDto[];
     listenersCount: number;
 }
 
@@ -626,7 +641,7 @@ export class SpotifyTrackDto implements ISpotifyTrackDto {
         data["trackDurationMs"] = this.trackDurationMs;
         data["trackStartDate"] = this.trackStartDate ? this.trackStartDate.toISOString() : <any>undefined;
         data["spotifyAlbum"] = this.spotifyAlbum ? this.spotifyAlbum.toJSON() : <any>undefined;
-        return data;
+        return data; 
     }
 }
 
@@ -650,7 +665,7 @@ export class SpotifyAlbumDto implements ISpotifyAlbumDto {
     albumId!: string;
     albumImage!: SpotifyAlbumImageDto;
     title!: string;
-    releaseDate!: Date;
+    releaseDate!: string;
 
     constructor(data?: ISpotifyAlbumDto) {
         if (data) {
@@ -669,7 +684,7 @@ export class SpotifyAlbumDto implements ISpotifyAlbumDto {
             this.albumId = _data["albumId"];
             this.albumImage = _data["albumImage"] ? SpotifyAlbumImageDto.fromJS(_data["albumImage"]) : new SpotifyAlbumImageDto();
             this.title = _data["title"];
-            this.releaseDate = _data["releaseDate"] ? new Date(_data["releaseDate"].toString()) : <any>undefined;
+            this.releaseDate = _data["releaseDate"];
         }
     }
 
@@ -685,8 +700,8 @@ export class SpotifyAlbumDto implements ISpotifyAlbumDto {
         data["albumId"] = this.albumId;
         data["albumImage"] = this.albumImage ? this.albumImage.toJSON() : <any>undefined;
         data["title"] = this.title;
-        data["releaseDate"] = this.releaseDate ? this.releaseDate.toISOString() : <any>undefined;
-        return data;
+        data["releaseDate"] = this.releaseDate;
+        return data; 
     }
 }
 
@@ -694,7 +709,7 @@ export interface ISpotifyAlbumDto {
     albumId: string;
     albumImage: SpotifyAlbumImageDto;
     title: string;
-    releaseDate: Date;
+    releaseDate: string;
 }
 
 export class SpotifyAlbumImageDto implements ISpotifyAlbumImageDto {
@@ -731,7 +746,7 @@ export class SpotifyAlbumImageDto implements ISpotifyAlbumImageDto {
         data["url"] = this.url;
         data["width"] = this.width;
         data["height"] = this.height;
-        return data;
+        return data; 
     }
 }
 
@@ -781,7 +796,7 @@ export class ProblemDetails implements IProblemDetails {
         data["status"] = this.status;
         data["detail"] = this.detail;
         data["instance"] = this.instance;
-        return data;
+        return data; 
     }
 }
 
@@ -832,7 +847,7 @@ export class GetDevicesResponse implements IGetDevicesResponse {
             for (let item of this.devices)
                 data["devices"].push(item.toJSON());
         }
-        return data;
+        return data; 
     }
 }
 
@@ -874,7 +889,7 @@ export class DeviceModel implements IDeviceModel {
         data["deviceId"] = this.deviceId;
         data["deviceName"] = this.deviceName;
         data["isActive"] = this.isActive;
-        return data;
+        return data; 
     }
 }
 
@@ -929,7 +944,7 @@ export class GetCurrentUserResponseModel implements IGetCurrentUserResponseModel
             for (let item of this.roles)
                 data["roles"].push(item);
         }
-        return data;
+        return data; 
     }
 }
 

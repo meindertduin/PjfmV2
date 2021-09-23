@@ -35,8 +35,8 @@
   </section>
   <section class="playback-queue">
     <h4>Up next:</h4>
-    <div class="queue-container">
-      <pjfm-queued-track *ngFor="let x of [1, 2, 3, 4, 5]"></pjfm-queued-track>
+    <div class="queue-container" *ngIf="loadedPlaybackData != null">
+      <pjfm-queued-track *ngFor="let queuedTrack of loadedPlaybackData.queuedTracks" [track]="queuedTrack"></pjfm-queued-track>
     </div>
   </section>
 </div>

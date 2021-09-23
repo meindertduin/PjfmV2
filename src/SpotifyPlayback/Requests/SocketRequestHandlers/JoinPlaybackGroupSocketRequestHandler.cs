@@ -45,6 +45,7 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
                     GroupId = playbackGroupInfo.GroupId,
                     GroupName = playbackGroupInfo.GroupName,
                     CurrentlyPlayingTrack = playbackGroupInfo.CurrentlyPlayingTrack,
+                    QueuedTracks = playbackGroupInfo.QueuedTracks,
                 }
             };
             return socketConnection.SendMessage(response.GetBytes());
