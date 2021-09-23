@@ -7,6 +7,7 @@ import { PlaybackService } from '../../../shared/services/playback.service';
 import { PlaybackClient } from '../../../core/services/api-client.service';
 import { DialogService } from '../../../shared/services/dialog.service';
 import { StartListenDialogComponent, StartListenDialogData } from '../components/start-listen-dialog/start-listen-dialog.component';
+import { SelectTrackDialogComponent } from '../components/select-track-dialog/select-track-dialog.component';
 
 @Component({
   selector: 'pjfm-session',
@@ -37,6 +38,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this.getPlaybackIsActive();
 
     this._dialogService.setRootViewContainer(this._viewContainerRef);
+    this._dialogService.openDialog(SelectTrackDialogComponent, {});
   }
 
   private connectToGroup() {
