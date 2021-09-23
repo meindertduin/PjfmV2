@@ -1,3 +1,39 @@
-.container {
+@import "variables";
 
+.container {
+  .input-container {
+    input {
+      padding: 5px 10px;
+
+      &:focus {
+        color: $color-yellow;
+        box-shadow: none;
+        outline: $color-orange 2px solid;
+      }
+    }
+  }
+
+  .auto-complete-values-container {
+    position: absolute;
+    background-color: $color-dark;
+    z-index: 10;
+    border: 2px solid $color-purple;
+
+    .auto-complete-values {
+      list-style-type: none;
+      padding: 5px 0;
+
+      margin: 0;
+
+      .value {
+        padding: 5px 10px;
+        cursor: pointer;
+
+        &:hover {
+          background: lighten($color-dark, 6);
+          color: $color-yellow;
+        }
+      }
+    }
+  }
 }

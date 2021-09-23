@@ -2,9 +2,9 @@
   <div class="input-container">
     <input type="text" class="form-input" [formControl]="query" />
   </div>
-  <div class="auto-complete-values">
-    <ul>
-      <li></li>
+  <div class="auto-complete-values-container">
+    <ul class="auto-complete-values">
+      <li class="value" *ngFor="let value of autoCompleteValues" (click)="onAutoCompleteValueClick(value)">{{value.text}}</li>
     </ul>
   </div>
 </div>
