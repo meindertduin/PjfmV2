@@ -26,7 +26,6 @@
     .listeners-text {
       color: $color-purple;
     }
-
   }
 
   .content {
@@ -36,12 +35,10 @@
     margin-left: 10px;
 
     .image-container {
-      padding: 5px;
-      background: $color-light-blue;
       margin: 10px 10px 10px 0;
       img {
-        width: 50px;
-        height: 50px;
+        width: 60px;
+        height: 60px;
       }
     }
 

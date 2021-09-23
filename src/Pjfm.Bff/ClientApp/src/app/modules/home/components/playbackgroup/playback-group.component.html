@@ -5,7 +5,7 @@
   </div>
   <div class="content">
     <div class="image-container" *ngIf="playbackGroup.currentlyPlayingTrack != null">
-      <img src="/assets/images/album-cover.jpg" alt="album cover" />
+      <img [src]="playbackGroup.currentlyPlayingTrack.spotifyAlbum.albumImage.url" alt="album cover" />
     </div>
     <div class="group-info-container" *ngIf="playbackGroup.currentlyPlayingTrack != null; else offlineContent">
       <div class="currently-playing-title">Now playing:</div>
