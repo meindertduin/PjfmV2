@@ -12,7 +12,14 @@ namespace Pjfm.Infrastructure.TableMappings
             builder.HasKey(s => s.Id);
             builder.HasIndex(s => s.UserId);
 
-            builder.Property(s => s.UserId).HasMaxLength(50).IsRequired();
+            builder.Property(s => s.UserId)
+                .HasMaxLength(50)
+                .IsRequired();
+
+            builder.HasOne(x => x.ApplicationUser)
+                .WithOne(x => x.SpotifyUserData)
+                .IsRequired();
+
             builder.Property(s => s.RefreshToken).IsRequired();
         }
     }

@@ -1,38 +1,34 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Domain.SpotifyTrack;
 using Microsoft.EntityFrameworkCore;
-using Pjfm.Application.Authentication;
 using Pjfm.Infrastructure;
-using SpotifyAPI.Web;
 
 namespace Pjfm.Application.GebruikerNummer
 {
     public class SpotifyTrackService : ISpotifyTrackService
     {
         private readonly ISpotifyTrackRepository _spotifyTrackRepository;
-        private readonly ISpotifyTokenService _spotifyTokenService;
         private readonly PjfmContext _pjfmContext;
+        private readonly ISpotifyTrackClient _spotifyTrackClient;
 
         private const int RefreshLongTermTracksDays = 300;
         private const int RefreshLongMediumTracksDays = 100;
         private const int RefreshLongShortTracksDays = 10;
         private const int TermSpotifyTracksAmount = 50;
 
-        public SpotifyTrackService(ISpotifyTrackRepository spotifyTrackRepository,ISpotifyTokenService spotifyTokenService, PjfmContext pjfmContext)
+        public SpotifyTrackService(ISpotifyTrackRepository spotifyTrackRepository, PjfmContext pjfmContext,
+            ISpotifyTrackClient spotifyTrackClient)
         {
             _spotifyTrackRepository = spotifyTrackRepository;
-            _spotifyTokenService = spotifyTokenService;
             _pjfmContext = pjfmContext;
+            _spotifyTrackClient = spotifyTrackClient;
         }
 
         public async Task UpdateUserSpotifyTracks(string userId)
         {
-            var spotifyClient = await CreateSpotifyClient(userId);
-            
             foreach (var trackTerm in Enum.GetValues<TrackTerm>())
             {
                 var termExpiredTracks = await GetExpiredTracks(userId, trackTerm);
@@ -42,22 +38,22 @@ namespace Pjfm.Application.GebruikerNummer
                     continue;
                 }
 
-                var tracksResult = await GetTermTracks(ref spotifyClient, trackTerm, termExpiredTracks.Count);
+                var tracksResult = await GetTermTracks(trackTerm, termExpiredTracks.Count, userId);
                 var newTracks = GetNewTracks(userId, tracksResult, trackTerm);
-                
+
                 ReplaceExpiredTracks(termExpiredTracks, newTracks);
             }
 
             await _pjfmContext.SaveChangesAsync();
         }
+
         public async Task SetUserSpotifyTracks(string userId)
         {
-            var spotifyClient = await CreateSpotifyClient(userId);
             var spotifyTracks = new List<SpotifyTrack>(150);
-            
+
             foreach (var trackTerm in Enum.GetValues<TrackTerm>())
             {
-                var tracksResult = await GetTermTracks(ref spotifyClient, trackTerm, TermSpotifyTracksAmount);
+                var tracksResult = await GetTermTracks(trackTerm, TermSpotifyTracksAmount, userId);
                 spotifyTracks.AddRange(tracksResult.Items?.Select(s => new SpotifyTrack()
                 {
                     Title = s.Name,
@@ -67,25 +63,28 @@ namespace Pjfm.Application.GebruikerNummer
                     TrackTerm = trackTerm,
                     TrackDurationMs = s.DurationMs,
                     UserId = userId,
+                    SpotifyAlbum = new SpotifyAlbum()
+                    {
+                        AlbumId = s.Album.Id,
+                        Title = s.Album.Name,
+                        AlbumImage =  new SpotifyAlbumImage()
+                        {
+                           Url = s.Album.Images.FirstOrDefault(x => x.Width == 300)?.Url ?? string.Empty,
+                           Height = s.Album.Images.FirstOrDefault(x => x.Width == 300)?.Height ?? 0,
+                           Width = s.Album.Images.FirstOrDefault(x => x.Width == 300)?.Height ?? 0,
+                        },
+                        // retrieve this from the release date
+                        ReleaseDate = s.Album.ReleaseDate,
+                    }
                 }).ToArray() ?? Array.Empty<SpotifyTrack>());
             }
-            
-            await _spotifyTrackRepository.SetUserSpotifyTracks(spotifyTracks, userId);
-        }
 
-
-        private async Task<SpotifyClient> CreateSpotifyClient(string userId)
-        {
-            var accessTokenResult = await _spotifyTokenService.GetUserSpotifyAccessToken(userId);
-
-            if (!accessTokenResult.IsSuccessful)
+            if (spotifyTracks.Count > 0)
             {
-                throw new NullReferenceException();
+                await _spotifyTrackRepository.SetUserSpotifyTracks(spotifyTracks, userId);
             }
-            
-            return new SpotifyClient(accessTokenResult.AccessToken);
         }
-        
+
         private async Task<List<SpotifyTrack>> GetExpiredTracks(string userId, TrackTerm trackTerm)
         {
             var refreshDays = GetTermTracksRefreshDays(trackTerm);
@@ -95,10 +94,11 @@ namespace Pjfm.Application.GebruikerNummer
                 .Where(x => x.TrackTerm == trackTerm)
                 .Where(x => x.CreationDate <= beforeDate)
                 .ToListAsync();
+
             return termExpiredTracks;
         }
 
-        private static SpotifyTrack[] GetNewTracks(string userId, Paging<FullTrack> tracksResult, TrackTerm trackTerm)
+        private static SpotifyTrack[] GetNewTracks(string userId, SpotifyTracksResult tracksResult, TrackTerm trackTerm)
         {
             if (tracksResult.Items == null)
             {
@@ -117,6 +117,7 @@ namespace Pjfm.Application.GebruikerNummer
             }).ToArray();
             return newTracks;
         }
+
         private void ReplaceExpiredTracks(List<SpotifyTrack> termExpiredTracks, SpotifyTrack[] newTracks)
         {
             for (int i = 0; i < termExpiredTracks.Count; i++)
@@ -130,8 +131,8 @@ namespace Pjfm.Application.GebruikerNummer
                 expiredTrack.SpotifyTrackId = newTrack.SpotifyTrackId;
                 expiredTrack.TrackDurationMs = newTrack.TrackDurationMs;
             }
-            
         }
+
         private int GetTermTracksRefreshDays(TrackTerm term)
         {
             switch (term)
@@ -147,27 +148,12 @@ namespace Pjfm.Application.GebruikerNummer
             }
         }
 
-        private Task<Paging<FullTrack>> GetTermTracks(ref SpotifyClient spotifyClient, TrackTerm term, int amount)
+        private Task<SpotifyTracksResult> GetTermTracks(TrackTerm term, int amount, string userId)
         {
-            return spotifyClient.Personalization.GetTopTracks(new PersonalizationTopRequest()
+            return _spotifyTrackClient.GetSpotifyTracks(new SpotifyTrackRequest()
             {
-                TimeRangeParam = ConvertTermToTimeRange(term),
-                Limit = amount,
-            });
-        }
-        private PersonalizationTopRequest.TimeRange ConvertTermToTimeRange(TrackTerm term)
-        {
-            switch (term)
-            {
-                case TrackTerm.Short:
-                    return PersonalizationTopRequest.TimeRange.ShortTerm;
-                case TrackTerm.Medium:
-                    return PersonalizationTopRequest.TimeRange.MediumTerm;
-                case TrackTerm.Long:
-                    return PersonalizationTopRequest.TimeRange.LongTerm;
-                default:
-                    throw new InvalidEnumArgumentException();
-            }
+                TrackTerm = term, PageSize = amount
+            }, userId);
         }
     }
 

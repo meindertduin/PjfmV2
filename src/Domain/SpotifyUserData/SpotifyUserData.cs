@@ -4,7 +4,7 @@ namespace Domain.SpotifyUserData
     {
         public int Id { get; set; }
         public string RefreshToken { get; set; } = null!;
-        public string UserId { get; set; } = null!;
         public ApplicationUser.ApplicationUser ApplicationUser { get; set; } = null!;
+        public string UserId { get; set; } = null!;
     }
 }

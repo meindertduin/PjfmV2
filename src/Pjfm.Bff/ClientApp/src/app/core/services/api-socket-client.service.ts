@@ -98,4 +98,18 @@ export interface SpotifyTrackDto {
   trackTerm: TrackTerm;
   trackDurationMs: number;
   trackStartDate: Date;
+  spotifyAlbum: SpotifyAlbumDto;
+}
+
+export interface SpotifyAlbumDto {
+  albumId: string;
+  albumImage: AlbumImageDto;
+  title: string;
+  releaseDate: string;
+}
+
+export interface AlbumImageDto {
+  url: string;
+  width: number;
+  height: number;
 }

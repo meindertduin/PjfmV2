@@ -9,7 +9,6 @@
       <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-      <PackageReference Include="SpotifyAPI.Web" Version="6.2.1" />
     </ItemGroup>
 
     <ItemGroup>
@@ -22,6 +21,7 @@
     <ItemGroup>
       <Folder Include="Enums" />
       <Folder Include="Exceptions" />
+      <Folder Include="Http" />
     </ItemGroup>
 
     <ItemGroup>

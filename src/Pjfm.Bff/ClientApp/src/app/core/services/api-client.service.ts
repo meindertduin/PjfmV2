@@ -75,7 +75,7 @@ export class AuthenticationClient {
 @Injectable()
 export class PlaybackClient {
     private http: HttpClient;
-    private baseUrl: string;
+    private readonly baseUrl: string;
     protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
 
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
@@ -557,7 +557,7 @@ export class PlaybackGroupDto implements IPlaybackGroupDto {
         data["groupName"] = this.groupName;
         data["currentlyPlayingTrack"] = this.currentlyPlayingTrack ? this.currentlyPlayingTrack.toJSON() : <any>undefined;
         data["listenersCount"] = this.listenersCount;
-        return data; 
+        return data;
     }
 }
 
@@ -575,6 +575,7 @@ export class SpotifyTrackDto implements ISpotifyTrackDto {
     trackTerm!: TrackTerm;
     trackDurationMs!: number;
     trackStartDate!: Date;
+    spotifyAlbum!: SpotifyAlbumDto;
 
     constructor(data?: ISpotifyTrackDto) {
         if (data) {
@@ -585,6 +586,7 @@ export class SpotifyTrackDto implements ISpotifyTrackDto {
         }
         if (!data) {
             this.artists = [];
+            this.spotifyAlbum = new SpotifyAlbumDto();
         }
     }
 
@@ -600,6 +602,7 @@ export class SpotifyTrackDto implements ISpotifyTrackDto {
             this.trackTerm = _data["trackTerm"];
             this.trackDurationMs = _data["trackDurationMs"];
             this.trackStartDate = _data["trackStartDate"] ? new Date(_data["trackStartDate"].toString()) : <any>undefined;
+            this.spotifyAlbum = _data["spotifyAlbum"] ? SpotifyAlbumDto.fromJS(_data["spotifyAlbum"]) : new SpotifyAlbumDto();
         }
     }
 
@@ -622,7 +625,8 @@ export class SpotifyTrackDto implements ISpotifyTrackDto {
         data["trackTerm"] = this.trackTerm;
         data["trackDurationMs"] = this.trackDurationMs;
         data["trackStartDate"] = this.trackStartDate ? this.trackStartDate.toISOString() : <any>undefined;
-        return data; 
+        data["spotifyAlbum"] = this.spotifyAlbum ? this.spotifyAlbum.toJSON() : <any>undefined;
+        return data;
     }
 }
 
@@ -633,12 +637,108 @@ export interface ISpotifyTrackDto {
     trackTerm: TrackTerm;
     trackDurationMs: number;
     trackStartDate: Date;
+    spotifyAlbum: SpotifyAlbumDto;
 }
 
 export enum TrackTerm {
     Short = 0,
     Medium = 1,
     Long = 2,
+}
+
+export class SpotifyAlbumDto implements ISpotifyAlbumDto {
+    albumId!: string;
+    albumImage!: SpotifyAlbumImageDto;
+    title!: string;
+    releaseDate!: Date;
+
+    constructor(data?: ISpotifyAlbumDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.albumImage = new SpotifyAlbumImageDto();
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.albumId = _data["albumId"];
+            this.albumImage = _data["albumImage"] ? SpotifyAlbumImageDto.fromJS(_data["albumImage"]) : new SpotifyAlbumImageDto();
+            this.title = _data["title"];
+            this.releaseDate = _data["releaseDate"] ? new Date(_data["releaseDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): SpotifyAlbumDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpotifyAlbumDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["albumId"] = this.albumId;
+        data["albumImage"] = this.albumImage ? this.albumImage.toJSON() : <any>undefined;
+        data["title"] = this.title;
+        data["releaseDate"] = this.releaseDate ? this.releaseDate.toISOString() : <any>undefined;
+        return data;
+    }
+}
+
+export interface ISpotifyAlbumDto {
+    albumId: string;
+    albumImage: SpotifyAlbumImageDto;
+    title: string;
+    releaseDate: Date;
+}
+
+export class SpotifyAlbumImageDto implements ISpotifyAlbumImageDto {
+    url!: string;
+    width!: number;
+    height!: number;
+
+    constructor(data?: ISpotifyAlbumImageDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.url = _data["url"];
+            this.width = _data["width"];
+            this.height = _data["height"];
+        }
+    }
+
+    static fromJS(data: any): SpotifyAlbumImageDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SpotifyAlbumImageDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["url"] = this.url;
+        data["width"] = this.width;
+        data["height"] = this.height;
+        return data;
+    }
+}
+
+export interface ISpotifyAlbumImageDto {
+    url: string;
+    width: number;
+    height: number;
 }
 
 export class ProblemDetails implements IProblemDetails {
@@ -681,7 +781,7 @@ export class ProblemDetails implements IProblemDetails {
         data["status"] = this.status;
         data["detail"] = this.detail;
         data["instance"] = this.instance;
-        return data; 
+        return data;
     }
 }
 
@@ -732,7 +832,7 @@ export class GetDevicesResponse implements IGetDevicesResponse {
             for (let item of this.devices)
                 data["devices"].push(item.toJSON());
         }
-        return data; 
+        return data;
     }
 }
 
@@ -774,7 +874,7 @@ export class DeviceModel implements IDeviceModel {
         data["deviceId"] = this.deviceId;
         data["deviceName"] = this.deviceName;
         data["isActive"] = this.isActive;
-        return data; 
+        return data;
     }
 }
 
@@ -829,7 +929,7 @@ export class GetCurrentUserResponseModel implements IGetCurrentUserResponseModel
             for (let item of this.roles)
                 data["roles"].push(item);
         }
-        return data; 
+        return data;
     }
 }
 

@@ -2,7 +2,7 @@
   <section class="playback">
     <div class="playback-info" *ngIf="loadedPlaybackData != null">
       <div class="image-container">
-        <img src="/assets/images/album-cover.jpg" alt="album cover" />
+        <img [src]="loadedPlaybackData.currentlyPlayingTrack.spotifyAlbum.albumImage.url" alt="album cover" />
       </div>
       <div class="track-info-container">
         <div class="currently-playing-title">Now playing:</div>

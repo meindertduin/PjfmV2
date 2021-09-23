@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Domain.SpotifyTrack;
 using Microsoft.Extensions.Configuration;
@@ -55,6 +56,7 @@ namespace SpotifyPlayback.Services
         {
             foreach (var spotifyTrack in spotifyTracks)
             {
+                // TODO: add a mapping
                 _spotifyTracks.Enqueue(new SpotifyTrackDto()
                 {
                     Title = spotifyTrack.Title,
@@ -62,6 +64,19 @@ namespace SpotifyPlayback.Services
                     SpotifyTrackId = spotifyTrack.SpotifyTrackId,
                     TrackDurationMs = spotifyTrack.TrackDurationMs,
                     TrackTerm = spotifyTrack.TrackTerm,
+                    SpotifyAlbum = new SpotifyAlbumDto()
+                    {
+                        AlbumId = spotifyTrack.SpotifyAlbum.AlbumId,
+                        Title = spotifyTrack.SpotifyAlbum.Title,
+                        ReleaseDate = spotifyTrack.SpotifyAlbum.ReleaseDate,
+                        
+                        AlbumImage = new SpotifyAlbumImageDto()
+                        {
+                            Width = spotifyTrack.SpotifyAlbum.AlbumImage.Width,
+                            Height = spotifyTrack.SpotifyAlbum.AlbumImage.Height,
+                            Url = spotifyTrack.SpotifyAlbum.AlbumImage.Url,
+                        }
+                    }
                 });
             }
         }

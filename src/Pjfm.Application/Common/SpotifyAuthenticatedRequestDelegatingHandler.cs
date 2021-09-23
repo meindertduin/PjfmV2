@@ -1,5 +1,4 @@
 using System;
-using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
@@ -7,13 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using Pjfm.Application.Authentication;
-using Pjfm.Application.Common;
 using Pjfm.Application.Spotify;
 using Pjfm.Common;
 using Pjfm.Common.Http;
-using SpotifyAPI.Web;
 
-namespace SpotifyPlayback.Http
+namespace Pjfm.Application.Common
 {
     public class SpotifyAuthenticatedRequestDelegatingHandler : DelegatingHandler
     {
@@ -32,14 +29,14 @@ namespace SpotifyPlayback.Http
             CancellationToken cancellationToken)
         {
             var typedRequest = Guard.IsType<HttpRequestMessage, DelegatingRequestMessage>(request);
-            var userId = typedRequest.GetDelegatingParam("userId");
+            var userId = typedRequest.GetDelegatingParam(DelegatingRequestParams.UserId);
 
             Guard.NotNullOrEmpty(userId, nameof(userId));
 
             var accessTokenResult = await _spotifyTokenService.GetUserSpotifyAccessToken(userId);
             if (!accessTokenResult.IsSuccessful)
             {
-                throw new APIException("Could not retrieve the user AccessToken");
+                throw new NullReferenceException("AccessToken is null");
             }
 
             typedRequest.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessTokenResult.AccessToken);

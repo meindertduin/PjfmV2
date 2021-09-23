@@ -1,6 +1,6 @@
 namespace Pjfm.Application.Spotify
 {
-    public class SpotifyErrorResponseDescriptions
+    public abstract class SpotifyErrorResponseDescriptions 
     {
         public const string TokenRevoked = "Refresh token revoked";
     }
