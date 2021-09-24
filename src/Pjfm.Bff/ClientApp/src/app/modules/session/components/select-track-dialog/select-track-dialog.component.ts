@@ -12,6 +12,8 @@ export class SelectTrackDialogComponent {
   autoCompleteValues: AutoCompleteValue[] = [];
   selectedTracks: SelectedTrack[] = [];
 
+  readonly selectTrackLimit = 3;
+
   constructor(@Inject(PJFM_DIALOG_REF) private readonly _dialogRef: DialogRef, private readonly _spotifyTrackClient: SpotifyTrackClient) {}
 
   closeDialog(): void {
@@ -30,9 +32,11 @@ export class SelectTrackDialogComponent {
   }
 
   onSearchValueSelect(value: unknown): void {
-    const trackId = value as string;
-    const autoCompleteValue = this.autoCompleteValues.find((s) => s.value === trackId);
-    this.selectedTracks.push({ trackId: trackId, text: autoCompleteValue?.text.split('-')[0].trim() ?? '' });
+    if (this.selectedTracks.length < this.selectTrackLimit) {
+      const trackId = value as string;
+      const autoCompleteValue = this.autoCompleteValues.find((s) => s.value === trackId);
+      this.selectedTracks.push({ trackId: trackId, text: autoCompleteValue?.text.split('-')[0].trim() ?? '' });
+    }
   }
 
   removeSelectedTrack(selectedTrack: SelectedTrack): void {
