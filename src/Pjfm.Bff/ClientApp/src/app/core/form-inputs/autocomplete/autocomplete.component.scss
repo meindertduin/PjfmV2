@@ -1,7 +1,6 @@
 @import "variables";
 
 .container {
-
   .input-container {
     display: flex;
     justify-content: center;
@@ -10,8 +9,8 @@
       width: 100%;
       background: $color-dark;
       color: $white;
-      border: 2px solid $color-purple;
       padding: 5px;
+      border: 2px solid $color-purple;
       overflow-x: hidden;
       text-wrap: none;
       text-overflow: ellipsis;

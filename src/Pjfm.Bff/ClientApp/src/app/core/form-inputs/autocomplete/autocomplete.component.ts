@@ -26,6 +26,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
   @Input() autoCompleteValues: AutoCompleteValue[] = [];
   @Input() inputId = generateRandomString(10);
   @Output() queryChanges = new EventEmitter<string>();
+  @Output() valueSelect = new EventEmitter<unknown>();
 
   readonly autoCompleteQueryLengthTrigger = 2;
 
@@ -83,6 +84,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
     this.setValue(autoCompleteValue.value);
     this.query.setValue(autoCompleteValue.text, { emitEvent: false });
     this.showAutoCompleteValues = false;
+    this.valueSelect.next(autoCompleteValue.value);
   }
 
   registerOnChange(fn: any): void {
@@ -110,7 +112,6 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
     const { y } = this.inputComponent.nativeElement.getBoundingClientRect() as { x: number; y: number };
     const spaceToTop = Math.floor(y);
     const spaceToBottom = window.innerHeight - spaceToTop;
-    console.log(spaceToBottom, spaceToTop);
     if (spaceToBottom < 150 && spaceToTop > spaceToBottom) {
       this.showAutoCompleteOnTop = true;
     }

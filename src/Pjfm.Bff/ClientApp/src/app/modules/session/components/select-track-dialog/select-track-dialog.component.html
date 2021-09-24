@@ -5,11 +5,17 @@
   <ng-container content>
     <div class="container">
       <section class="search-track">
+        <div class="selected-tracks m-s-b">
+          <span class="selected-track" (click)="removeSelectedTrack(selectedTrack)" *ngFor="let selectedTrack of selectedTracks"
+            >[ {{selectedTrack.text}} ]</span
+          >
+        </div>
         <label class="search-track-label" for="track-search">Search for a track</label>
         <pjfm-autocomplete
           [inputId]="'track-search'"
           (queryChanges)="onQueryChange($event)"
           [autoCompleteValues]="autoCompleteValues"
+          (valueSelect)="onSearchValueSelect($event)"
         ></pjfm-autocomplete>
       </section>
     </div>

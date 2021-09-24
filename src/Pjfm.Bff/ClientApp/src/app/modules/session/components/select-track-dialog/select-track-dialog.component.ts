@@ -10,6 +10,7 @@ import { AutoCompleteValue } from '../../../../core/form-inputs/autocomplete/aut
 })
 export class SelectTrackDialogComponent {
   autoCompleteValues: AutoCompleteValue[] = [];
+  selectedTracks: SelectedTrack[] = [];
 
   constructor(@Inject(PJFM_DIALOG_REF) private readonly _dialogRef: DialogRef, private readonly _spotifyTrackClient: SpotifyTrackClient) {}
 
@@ -27,4 +28,19 @@ export class SelectTrackDialogComponent {
       });
     });
   }
+
+  onSearchValueSelect(value: unknown): void {
+    const trackId = value as string;
+    const autoCompleteValue = this.autoCompleteValues.find((s) => s.value === trackId);
+    this.selectedTracks.push({ trackId: trackId, text: autoCompleteValue?.text.split('-')[0].trim() ?? '' });
+  }
+
+  removeSelectedTrack(selectedTrack: SelectedTrack): void {
+    this.selectedTracks = this.selectedTracks.filter((s) => s.trackId !== selectedTrack.trackId);
+  }
+}
+
+export interface SelectedTrack {
+  text: string;
+  trackId: string;
 }

@@ -2,6 +2,20 @@
 
 .container {
   padding: 10px;
+
+  .selected-tracks {
+    color: $color-yellow;
+
+    .selected-track {
+      margin-right: 5px;
+      cursor: pointer;
+      font-size: 12px;
+
+      &:hover {
+        color: $color-warning;
+      }
+    }
+  }
   .search-track {
     width: 100%;
     display: flex;
