@@ -7,7 +7,6 @@ using Pjfm.Application.GebruikerNummer.Models;
 using Pjfm.Infrastructure;
 using Pjfm.Infrastructure.Repositories;
 using SpotifyPlayback.Interfaces;
-using SpotifyPlayback.Models.Socket;
 
 namespace SpotifyPlayback.Services
 {
@@ -95,6 +94,21 @@ namespace SpotifyPlayback.Services
         public void SetTermijn(TrackTerm term)
         {
             _term = term;
+        }
+
+        public void AddTracksToQueue(IEnumerable<SpotifyTrackDto> tracks)
+        {
+            var queuedTracks = _spotifyTracks.ToArray();
+            _spotifyTracks = new();
+            foreach (var track in tracks)
+            {
+                _spotifyTracks.Enqueue(track);
+            }
+
+            foreach (var track in queuedTracks)
+            {
+                _spotifyTracks.Enqueue(track);
+            }
         }
     }
 }

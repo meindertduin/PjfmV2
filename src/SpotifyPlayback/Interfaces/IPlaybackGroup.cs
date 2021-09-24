@@ -23,5 +23,6 @@ namespace SpotifyPlayback.Interfaces
         bool ContainsJoinedConnectionId(Guid connectionId);
         bool HasListeners();
         PlaybackGroupDto GetPlaybackGroupInfo();
+        void AddTracksToQueue(IEnumerable<SpotifyTrackDto> tracks);
     }
 }

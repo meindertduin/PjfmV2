@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Api.Controllers.Base;
+using Pjfm.Api.Models.Playback;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models.DataTransferObjects;
 using SpotifyPlayback.Requests.PlaybackRequestHandlers;
@@ -85,6 +86,35 @@ namespace Pjfm.Api.Controllers
                 UserId = PjfmPrincipal.Id,
                 ConnectionId = socketConnection.ConnectionId,
             });
+
+            return Ok();
+        }
+
+        [HttpPut("{groupId:guid}/track-request")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> PlaybackTrackRequest(PlaybackTrackRequest trackRequest)
+        {
+            if (!_socketConnectionCollection.TryGetUserSocketConnection(PjfmPrincipal.Id, out var socketConnection))
+            {
+                return Conflict();
+            }
+
+            var connectionPlaybackGroupId = socketConnection.GetConnectedPlaybackGroupId();
+            if (connectionPlaybackGroupId == null)
+            {
+                return Conflict();
+            }
+
+            var result = await _playbackRequestDispatcher.HandlePlaybackRequest(new AddTracksToQueueRequest()
+            {
+                GroupId = connectionPlaybackGroupId.Value,
+            });
+
+            if (!result.IsSuccessful)
+            {
+                return Conflict();
+            }
 
             return Ok();
         }

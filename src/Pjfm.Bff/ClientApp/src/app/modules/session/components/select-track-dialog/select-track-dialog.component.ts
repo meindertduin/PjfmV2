@@ -42,6 +42,8 @@ export class SelectTrackDialogComponent {
   removeSelectedTrack(selectedTrack: SelectedTrack): void {
     this.selectedTracks = this.selectedTracks.filter((s) => s.trackId !== selectedTrack.trackId);
   }
+
+  confirmClicked(): void {}
 }
 
 export interface SelectedTrack {

@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Pjfm.Application.GebruikerNummer.Models;
 using Pjfm.Common;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
@@ -139,6 +140,19 @@ namespace SpotifyPlayback.Services
 
             return false;
         }
+
+        public bool AddTracksToQueue(IEnumerable<SpotifyTrackDto> tracks, Guid groupId)
+        {
+            var retrievedGroup = _playbackGroups.TryGetValue(groupId, out var playbackGroup);
+            if (retrievedGroup)
+            {
+                playbackGroup!.AddTracksToQueue(tracks);
+                return true;
+            }
+
+            return false;
+        }
+
         private IPlaybackGroup GetPlaybackGroup(Guid groupId)
         {
             if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))

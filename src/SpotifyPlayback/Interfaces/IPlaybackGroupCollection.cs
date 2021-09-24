@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Pjfm.Application.GebruikerNummer.Models;
 using SpotifyPlayback.Models;
 using SpotifyPlayback.Models.DataTransferObjects;
 using SpotifyPlayback.Services;
@@ -21,5 +22,6 @@ namespace SpotifyPlayback.Interfaces
         bool RemoveListenerFromGroup(Guid connectionId, Guid groupId);
         void ClearConnectionFromGroup(Guid connectionId, Guid groupId);
         bool ListenToGroup(Guid groupId, ListenerDto listener);
+        bool AddTracksToQueue(IEnumerable<SpotifyTrackDto> tracks, Guid groupId);
     }
 }
