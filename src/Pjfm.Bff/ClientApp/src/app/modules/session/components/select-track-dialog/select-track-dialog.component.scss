@@ -2,7 +2,14 @@
   min-height: 300px;
 
   .search-track {
-    .input {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
+    pjfm-autocomplete {
+      margin-top: 10px;
+      width: 90%;
     }
   }
 }

@@ -1,7 +1,19 @@
-import { Component, OnDestroy, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import {
+  Component,
+  OnDestroy,
+  OnInit,
+  Output,
+  EventEmitter,
+  Input,
+  HostListener,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+} from '@angular/core';
 import { ControlValueAccessor, FormControl } from '@angular/forms';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { generateRandomString } from '../../utils/random-string';
 
 @Component({
   selector: 'pjfm-autocomplete',
@@ -10,8 +22,9 @@ import { Subject } from 'rxjs';
 })
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-function, @typescript-eslint/explicit-module-boundary-types */
-export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAccessor {
+export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAccessor, AfterViewInit {
   @Input() autoCompleteValues: AutoCompleteValue[] = [];
+  @Input() inputId = generateRandomString(10);
   @Output() queryChanges = new EventEmitter<string>();
 
   readonly autoCompleteQueryLengthTrigger = 2;
@@ -19,9 +32,21 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
   query = new FormControl('');
   showAutoCompleteValues = false;
   value: any;
+  autoCompleteWidth = 0;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onChange = (_: any) => {};
   onTouched = () => {};
+
+  private _componentViewInitialized = false;
+
+  @HostListener('window:resize')
+  onResize(): void {
+    if (this._componentViewInitialized) {
+      this.setAutoCompleteWidth();
+    }
+  }
+
+  @ViewChild('input') inputComponent!: ElementRef;
 
   private readonly _destroyed$ = new Subject();
 
@@ -31,6 +56,11 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
 
   ngOnInit(): void {
     this.setupOnQueryChanges();
+  }
+
+  ngAfterViewInit(): void {
+    this.setAutoCompleteWidth();
+    this._componentViewInitialized = true;
   }
 
   private setupOnQueryChanges() {
@@ -73,6 +103,10 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
 
   onInputFocusChange(focusIn: boolean) {
     this.showAutoCompleteValues = focusIn;
+  }
+
+  private setAutoCompleteWidth(): void {
+    this.autoCompleteWidth = this.inputComponent.nativeElement.offsetWidth;
   }
 }
 

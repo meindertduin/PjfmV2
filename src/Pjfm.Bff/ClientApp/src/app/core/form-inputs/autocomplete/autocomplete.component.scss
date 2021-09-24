@@ -2,8 +2,15 @@
 
 .container {
   .input-container {
+    display: flex;
+    justify-content: center;
+
     input {
-      padding: 5px 10px;
+      width: 100%;
+      background: $color-dark;
+      color: $white;
+      border: 2px solid $color-purple;
+      padding: 5px 0;
 
       &:focus {
         color: $color-yellow;
