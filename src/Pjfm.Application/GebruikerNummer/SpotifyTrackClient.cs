@@ -28,7 +28,7 @@ namespace Pjfm.Application.GebruikerNummer
                 new SpotifyAuthenticatedRequestDelegatingHandler(spotifyTokenService, serviceProvider));
         }
 
-        public async Task<SpotifyClientTrackstResult> GetSpotifyTracks(SpotifyTrackRequest spotifyTrackRequest, string userId)
+        public async Task<IEnumerable<SpotifyTrackDto>> GetSpotifyTracks(SpotifyTrackRequest spotifyTrackRequest, string userId)
         {
             var url = new StringBuilder(_configuration["Spotify:ApiBaseUrl"]);
 
@@ -47,11 +47,7 @@ namespace Pjfm.Application.GebruikerNummer
             var result = await SendTracksRequest<SpotifyClientTrackstResult>(requestMessage);
             if (result == null)
             {
-                return new SpotifyClientTrackstResult()
-                {
-                    Items = Enumerable.Empty<SpotifyClientTrackItemResult>(),
-                    Total = 0,
-                };
+                return Enumerable.Empty<SpotifyTrackDto>();
             }
             
             foreach (var spotifyTrackItemResult in result.Items)
@@ -59,7 +55,7 @@ namespace Pjfm.Application.GebruikerNummer
                 spotifyTrackItemResult.TrackTerm = spotifyTrackRequest.TrackTerm;
             }
 
-            return result;
+            return result.Items.Select(x => x.GetTrackDto(300));
         }
 
         public async Task<IEnumerable<SpotifyTrackDto>> SearchSpotifyTracks(string query, string userId)
@@ -111,7 +107,7 @@ namespace Pjfm.Application.GebruikerNummer
 
     public interface ISpotifyTrackClient
     {
-        Task<SpotifyClientTrackstResult> GetSpotifyTracks(SpotifyTrackRequest spotifyTrackRequest, string userId);
+        Task<IEnumerable<SpotifyTrackDto>> GetSpotifyTracks(SpotifyTrackRequest spotifyTrackRequest, string userId);
         Task<IEnumerable<SpotifyTrackDto>> SearchSpotifyTracks(string query, string userId);
     }
 }

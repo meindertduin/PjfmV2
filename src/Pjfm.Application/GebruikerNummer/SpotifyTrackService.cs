@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain.SpotifyTrack;
 using Microsoft.EntityFrameworkCore;
+using Pjfm.Application.GebruikerNummer.Models;
 using Pjfm.Infrastructure;
 
 namespace Pjfm.Application.GebruikerNummer
@@ -54,29 +55,28 @@ namespace Pjfm.Application.GebruikerNummer
             foreach (var trackTerm in Enum.GetValues<TrackTerm>())
             {
                 var tracksResult = await GetTermTracks(trackTerm, TermSpotifyTracksAmount, userId);
-                spotifyTracks.AddRange(tracksResult.Items?.Select(s => new SpotifyTrack()
+                spotifyTracks.AddRange(tracksResult.Select(s => new SpotifyTrack()
                 {
-                    Title = s.Name,
-                    SpotifyTrackId = s.Id,
+                    Title = s.Title,
+                    SpotifyTrackId = s.SpotifyTrackId,
                     CreationDate = DateTime.Now,
-                    Artists = s.Artists.Select(a => a.Name),
+                    Artists = s.Artists.Select(a => a),
                     TrackTerm = trackTerm,
-                    TrackDurationMs = s.DurationMs,
+                    TrackDurationMs = s.TrackDurationMs,
                     UserId = userId,
                     SpotifyAlbum = new SpotifyAlbum()
                     {
-                        AlbumId = s.Album.Id,
-                        Title = s.Album.Name,
+                        AlbumId = s.SpotifyAlbum.AlbumId,
+                        Title = s.SpotifyAlbum.Title,
                         AlbumImage =  new SpotifyAlbumImage()
                         {
-                           Url = s.Album.Images.FirstOrDefault(x => x.Width == 300)?.Url ?? string.Empty,
-                           Height = s.Album.Images.FirstOrDefault(x => x.Width == 300)?.Height ?? 0,
-                           Width = s.Album.Images.FirstOrDefault(x => x.Width == 300)?.Height ?? 0,
+                           Url = s.SpotifyAlbum.AlbumImage.Url,
+                           Height = s.SpotifyAlbum.AlbumImage.Height,
+                           Width = s.SpotifyAlbum.AlbumImage.Width,
                         },
-                        // retrieve this from the release date
-                        ReleaseDate = s.Album.ReleaseDate,
+                        ReleaseDate = s.SpotifyAlbum.ReleaseDate,
                     }
-                }).ToArray() ?? Array.Empty<SpotifyTrack>());
+                }).ToArray());
             }
 
             if (spotifyTracks.Count > 0)
@@ -98,21 +98,16 @@ namespace Pjfm.Application.GebruikerNummer
             return termExpiredTracks;
         }
 
-        private static SpotifyTrack[] GetNewTracks(string userId, SpotifyClientTrackstResult clientTrackstResult, TrackTerm trackTerm)
+        private static SpotifyTrack[] GetNewTracks(string userId, IEnumerable<SpotifyTrackDto> tracks, TrackTerm trackTerm)
         {
-            if (clientTrackstResult.Items == null)
+            var newTracks = tracks.Select(s => new SpotifyTrack()
             {
-                throw new NullReferenceException();
-            }
-
-            var newTracks = clientTrackstResult.Items.Select(s => new SpotifyTrack()
-            {
-                Title = s.Name,
-                SpotifyTrackId = s.Id,
+                Title = s.Title,
+                SpotifyTrackId = s.SpotifyTrackId,
                 CreationDate = DateTime.Now,
-                Artists = s.Artists.Select(a => a.Name),
+                Artists = s.Artists,
                 TrackTerm = trackTerm,
-                TrackDurationMs = s.DurationMs,
+                TrackDurationMs = s.TrackDurationMs,
                 UserId = userId,
             }).ToArray();
             return newTracks;
@@ -148,7 +143,7 @@ namespace Pjfm.Application.GebruikerNummer
             }
         }
 
-        private Task<SpotifyClientTrackstResult> GetTermTracks(TrackTerm term, int amount, string userId)
+        private Task<IEnumerable<SpotifyTrackDto>> GetTermTracks(TrackTerm term, int amount, string userId)
         {
             return _spotifyTrackClient.GetSpotifyTracks(new SpotifyTrackRequest()
             {
