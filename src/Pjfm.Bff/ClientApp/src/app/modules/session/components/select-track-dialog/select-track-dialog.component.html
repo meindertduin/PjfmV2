@@ -5,7 +5,7 @@
   <ng-container content>
     <div class="container">
       <section class="search-track">
-        <pjfm-autocomplete></pjfm-autocomplete>
+        <pjfm-autocomplete (queryChanges)="onQueryChange($event)"></pjfm-autocomplete>
       </section>
     </div>
   </ng-container>

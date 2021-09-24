@@ -14,13 +14,20 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
   @Input() autoCompleteValues: AutoCompleteValue[] = [{ text: 'this is a test', value: 'x' }];
   @Output() queryChanges = new EventEmitter<string>();
 
+  readonly autoCompleteQueryLengthTrigger = 2;
+
   query = new FormControl('');
+  showAutoCompleteValues = false;
   value: any;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onChange = (_: any) => {};
   onTouched = () => {};
 
   private readonly _destroyed$ = new Subject();
+
+  get queryValue() {
+    return this.query.value as string;
+  }
 
   ngOnInit(): void {
     this.setupOnQueryChanges();
@@ -29,9 +36,8 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
   private setupOnQueryChanges() {
     this.query.valueChanges.pipe(debounceTime(500), takeUntil(this._destroyed$)).subscribe((value) => {
       if (value != null) {
-        const typedValue = value as string;
-        if (typedValue.trim().length > 2) {
-          this.queryChanges.next(typedValue);
+        if (this.queryValue.length > this.autoCompleteQueryLengthTrigger) {
+          this.queryChanges.next(this.queryValue);
         }
       }
     });
@@ -45,6 +51,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
   onAutoCompleteValueClick(autoCompleteValue: AutoCompleteValue): void {
     this.setValue(autoCompleteValue.value);
     this.query.setValue(autoCompleteValue.text, { emitEvent: false });
+    this.showAutoCompleteValues = false;
   }
 
   registerOnChange(fn: any): void {
@@ -62,6 +69,10 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
   setValue(value: any) {
     this.value = value;
     this.onChange(this.value);
+  }
+
+  onInputFocusChange(focusIn: boolean) {
+    this.showAutoCompleteValues = focusIn;
   }
 }
 

@@ -14,4 +14,8 @@ export class SelectTrackDialogComponent implements OnInit {
   closeDialog(): void {
     this._dialogRef.closeDialog(undefined);
   }
+
+  onQueryChange(query: string): void {
+    console.log(query);
+  }
 }
