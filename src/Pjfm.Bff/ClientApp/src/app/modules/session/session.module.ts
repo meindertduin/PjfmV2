@@ -15,11 +15,18 @@ import { FormInputsModule } from '../../core/form-inputs/form-inputs.module';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { SelectTrackDialogComponent } from './components/select-track-dialog/select-track-dialog.component';
 
-const COMPONENTS = [SessionComponent, AsciiSliderComponent, TrackProgressionBarComponent, QueuedTrackComponent, StartListenDialogComponent];
+const COMPONENTS = [
+  SessionComponent,
+  AsciiSliderComponent,
+  TrackProgressionBarComponent,
+  QueuedTrackComponent,
+  StartListenDialogComponent,
+  SelectTrackDialogComponent,
+];
 const PIPES = [ConvertMsToTimePipe];
 
 @NgModule({
-  declarations: [COMPONENTS, PIPES, SelectTrackDialogComponent],
+  declarations: [COMPONENTS, PIPES],
   imports: [
     CommonModule,
     SessionRoutingModule,

@@ -1,21 +1,30 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { DialogRef, PJFM_DIALOG_REF } from '../../../../shared/services/dialog.service';
+import { SpotifyTrackClient } from '../../../../core/services/api-client.service';
+import { AutoCompleteValue } from '../../../../core/form-inputs/autocomplete/autocomplete.component';
 
 @Component({
   selector: 'pjfm-select-track-dialog',
   templateUrl: './select-track-dialog.component.html',
   styleUrls: ['./select-track-dialog.component.scss'],
 })
-export class SelectTrackDialogComponent implements OnInit {
-  constructor(@Inject(PJFM_DIALOG_REF) private readonly _dialogRef: DialogRef) {}
+export class SelectTrackDialogComponent {
+  autoCompleteValues: AutoCompleteValue[] = [];
 
-  ngOnInit(): void {}
+  constructor(@Inject(PJFM_DIALOG_REF) private readonly _dialogRef: DialogRef, private readonly _spotifyTrackClient: SpotifyTrackClient) {}
 
   closeDialog(): void {
     this._dialogRef.closeDialog(undefined);
   }
 
   onQueryChange(query: string): void {
-    console.log(query);
+    this._spotifyTrackClient.search(query).subscribe((result) => {
+      this.autoCompleteValues = result.tracks.map<AutoCompleteValue>((s) => {
+        return {
+          value: s.spotifyTrackId,
+          text: `${s.title} - ${s.artists.join(', ')}`,
+        };
+      });
+    });
   }
 }

@@ -11,7 +11,7 @@ import { Subject } from 'rxjs';
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-function, @typescript-eslint/explicit-module-boundary-types */
 export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAccessor {
-  @Input() autoCompleteValues: AutoCompleteValue[] = [{ text: 'this is a test', value: 'x' }];
+  @Input() autoCompleteValues: AutoCompleteValue[] = [];
   @Output() queryChanges = new EventEmitter<string>();
 
   readonly autoCompleteQueryLengthTrigger = 2;

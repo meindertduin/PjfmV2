@@ -1,4 +1,3 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -11,7 +10,7 @@ using Pjfm.Application.GebruikerNummer;
 namespace Pjfm.Api.Controllers
 {
     [Authorize(WellKnownPolicies.SpotifyAuthenticatedUser)]
-    [Microsoft.AspNetCore.Components.Route("api/spotify/tracks")]
+    [Route("api/spotify/tracks")]
     public class SpotifyTrackController : PjfmController
     {
         private readonly ISpotifyTrackClient _spotifyTrackClient;

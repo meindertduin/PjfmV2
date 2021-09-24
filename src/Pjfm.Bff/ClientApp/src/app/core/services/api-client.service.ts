@@ -426,7 +426,7 @@ export class SpotifyTrackClient {
     }
 
     search(query: string | null | undefined): Observable<SearchTracksResult> {
-        let url_ = this.baseUrl + "/search?";
+        let url_ = this.baseUrl + "/api/spotify/tracks/search?";
         if (query !== undefined && query !== null)
             url_ += "query=" + encodeURIComponent("" + query) + "&";
         url_ = url_.replace(/[?&]$/, "");
