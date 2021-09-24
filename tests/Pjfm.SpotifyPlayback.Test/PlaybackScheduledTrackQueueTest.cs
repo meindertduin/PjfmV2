@@ -1,8 +1,8 @@
 using System;
 using System.Linq;
+using Pjfm.Application.GebruikerNummer.Models;
 using SpotifyPlayback;
 using SpotifyPlayback.Models;
-using SpotifyPlayback.Models.Socket;
 using Xunit;
 
 namespace Pjfm.SpotifyPlayback.Test

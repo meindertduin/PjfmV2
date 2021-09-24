@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Domain.SpotifyTrack;
 
-namespace SpotifyPlayback.Models.Socket
+namespace Pjfm.Application.GebruikerNummer.Models
 {
     public class SpotifyTrackDto
     {

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.SpotifyTrack;
-using SpotifyPlayback.Models.Socket;
+using Pjfm.Application.GebruikerNummer.Models;
 
 namespace SpotifyPlayback.Interfaces
 {

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Domain.SpotifyTrack;
 using Microsoft.Extensions.Configuration;
+using Pjfm.Application.GebruikerNummer.Models;
 using Pjfm.Infrastructure;
 using Pjfm.Infrastructure.Repositories;
 using SpotifyPlayback.Interfaces;

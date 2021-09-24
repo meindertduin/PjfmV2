@@ -11,19 +11,13 @@ namespace Pjfm.Api.Controllers
 {
     [Authorize]
     [Route("api/spotify")]
-    public class SpotifyController : PjfmController
+    public class SpotifyPlayerController : PjfmController
     {
         private readonly ISpotifyPlaybackService _spotifyPlaybackService;
 
-        public SpotifyController(IPjfmControllerContext pjfmContext, ISpotifyPlaybackService spotifyPlaybackService) : base(pjfmContext)
+        public SpotifyPlayerController(IPjfmControllerContext pjfmContext, ISpotifyPlaybackService spotifyPlaybackService) : base(pjfmContext)
         {
             _spotifyPlaybackService = spotifyPlaybackService;
-        }
-
-        [HttpGet("tracks/update")]
-        public IActionResult UpdateUserSpotifyTracks()
-        {
-            return Ok();
         }
 
         [HttpGet("devices")]

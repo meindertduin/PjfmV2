@@ -98,14 +98,14 @@ namespace Pjfm.Application.GebruikerNummer
             return termExpiredTracks;
         }
 
-        private static SpotifyTrack[] GetNewTracks(string userId, SpotifyTracksResult tracksResult, TrackTerm trackTerm)
+        private static SpotifyTrack[] GetNewTracks(string userId, SpotifyClientTrackstResult clientTrackstResult, TrackTerm trackTerm)
         {
-            if (tracksResult.Items == null)
+            if (clientTrackstResult.Items == null)
             {
                 throw new NullReferenceException();
             }
 
-            var newTracks = tracksResult.Items.Select(s => new SpotifyTrack()
+            var newTracks = clientTrackstResult.Items.Select(s => new SpotifyTrack()
             {
                 Title = s.Name,
                 SpotifyTrackId = s.Id,
@@ -148,7 +148,7 @@ namespace Pjfm.Application.GebruikerNummer
             }
         }
 
-        private Task<SpotifyTracksResult> GetTermTracks(TrackTerm term, int amount, string userId)
+        private Task<SpotifyClientTrackstResult> GetTermTracks(TrackTerm term, int amount, string userId)
         {
             return _spotifyTrackClient.GetSpotifyTracks(new SpotifyTrackRequest()
             {

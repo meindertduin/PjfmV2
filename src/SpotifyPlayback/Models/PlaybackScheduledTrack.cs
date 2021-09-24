@@ -1,6 +1,5 @@
 using System;
-using Domain.SpotifyTrack;
-using SpotifyPlayback.Models.Socket;
+using Pjfm.Application.GebruikerNummer.Models;
 
 namespace SpotifyPlayback.Models
 {
