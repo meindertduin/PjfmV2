@@ -6,6 +6,7 @@
     class="auto-complete-values-container"
     *ngIf="showAutoCompleteValues && queryValue.length > autoCompleteQueryLengthTrigger"
     [ngStyle]="{ 'width.px': autoCompleteWidth }"
+    [ngClass]="{ 'show-at-top': showAutoCompleteOnTop }"
   >
     <ul class="auto-complete-values">
       <li class="value" *ngFor="let value of autoCompleteValues" (mousedown)="onAutoCompleteValueClick(value)">{{value.text}}</li>

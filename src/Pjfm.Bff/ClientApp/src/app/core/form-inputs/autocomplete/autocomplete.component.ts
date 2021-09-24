@@ -33,6 +33,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
   showAutoCompleteValues = false;
   value: any;
   autoCompleteWidth = 0;
+  showAutoCompleteOnTop = false;
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onChange = (_: any) => {};
   onTouched = () => {};
@@ -42,7 +43,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
   @HostListener('window:resize')
   onResize(): void {
     if (this._componentViewInitialized) {
-      this.setAutoCompleteWidth();
+      this.setAutoCompletePositionAndWidth();
     }
   }
 
@@ -59,7 +60,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
   }
 
   ngAfterViewInit(): void {
-    this.setAutoCompleteWidth();
+    this.setAutoCompletePositionAndWidth();
     this._componentViewInitialized = true;
   }
 
@@ -105,7 +106,15 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
     this.showAutoCompleteValues = focusIn;
   }
 
-  private setAutoCompleteWidth(): void {
+  private setAutoCompletePositionAndWidth(): void {
+    const { y } = this.inputComponent.nativeElement.getBoundingClientRect() as { x: number; y: number };
+    const spaceToTop = Math.floor(y);
+    const spaceToBottom = window.innerHeight - spaceToTop;
+    console.log(spaceToBottom, spaceToTop);
+    if (spaceToBottom < 150 && spaceToTop > spaceToBottom) {
+      this.showAutoCompleteOnTop = true;
+    }
+
     this.autoCompleteWidth = this.inputComponent.nativeElement.offsetWidth;
   }
 }

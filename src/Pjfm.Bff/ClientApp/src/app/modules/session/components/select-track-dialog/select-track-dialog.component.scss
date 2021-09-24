@@ -1,15 +1,30 @@
-.container {
-  min-height: 300px;
+@import "variables";
 
+.container {
+  padding: 10px;
   .search-track {
     width: 100%;
     display: flex;
     justify-content: center;
     flex-direction: column;
 
+    .search-track-label {
+      color: $color-blue;
+    }
+
     pjfm-autocomplete {
       margin-top: 10px;
       width: 90%;
     }
+  }
+}
+
+.footer-buttons {
+  display: flex;
+  flex-direction: row;
+
+  .raised-button {
+    width: 200px;
+    padding: 0 10px;
   }
 }
