@@ -160,9 +160,9 @@ namespace SpotifyPlayback.Services
             };
         }
 
-        public void AddTracksToQueue(IEnumerable<SpotifyTrackDto> tracks)
+        public void AddRequestsToQueue(IEnumerable<SpotifyTrackDto> tracks, string userId)
         {
-            _nextTrack = _playbackQueue.AddTracksToQueue(tracks, _nextTrack);
+            _nextTrack = _playbackQueue.AddRequestsToQueue(tracks, _nextTrack, userId);
         }
 
         private List<SpotifyTrackDto> GetQueuedTracks()

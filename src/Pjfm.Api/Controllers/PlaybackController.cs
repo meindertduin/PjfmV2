@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Api.Controllers.Base;
 using Pjfm.Api.Models.Playback;
+using Pjfm.Application.ApplicationUser;
 using Pjfm.Application.GebruikerNummer;
 using Pjfm.Application.GebruikerNummer.Models;
 using SpotifyPlayback.Interfaces;
@@ -105,8 +106,8 @@ namespace Pjfm.Api.Controllers
                 return Conflict();
             }
 
-            var connectionPlaybackGroupId = socketConnection.GetListeningPlaybackGroupId();
-            if (connectionPlaybackGroupId == null)
+            var joinedPlaybackGroupId = socketConnection.GetJoinedPlaybackGroupId();
+            if (joinedPlaybackGroupId == null)
             {
                 return Conflict();
             }
@@ -121,12 +122,18 @@ namespace Pjfm.Api.Controllers
             foreach (var requestedTrack in tracks)
             {
                 requestedTrack.TrackType = TrackType.Request;
+                requestedTrack.User = new ApplicationUserDto()
+                {
+                    UserId = PjfmPrincipal.Id, 
+                    UserName = PjfmPrincipal.UserName
+                };
             }
 
             var result = await _playbackRequestDispatcher.HandlePlaybackRequest(new AddTracksToQueueRequest()
             {
-                GroupId = connectionPlaybackGroupId.Value,
+                GroupId = joinedPlaybackGroupId.Value,
                 RequestedTracks = tracks,
+                UserId = PjfmPrincipal.Id,
             });
 
             if (!result.IsSuccessful)

@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Pjfm.Application.GebruikerNummer.Models;
 using Pjfm.Infrastructure;
 using Pjfm.Infrastructure.Repositories;
+using SpotifyPlayback.Exceptions;
 using SpotifyPlayback.Interfaces;
 
 namespace SpotifyPlayback.Services
@@ -20,6 +21,7 @@ namespace SpotifyPlayback.Services
         private readonly IEnumerable<string> _userIds = new List<string>();
         
         private TrackTerm _term = TrackTerm.Long;
+        private const int MaxRequestsPerUser = 3;
 
         public PlaybackQueue(IConfiguration configuration)
         {
@@ -55,7 +57,18 @@ namespace SpotifyPlayback.Services
             _term = term;
         }
 
-        public SpotifyTrackDto? AddTracksToQueue(IEnumerable<SpotifyTrackDto> tracks, SpotifyTrackDto? scheduledNextTrack)
+        public SpotifyTrackDto? AddRequestsToQueue(IEnumerable<SpotifyTrackDto> tracks, SpotifyTrackDto? scheduledTrack,
+            string userId)
+        {
+            var userRequestedTracks = _requestQueue.Count(r => r.User.UserId == userId);
+            if (tracks.Count() > MaxRequestsPerUser - userRequestedTracks)
+            {
+                throw new MaxRequestExceededException();
+            }
+            
+            return AddTracksToQueue(tracks, scheduledTrack);
+        }
+        private SpotifyTrackDto? AddTracksToQueue(IEnumerable<SpotifyTrackDto> tracks, SpotifyTrackDto? scheduledNextTrack)
         {
             ResetScheduledNextTrack(scheduledNextTrack);
             AddTracksToQueue(tracks);

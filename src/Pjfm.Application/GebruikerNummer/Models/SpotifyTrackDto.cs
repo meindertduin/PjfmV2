@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Domain.SpotifyTrack;
+using Pjfm.Application.ApplicationUser;
 
 namespace Pjfm.Application.GebruikerNummer.Models
 {
@@ -14,6 +15,7 @@ namespace Pjfm.Application.GebruikerNummer.Models
         public DateTime TrackStartDate { get; set; }
         public SpotifyAlbumDto SpotifyAlbum { get; set; } = null!;
         public TrackType TrackType { get; set; }
+        public ApplicationUserDto User { get; set; } = null!;
     }
 
     public enum TrackType

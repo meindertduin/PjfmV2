@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Pjfm.Application.GebruikerNummer.Models;
+using SpotifyPlayback.Exceptions;
 using SpotifyPlayback.Interfaces;
 
 namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
@@ -20,7 +21,15 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
         public Task<PlaybackRequestResult<AddTracksToQueueResult>> HandleAsync(AddTracksToQueueRequest request)
         {
             var playbackGroup = _playbackGroupCollection.GetPlaybackGroup(request.GroupId);
-            playbackGroup.AddTracksToQueue(request.RequestedTracks);
+            
+            try
+            {
+                playbackGroup.AddRequestsToQueue(request.RequestedTracks, request.UserId);
+            }
+            catch (MaxRequestExceededException e)
+            {
+                return PlaybackRequestResult.FailAsync<AddTracksToQueueResult>("Max requests for user exceeded.");
+            }
             
             return PlaybackRequestResult.SuccessAsync(new AddTracksToQueueResult(),
                 "Successfully added tracks to queue");
@@ -30,6 +39,7 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
     public class AddTracksToQueueRequest : IPlaybackRequest<PlaybackRequestResult<AddTracksToQueueResult>>
     {
         public Guid GroupId { get; set; }
+        public string UserId { get; set; } = null!;
         public IEnumerable<SpotifyTrackDto> RequestedTracks { get; set; } = null!;
     }
     

@@ -662,6 +662,8 @@ export class SpotifyTrackDto implements ISpotifyTrackDto {
     trackDurationMs!: number;
     trackStartDate!: Date;
     spotifyAlbum!: SpotifyAlbumDto;
+    trackType!: TrackType;
+    user!: ApplicationUserDto;
 
     constructor(data?: ISpotifyTrackDto) {
         if (data) {
@@ -673,6 +675,7 @@ export class SpotifyTrackDto implements ISpotifyTrackDto {
         if (!data) {
             this.artists = [];
             this.spotifyAlbum = new SpotifyAlbumDto();
+            this.user = new ApplicationUserDto();
         }
     }
 
@@ -689,6 +692,8 @@ export class SpotifyTrackDto implements ISpotifyTrackDto {
             this.trackDurationMs = _data["trackDurationMs"];
             this.trackStartDate = _data["trackStartDate"] ? new Date(_data["trackStartDate"].toString()) : <any>undefined;
             this.spotifyAlbum = _data["spotifyAlbum"] ? SpotifyAlbumDto.fromJS(_data["spotifyAlbum"]) : new SpotifyAlbumDto();
+            this.trackType = _data["trackType"];
+            this.user = _data["user"] ? ApplicationUserDto.fromJS(_data["user"]) : new ApplicationUserDto();
         }
     }
 
@@ -712,6 +717,8 @@ export class SpotifyTrackDto implements ISpotifyTrackDto {
         data["trackDurationMs"] = this.trackDurationMs;
         data["trackStartDate"] = this.trackStartDate ? this.trackStartDate.toISOString() : <any>undefined;
         data["spotifyAlbum"] = this.spotifyAlbum ? this.spotifyAlbum.toJSON() : <any>undefined;
+        data["trackType"] = this.trackType;
+        data["user"] = this.user ? this.user.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -724,6 +731,8 @@ export interface ISpotifyTrackDto {
     trackDurationMs: number;
     trackStartDate: Date;
     spotifyAlbum: SpotifyAlbumDto;
+    trackType: TrackType;
+    user: ApplicationUserDto;
 }
 
 export enum TrackTerm {
@@ -826,6 +835,52 @@ export interface ISpotifyAlbumImageDto {
     url: string;
     width: number;
     height: number;
+}
+
+export enum TrackType {
+    Request = 0,
+    Filler = 1,
+    ModRequest = 2,
+}
+
+export class ApplicationUserDto implements IApplicationUserDto {
+    userName!: string;
+    userId!: string;
+
+    constructor(data?: IApplicationUserDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userName = _data["userName"];
+            this.userId = _data["userId"];
+        }
+    }
+
+    static fromJS(data: any): ApplicationUserDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ApplicationUserDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userName"] = this.userName;
+        data["userId"] = this.userId;
+        return data; 
+    }
+}
+
+export interface IApplicationUserDto {
+    userName: string;
+    userId: string;
 }
 
 export class ProblemDetails implements IProblemDetails {
