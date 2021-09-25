@@ -11,10 +11,9 @@ namespace SpotifyPlayback.Interfaces
         void RemoveUserFromConnectionIdMap(SocketConnection socketConnection);
         bool TryAddSocket(Guid connectionId, SocketConnection socketConnection);
         bool RemoveSocket(Guid connectionId);
+        ISocketConnection? GetSocketConnection(Guid connectionId);
         IEnumerable<ISocketConnection> GetSocketConnections();
         IEnumerable<ISocketConnection> GetSocketConnections(IEnumerable<Guid> connectionIds);
         bool TryGetUserSocketConnection(string userId, [MaybeNullWhen(false)] out ISocketConnection socketConnection);
-        bool SetSocketConnectedGroupId(Guid connectionId, Guid groupId);
-        bool ClearSocketConnectedGroupId(Guid connectionId);
     }
 }

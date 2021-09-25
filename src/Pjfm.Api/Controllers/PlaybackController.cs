@@ -64,7 +64,7 @@ namespace Pjfm.Api.Controllers
                 throw new Exception(result.Message);
             }
 
-            _socketConnectionCollection.SetSocketConnectedGroupId(socketConnection.ConnectionId, groupId);
+            socketConnection.SetListeningPlaybackGroupId(groupId);
 
             return Ok();
         }
@@ -79,7 +79,7 @@ namespace Pjfm.Api.Controllers
                 return Conflict();
             }
 
-            var connectionPlaybackGroupId = socketConnection.GetConnectedPlaybackGroupId();
+            var connectionPlaybackGroupId = socketConnection.GetListeningPlaybackGroupId();
             if (connectionPlaybackGroupId == null)
             {
                 return Conflict();
@@ -105,7 +105,7 @@ namespace Pjfm.Api.Controllers
                 return Conflict();
             }
 
-            var connectionPlaybackGroupId = socketConnection.GetConnectedPlaybackGroupId();
+            var connectionPlaybackGroupId = socketConnection.GetListeningPlaybackGroupId();
             if (connectionPlaybackGroupId == null)
             {
                 return Conflict();

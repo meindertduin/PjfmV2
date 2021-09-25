@@ -12,8 +12,12 @@ namespace SpotifyPlayback.Interfaces
         IPjfmPrincipal Principal { get; init; }
         Task PollConnection(Action<WebSocketReceiveResult, byte[]> onMessageReceive);
         Task SendMessage(byte[] message);
-        Guid? GetConnectedPlaybackGroupId();
-        void SetConnectedPlaybackGroupId(Guid groupId);
-        void ClearConnectedPlaybackGroupId();
+        Guid? GetListeningPlaybackGroupId();
+        void SetListeningPlaybackGroupId(Guid groupId);
+        void ClearListeningPlaybackGroupId();
+        
+        Guid? GetJoinedPlaybackGroupId();
+        void SetJoinedPlaybackGroupId(Guid groupId);
+        void ClearJoinedPlaybackGroupId();
     }
 }

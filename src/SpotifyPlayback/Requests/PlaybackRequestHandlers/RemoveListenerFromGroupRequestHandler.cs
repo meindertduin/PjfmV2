@@ -26,7 +26,12 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
             playbackGroup.RemoveListener(request.ConnectionId);
             
             _spotifyPlaybackService.PausePlaybackForUser(request.UserId);
-            _socketConnectionCollection.ClearSocketConnectedGroupId(request.ConnectionId);
+            var socketConnection = _socketConnectionCollection.GetSocketConnection(request.ConnectionId);
+            if (socketConnection == null)
+            {
+                throw new NullReferenceException();
+            }
+            socketConnection.ClearListeningPlaybackGroupId();
 
             return PlaybackRequestResult.SuccessAsync(new RemoveListenerFromGroupRequestResult(), "Successfully removed user.");
         }

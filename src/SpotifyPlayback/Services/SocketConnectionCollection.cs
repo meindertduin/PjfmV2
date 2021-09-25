@@ -36,6 +36,12 @@ namespace SpotifyPlayback.Services
             return Connections.Remove(connectionId, out _);
         }
 
+        public ISocketConnection? GetSocketConnection(Guid connectionId)
+        {
+            Connections.TryGetValue(connectionId, out var connection);
+            return connection;
+        }
+
         public IEnumerable<ISocketConnection> GetSocketConnections()
         {
             return Connections.Values;
@@ -64,7 +70,7 @@ namespace SpotifyPlayback.Services
         {
             if (Connections.TryGetValue(connectionId, out var socketConnection))
             {
-                socketConnection.SetConnectedPlaybackGroupId(groupId);
+                socketConnection.SetListeningPlaybackGroupId(groupId);
                 return true;
             }
             
@@ -75,7 +81,7 @@ namespace SpotifyPlayback.Services
         {
             if (Connections.TryGetValue(connectionId, out var socketConnection))
             {
-                socketConnection.ClearConnectedPlaybackGroupId();
+                socketConnection.ClearListeningPlaybackGroupId();
                 return true;
             }
 
