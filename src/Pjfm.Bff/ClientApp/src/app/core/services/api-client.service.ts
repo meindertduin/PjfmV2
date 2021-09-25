@@ -663,7 +663,7 @@ export class SpotifyTrackDto implements ISpotifyTrackDto {
     trackStartDate!: Date;
     spotifyAlbum!: SpotifyAlbumDto;
     trackType!: TrackType;
-    user!: ApplicationUserDto;
+    user?: ApplicationUserDto | undefined;
 
     constructor(data?: ISpotifyTrackDto) {
         if (data) {
@@ -675,7 +675,6 @@ export class SpotifyTrackDto implements ISpotifyTrackDto {
         if (!data) {
             this.artists = [];
             this.spotifyAlbum = new SpotifyAlbumDto();
-            this.user = new ApplicationUserDto();
         }
     }
 
@@ -693,7 +692,7 @@ export class SpotifyTrackDto implements ISpotifyTrackDto {
             this.trackStartDate = _data["trackStartDate"] ? new Date(_data["trackStartDate"].toString()) : <any>undefined;
             this.spotifyAlbum = _data["spotifyAlbum"] ? SpotifyAlbumDto.fromJS(_data["spotifyAlbum"]) : new SpotifyAlbumDto();
             this.trackType = _data["trackType"];
-            this.user = _data["user"] ? ApplicationUserDto.fromJS(_data["user"]) : new ApplicationUserDto();
+            this.user = _data["user"] ? ApplicationUserDto.fromJS(_data["user"]) : <any>undefined;
         }
     }
 
@@ -732,7 +731,7 @@ export interface ISpotifyTrackDto {
     trackStartDate: Date;
     spotifyAlbum: SpotifyAlbumDto;
     trackType: TrackType;
-    user: ApplicationUserDto;
+    user?: ApplicationUserDto | undefined;
 }
 
 export enum TrackTerm {

@@ -1,6 +1,8 @@
 <pjfm-base-bottom-sheet (closeDialog)="closeDialog()">
   <ng-container title>
-    <h4 class="m-0">Choose a track ({{selectedTracks.length}}/{{selectTrackLimit}})</h4>
+    <h4 class="m-0" [class.text--danger]="dialogData.userRequestedAmount + selectedTracks.length >= selectTrackLimit">
+      Choose a track ({{selectedTracks.length + dialogData.userRequestedAmount}}/{{selectTrackLimit}})
+    </h4>
   </ng-container>
   <ng-container content>
     <div class="container">

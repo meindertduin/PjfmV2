@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { DialogRef, PJFM_DIALOG_REF } from '../../../../shared/services/dialog.service';
+import { DialogRef, PJFM_DIALOG_DATA, PJFM_DIALOG_REF } from '../../../../shared/services/dialog.service';
 import { PlaybackClient, PlaybackTrackRequest, SpotifyTrackClient } from '../../../../core/services/api-client.service';
 import { AutoCompleteValue } from '../../../../core/form-inputs/autocomplete/autocomplete.component';
 import { finalize } from 'rxjs/operators';
@@ -18,6 +18,7 @@ export class SelectTrackDialogComponent {
   private _isRequesting = false;
 
   constructor(
+    @Inject(PJFM_DIALOG_DATA) readonly dialogData: SelectTrackDialogData,
     @Inject(PJFM_DIALOG_REF) private readonly _dialogRef: DialogRef,
     private readonly _spotifyTrackClient: SpotifyTrackClient,
     private readonly _playbackClient: PlaybackClient,
@@ -39,7 +40,7 @@ export class SelectTrackDialogComponent {
   }
 
   onSearchValueSelect(value: unknown): void {
-    if (this.selectedTracks.length < this.selectTrackLimit) {
+    if (this.selectedTracks.length + this.dialogData.userRequestedAmount < this.selectTrackLimit) {
       const trackId = value as string;
       const autoCompleteValue = this.autoCompleteValues.find((s) => s.value === trackId);
       this.selectedTracks.push({ trackId: trackId, text: autoCompleteValue?.text.split('-')[0].trim() ?? '' });
@@ -64,11 +65,17 @@ export class SelectTrackDialogComponent {
           this._isRequesting = false;
         }),
       )
-      .subscribe();
+      .subscribe(() => {
+        this.closeDialog();
+      });
   }
 }
 
 export interface SelectedTrack {
   text: string;
   trackId: string;
+}
+
+export interface SelectTrackDialogData {
+  userRequestedAmount: number;
 }

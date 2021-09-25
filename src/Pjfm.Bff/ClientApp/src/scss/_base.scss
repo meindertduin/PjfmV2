@@ -34,3 +34,11 @@ h5 {
   font-size: 16px;
   font-weight: lighter;
 }
+
+.text {
+  color: white;
+
+  &--danger {
+    color: $color-danger;
+  }
+}

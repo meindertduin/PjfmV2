@@ -16,7 +16,7 @@
         [trackDurationMs]="loadedPlaybackData.currentlyPlayingTrack.trackDurationMs"
       ></pjfm-track-progression-bar>
       <div class="playback-buttons" *ngxPermissionsOnly="'spotifyAuthenticated'">
-        <button class="flat-button ripple control-button">
+        <button class="flat-button ripple control-button" (click)="openRequestDialog()">
           <span class="icon" [inlineSVG]="'assets/icons/search.svg'"></span>
         </button>
         <button class="flat-button ripple control-button" (click)="playClicked()" *ngIf="!playbackIsActive; else pausePlaybackButton">
