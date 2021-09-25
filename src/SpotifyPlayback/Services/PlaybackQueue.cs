@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,8 +14,10 @@ namespace SpotifyPlayback.Services
     public class PlaybackQueue : IPlaybackQueue
     {
         private readonly IConfiguration _configuration;
-        private Queue<SpotifyTrackDto> _spotifyTracks = new();
-        private IEnumerable<string> _userIds = new List<string>();
+        private readonly LinkedList<SpotifyTrackDto> _fillerQueue = new();
+        private readonly LinkedList<SpotifyTrackDto> _requestQueue = new();
+        
+        private readonly IEnumerable<string> _userIds = new List<string>();
         
         private TrackTerm _term = TrackTerm.Long;
 
@@ -22,7 +25,7 @@ namespace SpotifyPlayback.Services
         {
             _configuration = configuration;
         }
-        public async Task<SpotifyTrackDto> GetNextSpotifyTrack()
+        public async Task<SpotifyTrackDto?> GetNextSpotifyTrack()
         {
             var getSpotifyTracksAmount = GetSpotifyTracksAmount();
             var spotifyTrackRepository = CreateSpotifyTrackRepository();
@@ -31,12 +34,16 @@ namespace SpotifyPlayback.Services
             
             AddSpotifyTracksToQueue(spotifyTracks);
 
-            return _spotifyTracks.Dequeue();
+            return GetAndRemoveNextTrack();
         }
 
         public IEnumerable<SpotifyTrackDto> GetQueuedTracks(int amount)
         {
-            return _spotifyTracks.Take(amount);
+            var queuedTracks = _requestQueue.Take(amount).ToList();
+            var leftOverAmount = amount - queuedTracks.Count();
+            queuedTracks.AddRange(_fillerQueue.Take(leftOverAmount));
+            
+            return queuedTracks;
         }
 
         private SpotifyTrackRepository CreateSpotifyTrackRepository()
@@ -49,7 +56,7 @@ namespace SpotifyPlayback.Services
         private int GetSpotifyTracksAmount()
         {
             int getSpotifyTracksAmount = 1;
-            if (_spotifyTracks.Count == 0)
+            if (_fillerQueue.Count == 0)
             {
                 getSpotifyTracksAmount = 20;
             }
@@ -62,13 +69,14 @@ namespace SpotifyPlayback.Services
             foreach (var spotifyTrack in spotifyTracks)
             {
                 // TODO: add a mapping
-                _spotifyTracks.Enqueue(new SpotifyTrackDto()
+                _fillerQueue.AddLast(new SpotifyTrackDto()
                 {
                     Title = spotifyTrack.Title,
                     Artists = spotifyTrack.Artists,
                     SpotifyTrackId = spotifyTrack.SpotifyTrackId,
                     TrackDurationMs = spotifyTrack.TrackDurationMs,
                     TrackTerm = spotifyTrack.TrackTerm,
+                    TrackType = TrackType.Filler,
                     SpotifyAlbum = new SpotifyAlbumDto()
                     {
                         AlbumId = spotifyTrack.SpotifyAlbum.AlbumId,
@@ -88,7 +96,7 @@ namespace SpotifyPlayback.Services
 
         public void ResetQueue()
         {
-            _spotifyTracks.Clear();
+            _fillerQueue.Clear();
         }
 
         public void SetTermijn(TrackTerm term)
@@ -96,19 +104,74 @@ namespace SpotifyPlayback.Services
             _term = term;
         }
 
-        public void AddTracksToQueue(IEnumerable<SpotifyTrackDto> tracks)
+        public SpotifyTrackDto? AddTracksToQueue(IEnumerable<SpotifyTrackDto> tracks, SpotifyTrackDto? scheduledNextTrack)
         {
-            var queuedTracks = _spotifyTracks.ToArray();
-            _spotifyTracks = new();
-            foreach (var track in tracks)
+            if (scheduledNextTrack != null)
             {
-                _spotifyTracks.Enqueue(track);
+                switch (scheduledNextTrack.TrackType)
+                {
+                    case TrackType.Filler:
+                        _fillerQueue.AddFirst(scheduledNextTrack);
+                        break;
+                    case TrackType.Request:
+                        _requestQueue.AddFirst(scheduledNextTrack);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
 
-            foreach (var track in queuedTracks)
+            foreach (var track in tracks)
             {
-                _spotifyTracks.Enqueue(track);
+                switch(track.TrackType)
+                {
+                    case TrackType.Filler:
+                        _fillerQueue.AddLast(track);
+                        break;
+                    case TrackType.Request:
+                        _requestQueue.AddLast(track);
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
+
+            return GetAndRemoveNextTrack();
+        }
+
+        private SpotifyTrackDto? GetNextTrack()
+        {
+            var request = _requestQueue.First?.Value;
+            if (request != null)
+            {
+                return request;
+            }
+
+            request = _fillerQueue.First?.Value;
+            if (request != null)
+            {
+                return request;
+            }
+            return null;
+        }
+
+        private SpotifyTrackDto? GetAndRemoveNextTrack()
+        {
+            var request = _requestQueue.First?.Value;
+            if (request != null)
+            {
+                _requestQueue.RemoveFirst();
+                return request;
+            }
+            
+            request = _fillerQueue.First?.Value;
+            if (request != null)
+            {
+                _fillerQueue.RemoveFirst();
+                return request;
+            }
+
+            return null;
         }
     }
 }

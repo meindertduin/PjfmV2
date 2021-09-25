@@ -13,6 +13,14 @@ namespace Pjfm.Application.GebruikerNummer.Models
         public int TrackDurationMs { get; set; }
         public DateTime TrackStartDate { get; set; }
         public SpotifyAlbumDto SpotifyAlbum { get; set; } = null!;
+        public TrackType TrackType { get; set; }
+    }
+
+    public enum TrackType
+    {
+        Request,
+        Filler,
+        ModRequest,
     }
 
     public class SpotifyAlbumDto

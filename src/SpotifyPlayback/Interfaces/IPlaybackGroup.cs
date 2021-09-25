@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Domain.SpotifyTrack;
 using Pjfm.Application.GebruikerNummer.Models;
 using SpotifyPlayback.Models.DataTransferObjects;
-using SpotifyPlayback.Models.Socket;
 
 namespace SpotifyPlayback.Interfaces
 {

@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Pjfm.Api.Controllers.Base;
 using Pjfm.Api.Models.Playback;
 using Pjfm.Application.GebruikerNummer;
+using Pjfm.Application.GebruikerNummer.Models;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models.DataTransferObjects;
 using SpotifyPlayback.Requests.PlaybackRequestHandlers;
@@ -94,7 +95,7 @@ namespace Pjfm.Api.Controllers
             return Ok();
         }
 
-        [HttpPut("{groupId:guid}/track-request")]
+        [HttpPut("track-request")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         public async Task<IActionResult> PlaybackTrackRequest(PlaybackTrackRequest trackRequest)
@@ -115,6 +116,11 @@ namespace Pjfm.Api.Controllers
             if (!tracks.Any())
             {
                 return BadRequest();
+            }
+            
+            foreach (var requestedTrack in tracks)
+            {
+                requestedTrack.TrackType = TrackType.Request;
             }
 
             var result = await _playbackRequestDispatcher.HandlePlaybackRequest(new AddTracksToQueueRequest()

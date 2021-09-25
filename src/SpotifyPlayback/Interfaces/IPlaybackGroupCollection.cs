@@ -11,6 +11,7 @@ namespace SpotifyPlayback.Interfaces
     public interface IPlaybackGroupCollection
     {
         event PlaybackGroupCreatedEvent PlaybackGroupCreatedEvent;
+        public IPlaybackGroup GetPlaybackGroup(Guid groupId);
         Guid CreateNewPlaybackGroup(string groupName);
         Task<PlaybackScheduledTrack> GetGroupNewTrack(Guid groupId);
         IEnumerable<ListenerDto> GetGroupListeners(Guid groupId);

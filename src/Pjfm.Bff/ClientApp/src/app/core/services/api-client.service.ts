@@ -245,11 +245,8 @@ export class PlaybackClient {
         return _observableOf<void>(<any>null);
     }
 
-    trackRequest(trackRequest: PlaybackTrackRequest, groupId: string): Observable<void> {
-        let url_ = this.baseUrl + "/api/playback/{groupId}/track-request";
-        if (groupId === undefined || groupId === null)
-            throw new Error("The parameter 'groupId' must be defined.");
-        url_ = url_.replace("{groupId}", encodeURIComponent("" + groupId));
+    trackRequest(trackRequest: PlaybackTrackRequest): Observable<void> {
+        let url_ = this.baseUrl + "/api/playback/track-request";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(trackRequest);

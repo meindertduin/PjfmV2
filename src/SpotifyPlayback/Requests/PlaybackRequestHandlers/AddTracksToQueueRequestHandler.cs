@@ -9,21 +9,19 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
     public class AddTracksToQueueRequestHandler : IPlaybackRequestHandler<AddTracksToQueueRequest, PlaybackRequestResult<AddTracksToQueueResult>>
     {
         private readonly IPlaybackGroupCollection _playbackGroupCollection;
+        private readonly IPlaybackScheduledTrackQueue _playbackScheduledTrackQueue;
 
-        public AddTracksToQueueRequestHandler(IPlaybackGroupCollection playbackGroupCollection)
+        public AddTracksToQueueRequestHandler(IPlaybackGroupCollection playbackGroupCollection, IPlaybackScheduledTrackQueue playbackScheduledTrackQueue)
         {
             _playbackGroupCollection = playbackGroupCollection;
+            _playbackScheduledTrackQueue = playbackScheduledTrackQueue;
         }
         
         public Task<PlaybackRequestResult<AddTracksToQueueResult>> HandleAsync(AddTracksToQueueRequest request)
         {
-            var addedTracks = _playbackGroupCollection.AddTracksToQueue(request.RequestedTracks, request.GroupId);
-
-            if (!addedTracks)
-            {
-                return PlaybackRequestResult.FailAsync<AddTracksToQueueResult>("Failed to add tracks to queue.");
-            }
-
+            var playbackGroup = _playbackGroupCollection.GetPlaybackGroup(request.GroupId);
+            playbackGroup.AddTracksToQueue(request.RequestedTracks);
+            
             return PlaybackRequestResult.SuccessAsync(new AddTracksToQueueResult(),
                 "Successfully added tracks to queue");
         }

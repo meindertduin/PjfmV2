@@ -153,7 +153,7 @@ namespace SpotifyPlayback.Services
             return false;
         }
 
-        private IPlaybackGroup GetPlaybackGroup(Guid groupId)
+        public IPlaybackGroup GetPlaybackGroup(Guid groupId)
         {
             if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
             {
