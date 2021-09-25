@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Api.Controllers.Base;
 using Pjfm.Api.Models.Playback;
+using Pjfm.Application.GebruikerNummer;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models.DataTransferObjects;
 using SpotifyPlayback.Requests.PlaybackRequestHandlers;
@@ -18,13 +20,15 @@ namespace Pjfm.Api.Controllers
     {
         private readonly IPlaybackRequestDispatcher _playbackRequestDispatcher;
         private readonly ISocketConnectionCollection _socketConnectionCollection;
+        private readonly ISpotifyTrackClient _spotifyTrackClient;
 
         public PlaybackController(IPjfmControllerContext pjfmContext, IPlaybackRequestDispatcher playbackRequestDispatcher,
-            ISocketConnectionCollection socketConnectionCollection) : base(
+            ISocketConnectionCollection socketConnectionCollection, ISpotifyTrackClient spotifyTrackClient) : base(
             pjfmContext)
         {
             _playbackRequestDispatcher = playbackRequestDispatcher;
             _socketConnectionCollection = socketConnectionCollection;
+            _spotifyTrackClient = spotifyTrackClient;
         }
 
         [HttpGet("groups")]
@@ -105,10 +109,18 @@ namespace Pjfm.Api.Controllers
             {
                 return Conflict();
             }
+            
+            var tracks = (await _spotifyTrackClient.GetTracks(trackRequest.TrackIds, PjfmPrincipal.Id)).ToList();
+
+            if (!tracks.Any())
+            {
+                return BadRequest();
+            }
 
             var result = await _playbackRequestDispatcher.HandlePlaybackRequest(new AddTracksToQueueRequest()
             {
                 GroupId = connectionPlaybackGroupId.Value,
+                RequestedTracks = tracks,
             });
 
             if (!result.IsSuccessful)

@@ -28,7 +28,8 @@ namespace Pjfm.Application.GebruikerNummer
                 new SpotifyAuthenticatedRequestDelegatingHandler(spotifyTokenService, serviceProvider));
         }
 
-        public async Task<IEnumerable<SpotifyTrackDto>> GetSpotifyTracks(SpotifyTrackRequest spotifyTrackRequest, string userId)
+        public async Task<IEnumerable<SpotifyTrackDto>> GetTopTracks(SpotifyTrackRequest spotifyTrackRequest,
+            string userId)
         {
             var url = new StringBuilder(_configuration["Spotify:ApiBaseUrl"]);
 
@@ -49,7 +50,7 @@ namespace Pjfm.Application.GebruikerNummer
             {
                 return Enumerable.Empty<SpotifyTrackDto>();
             }
-            
+
             foreach (var spotifyTrackItemResult in result.Items)
             {
                 spotifyTrackItemResult.TrackTerm = spotifyTrackRequest.TrackTerm;
@@ -76,6 +77,26 @@ namespace Pjfm.Application.GebruikerNummer
             }
 
             return result.Tracks.Items.Select(x => x.GetTrackDto(AlbumImageSize));
+        }
+
+        public async Task<IEnumerable<SpotifyTrackDto>> GetTracks(string[] trackIds, string userId)
+        {
+            var url = new StringBuilder(_configuration["Spotify:ApiBaseUrl"]);
+            url.Append("/tracks");
+            url.Append($"?ids={String.Join(',', trackIds)}");
+
+            var requestMessage = new DelegatingRequestBuilder(HttpMethod.Get, url.ToString())
+                .AddRequestParam(DelegatingRequestParams.UserId, userId)
+                .Build();
+
+            var result = await SendTracksRequest<SpotifyClientGetTracksResult>(requestMessage);
+
+            if (result == null)
+            {
+                return Enumerable.Empty<SpotifyTrackDto>();
+            }
+
+            return result.Tracks.Select(x => x.GetTrackDto(AlbumImageSize));
         }
 
         private async Task<T?> SendTracksRequest<T>(HttpRequestMessage requestMessage)
@@ -107,7 +128,8 @@ namespace Pjfm.Application.GebruikerNummer
 
     public interface ISpotifyTrackClient
     {
-        Task<IEnumerable<SpotifyTrackDto>> GetSpotifyTracks(SpotifyTrackRequest spotifyTrackRequest, string userId);
+        Task<IEnumerable<SpotifyTrackDto>> GetTopTracks(SpotifyTrackRequest spotifyTrackRequest, string userId);
         Task<IEnumerable<SpotifyTrackDto>> SearchSpotifyTracks(string query, string userId);
+        Task<IEnumerable<SpotifyTrackDto>> GetTracks(string[] trackIds, string userId);
     }
 }

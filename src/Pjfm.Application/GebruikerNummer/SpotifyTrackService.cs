@@ -145,7 +145,7 @@ namespace Pjfm.Application.GebruikerNummer
 
         private Task<IEnumerable<SpotifyTrackDto>> GetTermTracks(TrackTerm term, int amount, string userId)
         {
-            return _spotifyTrackClient.GetSpotifyTracks(new SpotifyTrackRequest()
+            return _spotifyTrackClient.GetTopTracks(new SpotifyTrackRequest()
             {
                 TrackTerm = term, PageSize = amount
             }, userId);
