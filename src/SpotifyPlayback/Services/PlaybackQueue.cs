@@ -60,7 +60,8 @@ namespace SpotifyPlayback.Services
         public SpotifyTrackDto? AddRequestsToQueue(IEnumerable<SpotifyTrackDto> tracks, SpotifyTrackDto? scheduledTrack,
             string userId)
         {
-            var userRequestedTracks = _requestQueue.Count(r => r.User.UserId == userId);
+            var userRequestedTracks = CalculateUserRequestedTracks(scheduledTrack, userId);
+
             if (tracks.Count() > MaxRequestsPerUser - userRequestedTracks)
             {
                 throw new MaxRequestExceededException();
@@ -68,6 +69,18 @@ namespace SpotifyPlayback.Services
             
             return AddTracksToQueue(tracks, scheduledTrack);
         }
+
+        private int CalculateUserRequestedTracks(SpotifyTrackDto? scheduledTrack, string userId)
+        {
+            var userRequestedTracks = _requestQueue.Count(r => r.User?.UserId == userId);
+            if (scheduledTrack?.User?.UserId == userId)
+            {
+                userRequestedTracks++;
+            }
+
+            return userRequestedTracks;
+        }
+
         private SpotifyTrackDto? AddTracksToQueue(IEnumerable<SpotifyTrackDto> tracks, SpotifyTrackDto? scheduledNextTrack)
         {
             ResetScheduledNextTrack(scheduledNextTrack);

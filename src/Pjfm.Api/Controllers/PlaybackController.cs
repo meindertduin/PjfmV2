@@ -129,7 +129,7 @@ namespace Pjfm.Api.Controllers
                 };
             }
 
-            var result = await _playbackRequestDispatcher.HandlePlaybackRequest(new AddTracksToQueueRequest()
+            var result = await _playbackRequestDispatcher.HandlePlaybackRequest(new UserRequestTracksToPlaybackRequest()
             {
                 GroupId = joinedPlaybackGroupId.Value,
                 RequestedTracks = tracks,
