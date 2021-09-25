@@ -45,6 +45,23 @@ namespace SpotifyPlayback.Services
             
             return queuedTracks;
         }
+        public void ResetQueue()
+        {
+            _fillerQueue.Clear();
+        }
+
+        public void SetTermijn(TrackTerm term)
+        {
+            _term = term;
+        }
+
+        public SpotifyTrackDto? AddTracksToQueue(IEnumerable<SpotifyTrackDto> tracks, SpotifyTrackDto? scheduledNextTrack)
+        {
+            ResetScheduledNextTrack(scheduledNextTrack);
+            AddTracksToQueue(tracks);
+
+            return GetAndRemoveNextTrack();
+        }
 
         private SpotifyTrackRepository CreateSpotifyTrackRepository()
         {
@@ -94,17 +111,7 @@ namespace SpotifyPlayback.Services
             }
         }
 
-        public void ResetQueue()
-        {
-            _fillerQueue.Clear();
-        }
-
-        public void SetTermijn(TrackTerm term)
-        {
-            _term = term;
-        }
-
-        public SpotifyTrackDto? AddTracksToQueue(IEnumerable<SpotifyTrackDto> tracks, SpotifyTrackDto? scheduledNextTrack)
+        private void ResetScheduledNextTrack(SpotifyTrackDto? scheduledNextTrack)
         {
             if (scheduledNextTrack != null)
             {
@@ -120,10 +127,13 @@ namespace SpotifyPlayback.Services
                         throw new ArgumentOutOfRangeException();
                 }
             }
-
+        }
+        
+        private void AddTracksToQueue(IEnumerable<SpotifyTrackDto> tracks)
+        {
             foreach (var track in tracks)
             {
-                switch(track.TrackType)
+                switch (track.TrackType)
                 {
                     case TrackType.Filler:
                         _fillerQueue.AddLast(track);
@@ -135,24 +145,6 @@ namespace SpotifyPlayback.Services
                         throw new ArgumentOutOfRangeException();
                 }
             }
-
-            return GetAndRemoveNextTrack();
-        }
-
-        private SpotifyTrackDto? GetNextTrack()
-        {
-            var request = _requestQueue.First?.Value;
-            if (request != null)
-            {
-                return request;
-            }
-
-            request = _fillerQueue.First?.Value;
-            if (request != null)
-            {
-                return request;
-            }
-            return null;
         }
 
         private SpotifyTrackDto? GetAndRemoveNextTrack()

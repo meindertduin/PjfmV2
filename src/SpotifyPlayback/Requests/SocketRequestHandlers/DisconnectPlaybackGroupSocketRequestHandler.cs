@@ -27,7 +27,10 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
             }
             
             var spotifyPlaybackService = scope.ServiceProvider.GetRequiredService<ISpotifyPlaybackService>();
-            var userWasListener = _playbackGroupCollection.RemoveListenerFromGroup(socketConnection.ConnectionId, groupId.Value);
+
+            var playbackGroup = _playbackGroupCollection.GetPlaybackGroup(groupId.Value);
+            var userWasListener = playbackGroup.RemoveListener(socketConnection.ConnectionId);
+            
             _playbackGroupCollection.RemoveJoinedConnectionFromGroup(socketConnection.ConnectionId, groupId.Value);
 
             if (userWasListener)

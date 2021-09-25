@@ -28,9 +28,10 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
                 
                 _playbackGroupCollection.RemoveJoinedConnectionFromGroup(socketConnection.ConnectionId, socketConnectedGroupId.Value);
             }
-            
-            var joinedGroup = _playbackGroupCollection.JoinGroup(request.GroupId, socketConnection.ConnectionId);
 
+            var playbackGroup = _playbackGroupCollection.GetPlaybackGroup(request.GroupId);
+            var joinedGroup = playbackGroup.AddJoinedConnectionId(socketConnection.ConnectionId);
+            
             if (!joinedGroup)
             {
                 return Task.CompletedTask;

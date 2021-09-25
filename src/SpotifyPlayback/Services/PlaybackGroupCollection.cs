@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Pjfm.Application.GebruikerNummer.Models;
 using Pjfm.Common;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
@@ -90,17 +89,6 @@ namespace SpotifyPlayback.Services
             return groupsData;
         }
 
-        public bool JoinGroup(Guid groupId, Guid connectionId)
-        {
-            var retrievedGroup = _playbackGroups.TryGetValue(groupId, out var playbackGroup);
-            if (retrievedGroup)
-            {
-                return playbackGroup!.AddJoinedConnectionId(connectionId);
-            }
-
-            return false;
-        }
-
         public bool RemoveJoinedConnectionFromGroup(Guid connectionId, Guid groupId)
         {
             if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
@@ -110,49 +98,6 @@ namespace SpotifyPlayback.Services
             
             return false;
         }
-
-        public bool RemoveListenerFromGroup(Guid connectionId, Guid groupId)
-        {
-            if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
-            {
-                return playbackGroup.RemoveListener(connectionId);
-            }
-            
-            return false;
-        }
-
-        public void ClearConnectionFromGroup(Guid connectionId, Guid groupId)
-        {
-            if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
-            {
-                playbackGroup.RemoveListener(connectionId);
-                playbackGroup.RemoveJoinedConnection(connectionId);
-            }
-        }
-
-        public bool ListenToGroup(Guid groupId, ListenerDto listener)
-        {
-            var retrievedGroup = _playbackGroups.TryGetValue(groupId, out var playbackGroup);
-            if (retrievedGroup)
-            {
-                return playbackGroup!.AddListener(listener);
-            }
-
-            return false;
-        }
-
-        public bool AddTracksToQueue(IEnumerable<SpotifyTrackDto> tracks, Guid groupId)
-        {
-            var retrievedGroup = _playbackGroups.TryGetValue(groupId, out var playbackGroup);
-            if (retrievedGroup)
-            {
-                playbackGroup!.AddTracksToQueue(tracks);
-                return true;
-            }
-
-            return false;
-        }
-
         public IPlaybackGroup GetPlaybackGroup(Guid groupId)
         {
             if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
