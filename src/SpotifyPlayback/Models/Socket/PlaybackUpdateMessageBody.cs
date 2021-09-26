@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Pjfm.Application.GebruikerNummer.Models;
 
 namespace SpotifyPlayback.Models.Socket
 {

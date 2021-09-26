@@ -10,16 +10,13 @@ namespace SpotifyPlayback.Interfaces
     public interface IPlaybackGroupCollection
     {
         event PlaybackGroupCreatedEvent PlaybackGroupCreatedEvent;
+        public IPlaybackGroup GetPlaybackGroup(Guid groupId);
         Guid CreateNewPlaybackGroup(string groupName);
         Task<PlaybackScheduledTrack> GetGroupNewTrack(Guid groupId);
         IEnumerable<ListenerDto> GetGroupListeners(Guid groupId);
         IEnumerable<Guid> GetGroupJoinedConnectionIds(Guid groupId);
         PlaybackGroupDto GetPlaybackGroupInfo(Guid groupId);
         IEnumerable<PlaybackGroupDto> GetPlaybackGroupsInfo();
-        bool JoinGroup(Guid groupId, Guid connectionId);
         bool RemoveJoinedConnectionFromGroup(Guid connectionId, Guid groupId);
-        bool RemoveListenerFromGroup(Guid connectionId, Guid groupId);
-        void ClearConnectionFromGroup(Guid connectionId, Guid groupId);
-        bool ListenToGroup(Guid groupId, ListenerDto listener);
     }
 }

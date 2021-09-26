@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Domain.ApplicationUser;
 using IdentityServer4.EntityFramework.DbContexts;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pjfm.Api.Authentication;
+using Pjfm.Common.Authentication;
 using Pjfm.Infrastructure;
 
 namespace Pjfm.Api
@@ -89,6 +91,11 @@ namespace Pjfm.Api
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(WellKnownPolicies.User, builder => { builder.RequireAuthenticatedUser(); });
+                options.AddPolicy(WellKnownPolicies.SpotifyAuthenticatedUser, builder =>
+                {
+                    builder.RequireAuthenticatedUser();
+                    builder.RequireClaim(PjfmClaimTypes.Role, UserRole.SpotifyAuth.ToString());
+                });
             });
         }
 

@@ -10,7 +10,7 @@
     <div class="group-info-container" *ngIf="playbackGroup.currentlyPlayingTrack != null; else offlineContent">
       <div class="currently-playing-title">Now playing:</div>
       <a class="track-title">[ {{playbackGroup.currentlyPlayingTrack.title}} ]</a>
-      <a class="artist-title">[ {{playbackGroup.currentlyPlayingTrack.artists | artistsPipe}} ]</a>
+      <a class="artist-title">[ {{playbackGroup.currentlyPlayingTrack.artists | artists}} ]</a>
     </div>
     <ng-template #offlineContent>
       <div class="currently-offline-title">Playback group is currently offline</div>

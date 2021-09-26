@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Pjfm.Application.GebruikerNummer.Models;
 using Pjfm.Common;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models.DataTransferObjects;
-using SpotifyPlayback.Models.Socket;
 
 namespace SpotifyPlayback.Services
 {
@@ -158,6 +158,11 @@ namespace SpotifyPlayback.Services
                 CurrentlyPlayingTrack = _currentlyPlayingTrack,
                 QueuedTracks = queuedTracks,
             };
+        }
+
+        public void AddRequestsToQueue(IEnumerable<SpotifyTrackDto> tracks, string userId)
+        {
+            _nextTrack = _playbackQueue.AddRequestsToQueue(tracks, _nextTrack, userId);
         }
 
         private List<SpotifyTrackDto> GetQueuedTracks()

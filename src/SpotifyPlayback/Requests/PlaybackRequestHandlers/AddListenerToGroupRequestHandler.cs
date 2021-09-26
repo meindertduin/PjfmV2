@@ -25,8 +25,10 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
                 var trackStartTimeMs = (DateTime.Now - groupInfo.CurrentlyPlayingTrack.TrackStartDate).TotalMilliseconds;
                 _spotifyPlaybackService.PlayTrackForUser(request.NewListener, groupInfo.CurrentlyPlayingTrack.SpotifyTrackId, (int) trackStartTimeMs);
             }
+
+            var playbackGroup = _playbackGroupCollection.GetPlaybackGroup(request.GroupId);
+            var hasJoinedAsListener = playbackGroup.AddListener(request.NewListener);
             
-            var hasJoinedAsListener = _playbackGroupCollection.ListenToGroup(request.GroupId, request.NewListener);
             if (!hasJoinedAsListener)
             {
                 return Task.FromResult(PlaybackRequestResult.Fail<AddListenerToGroupRequestResult>("Failed to join playbackgroup."));

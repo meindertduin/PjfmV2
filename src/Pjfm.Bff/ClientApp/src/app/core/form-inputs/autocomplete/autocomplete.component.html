@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="input-container" #input>
+    <input
+      [id]=""
+      type="text"
+      [formControl]="query"
+      (focusin)="onInputFocusChange(true)"
+      (blur)="onInputFocusChange(false)"
+      [placeholder]="placeHolder"
+    />
+  </div>
+  <div
+    class="auto-complete-values-container"
+    *ngIf="showAutoCompleteValues && queryValue.length > autoCompleteQueryLengthTrigger"
+    [ngStyle]="{ 'width.px': autoCompleteWidth }"
+    [ngClass]="{ 'show-at-top': showAutoCompleteOnTop }"
+  >
+    <ul class="auto-complete-values">
+      <li class="value" *ngFor="let value of autoCompleteValues" (mousedown)="onAutoCompleteValueClick(value)">{{value.text}}</li>
+    </ul>
+  </div>
+</div>

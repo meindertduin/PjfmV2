@@ -1,19 +1,19 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { QueuedTrackComponent } from './queued-track.component';
+import { AutocompleteComponent } from './autocomplete.component';
 
-describe('QueuedTrackComponent', () => {
-  let component: QueuedTrackComponent;
-  let fixture: ComponentFixture<QueuedTrackComponent>;
+describe('AutocompleteComponent', () => {
+  let component: AutocompleteComponent;
+  let fixture: ComponentFixture<AutocompleteComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [QueuedTrackComponent],
+      declarations: [AutocompleteComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(QueuedTrackComponent);
+    fixture = TestBed.createComponent(AutocompleteComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

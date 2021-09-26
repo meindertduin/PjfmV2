@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.SpotifyTrack;
+using Pjfm.Application.GebruikerNummer.Models;
 using SpotifyPlayback.Models.DataTransferObjects;
-using SpotifyPlayback.Models.Socket;
 
 namespace SpotifyPlayback.Interfaces
 {
@@ -22,5 +22,6 @@ namespace SpotifyPlayback.Interfaces
         bool ContainsJoinedConnectionId(Guid connectionId);
         bool HasListeners();
         PlaybackGroupDto GetPlaybackGroupInfo();
+        void AddRequestsToQueue(IEnumerable<SpotifyTrackDto> tracks, string userId);
     }
 }

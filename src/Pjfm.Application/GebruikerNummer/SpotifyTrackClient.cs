@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Pjfm.Application.Authentication;
 using Pjfm.Application.Common;
+using Pjfm.Application.GebruikerNummer.Models;
 using Pjfm.Common.Http;
 
 namespace Pjfm.Application.GebruikerNummer
@@ -16,21 +18,24 @@ namespace Pjfm.Application.GebruikerNummer
     {
         private readonly IConfiguration _configuration;
         private static HttpClient _client = null!;
+        private const int AlbumImageSize = 300;
 
-        public SpotifyTrackClient(ISpotifyTokenService spotifyTokenService, IServiceProvider serviceProvider, IConfiguration configuration)
+        public SpotifyTrackClient(ISpotifyTokenService spotifyTokenService, IServiceProvider serviceProvider,
+            IConfiguration configuration)
         {
             _configuration = configuration;
             _client = new HttpClient(
                 new SpotifyAuthenticatedRequestDelegatingHandler(spotifyTokenService, serviceProvider));
         }
-        
-        public async Task<SpotifyTracksResult> GetSpotifyTracks(SpotifyTrackRequest spotifyTrackRequest, string userId)
+
+        public async Task<IEnumerable<SpotifyTrackDto>> GetTopTracks(SpotifyTrackRequest spotifyTrackRequest,
+            string userId)
         {
             var url = new StringBuilder(_configuration["Spotify:ApiBaseUrl"]);
-            
+
             url.Append($"/me/top/tracks?time_range={ConvertTrackTermToTimeRangeString(spotifyTrackRequest.TrackTerm)}");
             url.Append($"&limit={spotifyTrackRequest.PageSize}");
-            
+
             if (spotifyTrackRequest.Page > 1)
             {
                 url.Append($"&offset={spotifyTrackRequest.Offset}");
@@ -40,28 +45,70 @@ namespace Pjfm.Application.GebruikerNummer
                 .AddRequestParam(DelegatingRequestParams.UserId, userId)
                 .Build();
 
+            var result = await SendTracksRequest<SpotifyClientTrackstResult>(requestMessage);
+            if (result == null)
+            {
+                return Enumerable.Empty<SpotifyTrackDto>();
+            }
+
+            foreach (var spotifyTrackItemResult in result.Items)
+            {
+                spotifyTrackItemResult.TrackTerm = spotifyTrackRequest.TrackTerm;
+            }
+
+            return result.Items.Select(x => x.GetTrackDto(300));
+        }
+
+        public async Task<IEnumerable<SpotifyTrackDto>> SearchSpotifyTracks(string query, string userId)
+        {
+            var url = new StringBuilder(_configuration["Spotify:ApiBaseUrl"]);
+            url.Append($"/search?query={query}");
+            url.Append("&type=track");
+
+            var requestMessage = new DelegatingRequestBuilder(HttpMethod.Get, url.ToString())
+                .AddRequestParam(DelegatingRequestParams.UserId, userId)
+                .Build();
+
+            var result = await SendTracksRequest<SpotifyTrackSearchClientResult>(requestMessage);
+
+            if (result == null)
+            {
+                return Enumerable.Empty<SpotifyTrackDto>();
+            }
+
+            return result.Tracks.Items.Select(x => x.GetTrackDto(AlbumImageSize));
+        }
+
+        public async Task<IEnumerable<SpotifyTrackDto>> GetTracks(string[] trackIds, string userId)
+        {
+            var url = new StringBuilder(_configuration["Spotify:ApiBaseUrl"]);
+            url.Append("/tracks");
+            url.Append($"?ids={String.Join(',', trackIds)}");
+
+            var requestMessage = new DelegatingRequestBuilder(HttpMethod.Get, url.ToString())
+                .AddRequestParam(DelegatingRequestParams.UserId, userId)
+                .Build();
+
+            var result = await SendTracksRequest<SpotifyClientGetTracksResult>(requestMessage);
+
+            if (result == null)
+            {
+                return Enumerable.Empty<SpotifyTrackDto>();
+            }
+
+            return result.Tracks.Select(x => x.GetTrackDto(AlbumImageSize));
+        }
+
+        private async Task<T?> SendTracksRequest<T>(HttpRequestMessage requestMessage)
+        {
             var response = await _client.SendAsync(requestMessage);
             if (response.IsSuccessStatusCode)
             {
-                var result = JsonConvert.DeserializeObject<SpotifyTracksResult>(await response.Content.ReadAsStringAsync(),
+                return JsonConvert.DeserializeObject<T>(await response.Content.ReadAsStringAsync(),
                     SpotifyApiHelpers.GetSpotifySerializerSettings());
-
-                if (result != null)
-                {
-                    foreach (var spotifyTrackItemResult in result.Items)
-                    {
-                        spotifyTrackItemResult.TrackTerm = spotifyTrackRequest.TrackTerm;
-                    }
-                }
-
-                return result;
             }
 
-            return new SpotifyTracksResult()
-            {
-                Items = Enumerable.Empty<SpotifyTrackItemResult>(),
-                Total = 0,
-            };
+            return default;
         }
 
         private static string ConvertTrackTermToTimeRangeString(TrackTerm term) =>
@@ -81,6 +128,8 @@ namespace Pjfm.Application.GebruikerNummer
 
     public interface ISpotifyTrackClient
     {
-        Task<SpotifyTracksResult> GetSpotifyTracks(SpotifyTrackRequest spotifyTrackRequest, string userId);
+        Task<IEnumerable<SpotifyTrackDto>> GetTopTracks(SpotifyTrackRequest spotifyTrackRequest, string userId);
+        Task<IEnumerable<SpotifyTrackDto>> SearchSpotifyTracks(string query, string userId);
+        Task<IEnumerable<SpotifyTrackDto>> GetTracks(string[] trackIds, string userId);
     }
 }

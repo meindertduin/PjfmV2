@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Domain.SpotifyTrack;
+using Pjfm.Application.ApplicationUser;
 
-namespace SpotifyPlayback.Models.Socket
+namespace Pjfm.Application.GebruikerNummer.Models
 {
     public class SpotifyTrackDto
     {
@@ -13,6 +14,15 @@ namespace SpotifyPlayback.Models.Socket
         public int TrackDurationMs { get; set; }
         public DateTime TrackStartDate { get; set; }
         public SpotifyAlbumDto SpotifyAlbum { get; set; } = null!;
+        public TrackType TrackType { get; set; }
+        public ApplicationUserDto? User { get; set; } = null!;
+    }
+
+    public enum TrackType
+    {
+        Request,
+        Filler,
+        ModRequest,
     }
 
     public class SpotifyAlbumDto

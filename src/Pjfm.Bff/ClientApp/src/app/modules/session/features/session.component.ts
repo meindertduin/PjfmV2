@@ -4,9 +4,11 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
 import { PlaybackService } from '../../../shared/services/playback.service';
-import { PlaybackClient } from '../../../core/services/api-client.service';
+import { PlaybackClient, SpotifyTrackDto } from '../../../core/services/api-client.service';
 import { DialogService } from '../../../shared/services/dialog.service';
 import { StartListenDialogComponent, StartListenDialogData } from '../components/start-listen-dialog/start-listen-dialog.component';
+import { SelectTrackDialogComponent, SelectTrackDialogData } from '../components/select-track-dialog/select-track-dialog.component';
+import { UserService } from '../../../shared/services/user.service';
 
 @Component({
   selector: 'pjfm-session',
@@ -29,14 +31,14 @@ export class SessionComponent implements OnInit, OnDestroy {
     private readonly _playbackClient: PlaybackClient,
     private readonly _viewContainerRef: ViewContainerRef,
     private readonly _dialogService: DialogService,
+    private readonly _userService: UserService,
   ) {}
 
   ngOnInit(): void {
+    this._dialogService.setRootViewContainer(this._viewContainerRef);
     this.connectToGroup();
     this.getPlaybackData();
     this.getPlaybackIsActive();
-
-    this._dialogService.setRootViewContainer(this._viewContainerRef);
   }
 
   private connectToGroup() {
@@ -104,5 +106,26 @@ export class SessionComponent implements OnInit, OnDestroy {
     this._playbackClient.stop().subscribe(() => {
       this._playbackService.setPlaybackIsActive(false);
     });
+  }
+
+  openRequestDialog(): void {
+    const userId = this._userService.getUser()?.userId;
+    if (userId == null) {
+      throw new Error('User should not be able to open request dialog if no user value is available.');
+    }
+
+    const userRequestedAmount =
+      this.loadedPlaybackData?.queuedTracks.reduce((sum: number, cur: SpotifyTrackDto) => {
+        if (cur.user?.userId == userId) {
+          return sum + 1;
+        }
+        return sum;
+      }, 0) ?? 0;
+
+    const dialogData: SelectTrackDialogData = {
+      userRequestedAmount: userRequestedAmount,
+    };
+
+    this._dialogService.openDialog(SelectTrackDialogComponent, dialogData);
   }
 }

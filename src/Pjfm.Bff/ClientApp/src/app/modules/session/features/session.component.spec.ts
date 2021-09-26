@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { SessionComponent } from './session.component';
 import { ActivatedRoute } from '@angular/router';
 import { PlaybackService } from '../../../shared/services/playback.service';
-import { PlaybackClient } from '../../../core/services/api-client.service';
+import { PlaybackClient, UserClient } from '../../../core/services/api-client.service';
 import { HttpClientModule } from '@angular/common/http';
 import { of } from 'rxjs';
 
@@ -29,6 +29,7 @@ describe('SessionComponent', () => {
           useValue: mockPlaybackService,
         },
         PlaybackClient,
+        UserClient,
       ],
     }).compileComponents();
   });

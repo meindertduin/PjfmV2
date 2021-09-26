@@ -5,5 +5,6 @@ namespace Domain.SpotifyTrack
         Short,
         Medium,
         Long,
+        None,
     }
 }

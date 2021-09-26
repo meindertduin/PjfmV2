@@ -13,8 +13,16 @@ import { StartListenDialogComponent } from './components/start-listen-dialog/sta
 import { ReactiveFormsModule } from '@angular/forms';
 import { FormInputsModule } from '../../core/form-inputs/form-inputs.module';
 import { NgxPermissionsModule } from 'ngx-permissions';
+import { SelectTrackDialogComponent } from './components/select-track-dialog/select-track-dialog.component';
 
-const COMPONENTS = [SessionComponent, AsciiSliderComponent, TrackProgressionBarComponent, QueuedTrackComponent, StartListenDialogComponent];
+const COMPONENTS = [
+  SessionComponent,
+  AsciiSliderComponent,
+  TrackProgressionBarComponent,
+  QueuedTrackComponent,
+  StartListenDialogComponent,
+  SelectTrackDialogComponent,
+];
 const PIPES = [ConvertMsToTimePipe];
 
 @NgModule({

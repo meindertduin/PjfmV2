@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup } from '@angular/forms';
 import { requiredValidator } from '../../../../core/utils/custom-form-validators';
-import { DeviceModel, PlaybackClient, SpotifyClient } from '../../../../core/services/api-client.service';
+import { DeviceModel, PlaybackClient, SpotifyPlayerClient } from '../../../../core/services/api-client.service';
 import { PlaybackService } from '../../../../shared/services/playback.service';
 import { DialogRef, PJFM_DIALOG_DATA, PJFM_DIALOG_REF } from '../../../../shared/services/dialog.service';
 
@@ -24,7 +24,7 @@ export class StartListenDialogComponent implements OnInit {
 
   constructor(
     private readonly _formBuilder: FormBuilder,
-    private readonly _spotifyClient: SpotifyClient,
+    private readonly _spotifyClient: SpotifyPlayerClient,
     private readonly _playbackClient: PlaybackClient,
     private readonly _playbackService: PlaybackService,
     @Inject(PJFM_DIALOG_DATA) private readonly _dialogData: StartListenDialogData,

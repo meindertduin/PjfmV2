@@ -12,7 +12,8 @@ namespace SpotifyPlayback.Models
     {
         private WebSocket _webSocket;
         private HttpContext _context;
-        private Guid? _connectedPlaybackGroup;
+        private Guid? _listeningPlaybackGroupId;
+        private Guid? _joinedPlaybackGroupId;
         public Guid ConnectionId { get; init; }
         public IPjfmPrincipal Principal { get; init; }
         public bool IsConnected => _webSocket.State is WebSocketState.Open;
@@ -57,19 +58,34 @@ namespace SpotifyPlayback.Models
             return Task.CompletedTask;
         }
 
-        public Guid? GetConnectedPlaybackGroupId()
+        public Guid? GetListeningPlaybackGroupId()
         {
-            return _connectedPlaybackGroup;
+            return _listeningPlaybackGroupId;
         }
 
-        public void SetConnectedPlaybackGroupId(Guid groupId)
+        public void SetListeningPlaybackGroupId(Guid groupId)
         {
-            _connectedPlaybackGroup = groupId;
+            _listeningPlaybackGroupId = groupId;
         }
 
-        public void ClearConnectedPlaybackGroupId()
+        public void ClearListeningPlaybackGroupId()
         {
-            _connectedPlaybackGroup = null;
+            _listeningPlaybackGroupId = null;
+        }
+
+        public Guid? GetJoinedPlaybackGroupId()
+        {
+            return _joinedPlaybackGroupId;
+        }
+
+        public void SetJoinedPlaybackGroupId(Guid groupId)
+        {
+            _joinedPlaybackGroupId = groupId;
+        }
+
+        public void ClearJoinedPlaybackGroupId()
+        {
+            _joinedPlaybackGroupId = null;
         }
     }
 }

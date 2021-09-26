@@ -1,10 +1,15 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Pjfm.Api.Controllers.Base;
+using Pjfm.Api.Models.Playback;
+using Pjfm.Application.ApplicationUser;
+using Pjfm.Application.GebruikerNummer;
+using Pjfm.Application.GebruikerNummer.Models;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models.DataTransferObjects;
 using SpotifyPlayback.Requests.PlaybackRequestHandlers;
@@ -17,13 +22,15 @@ namespace Pjfm.Api.Controllers
     {
         private readonly IPlaybackRequestDispatcher _playbackRequestDispatcher;
         private readonly ISocketConnectionCollection _socketConnectionCollection;
+        private readonly ISpotifyTrackClient _spotifyTrackClient;
 
         public PlaybackController(IPjfmControllerContext pjfmContext, IPlaybackRequestDispatcher playbackRequestDispatcher,
-            ISocketConnectionCollection socketConnectionCollection) : base(
+            ISocketConnectionCollection socketConnectionCollection, ISpotifyTrackClient spotifyTrackClient) : base(
             pjfmContext)
         {
             _playbackRequestDispatcher = playbackRequestDispatcher;
             _socketConnectionCollection = socketConnectionCollection;
+            _spotifyTrackClient = spotifyTrackClient;
         }
 
         [HttpGet("groups")]
@@ -58,7 +65,7 @@ namespace Pjfm.Api.Controllers
                 throw new Exception(result.Message);
             }
 
-            _socketConnectionCollection.SetSocketConnectedGroupId(socketConnection.ConnectionId, groupId);
+            socketConnection.SetListeningPlaybackGroupId(groupId);
 
             return Ok();
         }
@@ -73,7 +80,7 @@ namespace Pjfm.Api.Controllers
                 return Conflict();
             }
 
-            var connectionPlaybackGroupId = socketConnection.GetConnectedPlaybackGroupId();
+            var connectionPlaybackGroupId = socketConnection.GetListeningPlaybackGroupId();
             if (connectionPlaybackGroupId == null)
             {
                 return Conflict();
@@ -85,6 +92,54 @@ namespace Pjfm.Api.Controllers
                 UserId = PjfmPrincipal.Id,
                 ConnectionId = socketConnection.ConnectionId,
             });
+
+            return Ok();
+        }
+
+        [HttpPut("track-request")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        public async Task<IActionResult> PlaybackTrackRequest(PlaybackTrackRequest trackRequest)
+        {
+            if (!_socketConnectionCollection.TryGetUserSocketConnection(PjfmPrincipal.Id, out var socketConnection))
+            {
+                return Conflict();
+            }
+
+            var joinedPlaybackGroupId = socketConnection.GetJoinedPlaybackGroupId();
+            if (joinedPlaybackGroupId == null)
+            {
+                return Conflict();
+            }
+            
+            var tracks = (await _spotifyTrackClient.GetTracks(trackRequest.TrackIds, PjfmPrincipal.Id)).ToList();
+
+            if (!tracks.Any())
+            {
+                return BadRequest();
+            }
+            
+            foreach (var requestedTrack in tracks)
+            {
+                requestedTrack.TrackType = TrackType.Request;
+                requestedTrack.User = new ApplicationUserDto()
+                {
+                    UserId = PjfmPrincipal.Id, 
+                    UserName = PjfmPrincipal.UserName
+                };
+            }
+
+            var result = await _playbackRequestDispatcher.HandlePlaybackRequest(new UserRequestTracksToPlaybackRequest()
+            {
+                GroupId = joinedPlaybackGroupId.Value,
+                RequestedTracks = tracks,
+                UserId = PjfmPrincipal.Id,
+            });
+
+            if (!result.IsSuccessful)
+            {
+                return Conflict();
+            }
 
             return Ok();
         }

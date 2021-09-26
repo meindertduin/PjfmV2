@@ -22,9 +22,16 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
         public Task<PlaybackRequestResult<RemoveListenerFromGroupRequestResult>> HandleAsync(
             RemoveListenerFromGroupRequest request)
         {
-            _playbackGroupCollection.RemoveListenerFromGroup(request.ConnectionId, request.UserGroupId);
+            var playbackGroup = _playbackGroupCollection.GetPlaybackGroup(request.UserGroupId);
+            playbackGroup.RemoveListener(request.ConnectionId);
+            
             _spotifyPlaybackService.PausePlaybackForUser(request.UserId);
-            _socketConnectionCollection.ClearSocketConnectedGroupId(request.ConnectionId);
+            var socketConnection = _socketConnectionCollection.GetSocketConnection(request.ConnectionId);
+            if (socketConnection == null)
+            {
+                throw new NullReferenceException();
+            }
+            socketConnection.ClearListeningPlaybackGroupId();
 
             return PlaybackRequestResult.SuccessAsync(new RemoveListenerFromGroupRequestResult(), "Successfully removed user.");
         }

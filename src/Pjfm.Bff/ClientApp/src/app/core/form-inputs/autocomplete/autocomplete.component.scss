@@ -1,0 +1,57 @@
+@import "variables";
+
+.container {
+  .input-container {
+    display: flex;
+    justify-content: center;
+
+    input {
+      width: 100%;
+      background: $color-dark;
+      color: $white;
+      padding: 5px;
+      border: 2px solid $color-purple;
+      overflow-x: hidden;
+      text-wrap: none;
+      text-overflow: ellipsis;
+
+      &:focus {
+        color: $color-yellow;
+        box-shadow: none;
+        outline: $color-orange 2px solid;
+      }
+    }
+  }
+
+  .auto-complete-values-container {
+    position: absolute;
+    background-color: $color-dark;
+    z-index: 10;
+    border: 2px solid $color-purple;
+    overflow-x: hidden;
+    text-wrap: none;
+    text-overflow: ellipsis;
+    max-height: 50vh;
+
+    .auto-complete-values {
+      list-style-type: none;
+      padding: 5px 0;
+
+      margin: 0;
+
+      .value {
+        padding: 5px 10px;
+        cursor: pointer;
+
+        &:hover {
+          background: lighten($color-dark, 6);
+          color: $color-yellow;
+        }
+      }
+    }
+  }
+
+  .show-at-top {
+    bottom: 95px;
+  }
+}

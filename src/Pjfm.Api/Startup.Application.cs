@@ -27,6 +27,6 @@ namespace Pjfm.Api
                 x.GetRequiredService<IHttpContextAccessor>().HttpContext!.User.GetPjfmPrincipal());
             
             serviceCollection.AddHttpClient();
-        } 
+        }
     }
 }
