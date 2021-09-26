@@ -1,7 +1,9 @@
 @import "variables";
 
 .container {
-  padding: 10px;
+  padding: 10px 15px 30px 15px;
+  display: flex;
+  justify-content: center;
 
   .selected-tracks {
     color: $color-yellow;
@@ -17,7 +19,7 @@
     }
   }
   .search-track {
-    width: 100%;
+    width: 80%;
     display: flex;
     justify-content: center;
     flex-direction: column;
@@ -28,17 +30,23 @@
 
     pjfm-autocomplete {
       margin-top: 10px;
-      width: 90%;
+      width: 100%;
     }
   }
 }
 
-.footer-buttons {
+
+.button-container {
+  padding: 0 15px;
   display: flex;
+  justify-content: center;
   flex-direction: row;
 
-  .raised-button {
-    width: 200px;
-    padding: 0 10px;
+  button {
+    width: 40%;
+
+    &:first-child {
+      margin-right: 10px;
+    }
   }
 }
