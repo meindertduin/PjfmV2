@@ -3,7 +3,7 @@
     <img [src]="track.spotifyAlbum.albumImage.url" alt="album cover" />
   </div>
   <div class="track-info-container">
-    <a class="track-title">[ {{track.title}} ]</a>
-    <a class="artist-title">[ {{track.artists | artists}} ]</a>
+    <a class="track-title">[ <span class="ellipsis-title">{{track.title}}</span> ]</a>
+    <a class="artist-title">[ <span class="ellipsis-title">{{track.artists | artists}}</span> ]</a>
   </div>
 </div>
