@@ -19,8 +19,7 @@ export class ApiSocketClientService {
   private readonly _playbackData$: Observable<PlaybackUpdateMessageBody | null> = this._playbackData.asObservable();
 
   initializeConnection(): void {
-    // TODO: set the connection through the bff
-    this.socket = webSocket('wss://localhost:5004/api/playback/ws');
+    this.socket = webSocket('/api/playback/ws');
     this.socket.subscribe(
       (message) => {
         this.handleIncomingMessage(message as PlaybackMessage<unknown>);
