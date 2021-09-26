@@ -11,7 +11,6 @@ namespace SpotifyPlayback
 {
     public class SpotifyPlaybackHostedService : IHostedService, IDisposable
     {
-        private ISpotifyPlaybackController _spotifyPlaybackController = null!;
         private IPlaybackGroupCollection _playbackGroupCollection = null!;
         private Timer? _playbackTimer;
         private IPlaybackScheduledTrackQueue _playbackScheduledTrackQueue = null!;
@@ -28,7 +27,6 @@ namespace SpotifyPlayback
             
             _playbackGroupCollection = scope.ServiceProvider.GetRequiredService<IPlaybackGroupCollection>();
             _playbackScheduledTrackQueue = scope.ServiceProvider.GetRequiredService<IPlaybackScheduledTrackQueue>();
-            _spotifyPlaybackController = scope.ServiceProvider.GetRequiredService<ISpotifyPlaybackController>();
             
             _playbackGroupCollection.PlaybackGroupCreatedEvent += AddNewGroupToScheduler;
             
@@ -69,11 +67,14 @@ namespace SpotifyPlayback
 
         private async Task PlayScheduledTrack(PlaybackScheduledTrack playbackScheduledTrack)
         {
+            using var scope = _services.CreateScope();
+            var spotifyPlaybackController = scope.ServiceProvider.GetRequiredService<ISpotifyPlaybackController>();
+            
             var groupNewTrack = await _playbackGroupCollection.GetGroupNewTrack(playbackScheduledTrack.GroupId);
             groupNewTrack.DueTime = DateTime.Now + TimeSpan.FromMilliseconds(playbackScheduledTrack.SpotifyTrack.TrackDurationMs);
             
             _playbackScheduledTrackQueue.AddPlaybackScheduledTrack(groupNewTrack);
-            await _spotifyPlaybackController.PlaySpotifyTrackForUsers(playbackScheduledTrack);
+            await spotifyPlaybackController.PlaySpotifyTrackForUsers(playbackScheduledTrack);
         }
 
         public void Dispose()

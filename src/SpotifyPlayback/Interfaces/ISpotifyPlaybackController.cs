@@ -6,6 +6,5 @@ namespace SpotifyPlayback.Interfaces
     public interface ISpotifyPlaybackController
     {
         Task PlaySpotifyTrackForUsers(PlaybackScheduledTrack spotifyScheduledTrack);
-        Task PauseSpotifyPlayerUser();
     }
 }

@@ -1,7 +1,5 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using SpotifyPlayback.Interfaces;
 using SpotifyPlayback.Models;
 using SpotifyPlayback.Models.Socket;
@@ -11,40 +9,32 @@ namespace SpotifyPlayback.Services
     public class SpotifyPlaybackController : ISpotifyPlaybackController
     {
         private readonly IPlaybackGroupCollection _playbackGroupCollection;
-        private readonly IServiceProvider _serviceProvider;
         private readonly ISocketDirector _socketDirector;
+        private readonly ISpotifyPlaybackService _spotifyPlaybackService;
 
-        public SpotifyPlaybackController(IPlaybackGroupCollection playbackGroupCollection, IServiceProvider serviceProvider, ISocketDirector socketDirector)
+        public SpotifyPlaybackController(IPlaybackGroupCollection playbackGroupCollection, ISocketDirector socketDirector, ISpotifyPlaybackService spotifyPlaybackService)
         {
             _playbackGroupCollection = playbackGroupCollection;
-            _serviceProvider = serviceProvider;
             _socketDirector = socketDirector;
+            _spotifyPlaybackService = spotifyPlaybackService;
         }
         
         public Task PlaySpotifyTrackForUsers(PlaybackScheduledTrack playbackScheduledTrack)
         {
-            var spotifyPlaybackService = CreateSpotifyPlaybackService();
+            var playbackGroup = _playbackGroupCollection.GetPlaybackGroup(playbackScheduledTrack.GroupId);
+            var listeners = playbackGroup.GetGroupListeners();
+            var connectedIds = playbackGroup.GetJoinedConnectionIds();
 
-            var listeners = _playbackGroupCollection.GetGroupListeners(playbackScheduledTrack.GroupId);
-            var connectedIds = _playbackGroupCollection.GetGroupJoinedConnectionIds(playbackScheduledTrack.GroupId);
-
-            var playbackUpdateMessage = CreatePlaybackUpdateMessage(playbackScheduledTrack);
+            var playbackUpdateMessage = CreatePlaybackUpdateMessage(playbackGroup);
 
             _socketDirector.BroadCastMessageOverConnections(playbackUpdateMessage, connectedIds);
 
-            return spotifyPlaybackService.PlayNextTrackForUsers(listeners.ToArray(), playbackScheduledTrack.SpotifyTrack.SpotifyTrackId);
+            return _spotifyPlaybackService.PlayNextTrackForUsers(listeners.ToArray(), playbackScheduledTrack.SpotifyTrack.SpotifyTrackId);
         }
-
-        private ISpotifyPlaybackService CreateSpotifyPlaybackService()
+        private SocketMessage<PlaybackUpdateMessageBody> CreatePlaybackUpdateMessage(IPlaybackGroup playbackGroup)
         {
-            using var scope = _serviceProvider.CreateScope();
-            var spotifyPlaybackService = scope.ServiceProvider.GetRequiredService<ISpotifyPlaybackService>();
-            return spotifyPlaybackService;
-        }
-        
-        private SocketMessage<PlaybackUpdateMessageBody> CreatePlaybackUpdateMessage(PlaybackScheduledTrack playbackScheduledTrack)
-        {
-            var playbackGroupInfo = _playbackGroupCollection.GetPlaybackGroupInfo(playbackScheduledTrack.GroupId);
+            var playbackGroupInfo = playbackGroup.GetPlaybackGroupInfo();
+            
             var playbackUpdateMessage = new SocketMessage<PlaybackUpdateMessageBody>()
             {
                 MessageType = MessageType.PlaybackInfo,
@@ -53,14 +43,10 @@ namespace SpotifyPlayback.Services
                     CurrentlyPlayingTrack = playbackGroupInfo.CurrentlyPlayingTrack,
                     GroupId = playbackGroupInfo.GroupId,
                     GroupName = playbackGroupInfo.GroupName,
+                    QueuedTracks = playbackGroupInfo.QueuedTracks,
                 }
             };
             return playbackUpdateMessage;
-        }
-
-        public Task PauseSpotifyPlayerUser()
-        {
-            throw new System.NotImplementedException();
         }
     }
 }
