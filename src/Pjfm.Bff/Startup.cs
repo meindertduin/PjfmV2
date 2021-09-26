@@ -37,7 +37,7 @@ namespace Pjfm.Bff
             app.UseRouting();
             app.UseCors();
 
-            app.UseMiddleware<StrictSameSiteExternalAuthenticationMiddleware>();
+            // app.UseMiddleware<StrictSameSiteExternalAuthenticationMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
 
