@@ -8,7 +8,7 @@ on:
 
 env:
   FRONTEND_LOCATION: 'src/Pjfm.Bff'
-  FRONTEND_CLIENT_LOCATION: 'src/Pjfm.Bff'
+  FRONTEND_CLIENT_LOCATION: 'src/Pjfm.Bff/ClientApp'
 
 jobs:
   build:
