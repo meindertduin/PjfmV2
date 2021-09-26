@@ -1,6 +1,13 @@
 <div class="container">
   <div class="input-container" #input>
-    <input [id]="" type="text" [formControl]="query" (focusin)="onInputFocusChange(true)" (blur)="onInputFocusChange(false)" />
+    <input
+      [id]=""
+      type="text"
+      [formControl]="query"
+      (focusin)="onInputFocusChange(true)"
+      (blur)="onInputFocusChange(false)"
+      [placeholder]="placeHolder"
+    />
   </div>
   <div
     class="auto-complete-values-container"

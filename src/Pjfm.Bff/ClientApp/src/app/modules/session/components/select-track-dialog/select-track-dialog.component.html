@@ -17,13 +17,14 @@
           [inputId]="'track-search'"
           (queryChanges)="onQueryChange($event)"
           [autoCompleteValues]="autoCompleteValues"
+          placeHolder="Search for a track"
           (valueSelect)="onSearchValueSelect($event)"
         ></pjfm-autocomplete>
       </section>
     </div>
   </ng-container>
   <ng-container footer>
-    <div class="footer-buttons">
+    <div class="button-container">
       <button class="raised-button raised-button__danger" (click)="closeDialog()">
         <span>Cancel</span>
       </button>

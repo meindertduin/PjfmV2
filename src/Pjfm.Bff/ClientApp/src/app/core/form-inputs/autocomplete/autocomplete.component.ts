@@ -25,6 +25,7 @@ import { generateRandomString } from '../../utils/random-string';
 export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAccessor, AfterViewInit {
   @Input() autoCompleteValues: AutoCompleteValue[] = [];
   @Input() inputId = generateRandomString(10);
+  @Input() placeHolder = '';
   @Output() queryChanges = new EventEmitter<string>();
   @Output() valueSelect = new EventEmitter<unknown>();
 
