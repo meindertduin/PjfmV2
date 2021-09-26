@@ -110,6 +110,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
   }
 
   private setAutoCompletePositionAndWidth(): void {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access,@typescript-eslint/no-unsafe-call
     const { y } = this.inputComponent.nativeElement.getBoundingClientRect() as { x: number; y: number };
     const spaceToTop = Math.floor(y);
     const spaceToBottom = window.innerHeight - spaceToTop;
@@ -117,6 +118,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
       this.showAutoCompleteOnTop = true;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     this.autoCompleteWidth = this.inputComponent.nativeElement.offsetWidth;
   }
 }
