@@ -21,18 +21,20 @@ namespace SpotifyPlayback.Services
         
         public Task PlaySpotifyTrackForUsers(PlaybackScheduledTrack playbackScheduledTrack)
         {
-            var listeners = _playbackGroupCollection.GetGroupListeners(playbackScheduledTrack.GroupId);
-            var connectedIds = _playbackGroupCollection.GetGroupJoinedConnectionIds(playbackScheduledTrack.GroupId);
+            var playbackGroup = _playbackGroupCollection.GetPlaybackGroup(playbackScheduledTrack.GroupId);
+            var listeners = playbackGroup.GetGroupListeners();
+            var connectedIds = playbackGroup.GetJoinedConnectionIds();
 
-            var playbackUpdateMessage = CreatePlaybackUpdateMessage(playbackScheduledTrack);
+            var playbackUpdateMessage = CreatePlaybackUpdateMessage(playbackGroup);
 
             _socketDirector.BroadCastMessageOverConnections(playbackUpdateMessage, connectedIds);
 
             return _spotifyPlaybackService.PlayNextTrackForUsers(listeners.ToArray(), playbackScheduledTrack.SpotifyTrack.SpotifyTrackId);
         }
-        private SocketMessage<PlaybackUpdateMessageBody> CreatePlaybackUpdateMessage(PlaybackScheduledTrack playbackScheduledTrack)
+        private SocketMessage<PlaybackUpdateMessageBody> CreatePlaybackUpdateMessage(IPlaybackGroup playbackGroup)
         {
-            var playbackGroupInfo = _playbackGroupCollection.GetPlaybackGroupInfo(playbackScheduledTrack.GroupId);
+            var playbackGroupInfo = playbackGroup.GetPlaybackGroupInfo();
+            
             var playbackUpdateMessage = new SocketMessage<PlaybackUpdateMessageBody>()
             {
                 MessageType = MessageType.PlaybackInfo,
@@ -41,6 +43,7 @@ namespace SpotifyPlayback.Services
                     CurrentlyPlayingTrack = playbackGroupInfo.CurrentlyPlayingTrack,
                     GroupId = playbackGroupInfo.GroupId,
                     GroupName = playbackGroupInfo.GroupName,
+                    QueuedTracks = playbackGroupInfo.QueuedTracks,
                 }
             };
             return playbackUpdateMessage;
