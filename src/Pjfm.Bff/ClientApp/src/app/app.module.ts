@@ -50,6 +50,10 @@ export function initializeApplication(userService: UserService, permissionConfig
     { provide: API_BASE_URL, useValue: '' },
     FormBuilder,
     UserClient,
+    {
+      provide: API_BASE_URL,
+      useValue: '',
+    },
   ],
   bootstrap: [AppComponent],
 })
