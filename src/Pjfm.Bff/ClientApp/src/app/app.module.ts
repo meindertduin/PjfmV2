@@ -10,6 +10,8 @@ import { FormBuilder } from '@angular/forms';
 import { UserService } from './shared/services/user.service';
 import { PermissionConfigService } from './core/authorization/permission-config.service';
 import { NgxPermissionsModule } from 'ngx-permissions';
+import { ServiceWorkerModule } from '@angular/service-worker';
+import { environment } from '../environments/environment';
 
 export function initializeApplication(userService: UserService, permissionConfigService: PermissionConfigService) {
   return (): Promise<void> => {
@@ -22,7 +24,19 @@ export function initializeApplication(userService: UserService, permissionConfig
 
 @NgModule({
   declarations: [AppComponent],
-  imports: [BrowserModule, AppRoutingModule, DefaultLayoutModule, HttpClientModule, NgxPermissionsModule.forRoot()],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    DefaultLayoutModule,
+    HttpClientModule,
+    NgxPermissionsModule.forRoot(),
+    ServiceWorkerModule.register('ngsw-worker.js', {
+      enabled: environment.production,
+      // Register the ServiceWorker as soon as the app is stable
+      // or after 30 seconds (whichever comes first).
+      registrationStrategy: 'registerWhenStable:30000',
+    }),
+  ],
   providers: [
     {
       provide: APP_INITIALIZER,
