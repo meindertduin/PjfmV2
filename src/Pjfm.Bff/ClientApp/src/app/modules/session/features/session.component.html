@@ -6,8 +6,8 @@
       </div>
       <div class="track-info-container">
         <div class="currently-playing-title">Now playing:</div>
-        <a class="track-title">[ {{loadedPlaybackData.currentlyPlayingTrack.title}} ]</a>
-        <a class="artist-title">[ {{loadedPlaybackData.currentlyPlayingTrack.artists | artists}} ]</a>
+        <a class="track-title">[ <span class="ellipsis-title">{{loadedPlaybackData.currentlyPlayingTrack.title}}</span> ]</a>
+        <a class="artist-title">[ <span class="ellipsis-title">{{loadedPlaybackData.currentlyPlayingTrack.artists | artists}}</span> ]</a>
       </div>
     </div>
     <div class="playback-controls-container" *ngIf="loadedPlaybackData != null">
