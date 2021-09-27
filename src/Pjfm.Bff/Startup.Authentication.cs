@@ -8,6 +8,9 @@ namespace Pjfm.Bff
     {
         private void ConfigureAuthentication(IServiceCollection services)
         {
+            var clientId = Configuration.GetValue<string>("ClientId");
+            var clientSecret = Configuration.GetValue<string>("ClientSecret");
+
             services.AddAuthentication(options =>
                 {
                     options.DefaultScheme = "cookies";
@@ -23,8 +26,8 @@ namespace Pjfm.Bff
                     options.Authority = Configuration.GetValue<string>("BackendUrl");
                     
                     // confidential client using code flow + PKCE + query response mode
-                    options.ClientId = "pjfm_web_client";
-                    options.ClientSecret = "test_secret";
+                    options.ClientId = clientId;
+                    options.ClientSecret = clientSecret;
                     options.ResponseType = "code";
                     options.ResponseMode = "query";
 
