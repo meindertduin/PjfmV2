@@ -62,6 +62,9 @@ namespace Pjfm.Api
                                     sqlServerDbContextOptionsBuilder.EnableRetryOnFailure();
                                     sqlServerDbContextOptionsBuilder.MigrationsAssembly("Pjfm.Infrastructure");
                                 });
+                        
+                        options.EnableTokenCleanup = true;
+                        options.TokenCleanupInterval = 3600;
                     })
                     .AddDeveloperSigningCredential();
             }
@@ -111,6 +114,9 @@ namespace Pjfm.Api
             
             var identityContext = serviceScore.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
             identityContext.Database.Migrate();
+
+            var persistedGrantsContext = serviceScore.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
+            persistedGrantsContext.Database.Migrate();
 
             var pjfmContext = serviceScore.ServiceProvider.GetRequiredService<PjfmContext>();
             pjfmContext.Database.Migrate();
