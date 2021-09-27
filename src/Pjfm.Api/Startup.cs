@@ -31,6 +31,8 @@ namespace Pjfm.Api
             services.AddTransient<PjfmSignInManager>();
             services.AddHostedService<UpdateUserSpotifyTracksHostedService>();
 
+            services.AddApplicationInsightsTelemetry();
+
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
