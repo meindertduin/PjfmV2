@@ -62,7 +62,8 @@ namespace Pjfm.Api
                                     sqlServerDbContextOptionsBuilder.EnableRetryOnFailure();
                                     sqlServerDbContextOptionsBuilder.MigrationsAssembly("Pjfm.Infrastructure");
                                 });
-                    });
+                    })
+                    .AddDeveloperSigningCredential();
             }
             else
             {
