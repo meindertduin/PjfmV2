@@ -1,6 +1,4 @@
-using IdentityServer4.Stores.Serialization;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace Pjfm.Application.Common
 {
@@ -10,11 +8,12 @@ namespace Pjfm.Application.Common
         {
             return new()
             {
-                ContractResolver = new CustomContractResolver()
-                {
-                    NamingStrategy = new SnakeCaseNamingStrategy(),
-                },
-                Formatting = Formatting.Indented,
+                // TODO: hopefully this doesnt break anything X__X, but certainly needs to get fixed
+                // ContractResolver = new CustomContractResolver()
+                // {
+                //     NamingStrategy = new SnakeCaseNamingStrategy(),
+                // },
+                // Formatting = Formatting.Indented,
             };
         }
     }

@@ -74,7 +74,6 @@ namespace Pjfm.Api
             });
 
             app.UseAuthentication();
-            app.UseIdentityServer();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

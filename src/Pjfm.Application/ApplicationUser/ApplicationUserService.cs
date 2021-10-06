@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Domain.ApplicationUser;
-using IdentityModel;
 using Microsoft.EntityFrameworkCore;
 using Pjfm.Infrastructure;
 

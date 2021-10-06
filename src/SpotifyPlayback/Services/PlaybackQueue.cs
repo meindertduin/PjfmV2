@@ -15,6 +15,7 @@ namespace SpotifyPlayback.Services
     public class PlaybackQueue : IPlaybackQueue
     {
         private readonly IConfiguration _configuration;
+        private readonly ISpotifyTrackRepository _spotifyTrackRepository;
         private readonly LinkedList<SpotifyTrackDto> _fillerQueue = new();
         private readonly LinkedList<SpotifyTrackDto> _requestQueue = new();
         
@@ -23,16 +24,16 @@ namespace SpotifyPlayback.Services
         private TrackTerm _term = TrackTerm.Long;
         private const int MaxRequestsPerUser = 3;
 
-        public PlaybackQueue(IConfiguration configuration)
+        public PlaybackQueue(IConfiguration configuration, ISpotifyTrackRepository spotifyTrackRepository)
         {
             _configuration = configuration;
+            _spotifyTrackRepository = spotifyTrackRepository;
         }
         public async Task<SpotifyTrackDto?> GetNextSpotifyTrack()
         {
             var getSpotifyTracksAmount = GetSpotifyTracksAmount();
-            var spotifyTrackRepository = CreateSpotifyTrackRepository();
 
-            var spotifyTracks = await spotifyTrackRepository.GetRandomUserSpotifyTracks(_userIds, new []{ _term }, getSpotifyTracksAmount);
+            var spotifyTracks = await _spotifyTrackRepository.GetRandomUserSpotifyTracks(_userIds, new []{ _term }, getSpotifyTracksAmount);
             
             AddSpotifyTracksToQueue(spotifyTracks);
 
@@ -87,13 +88,6 @@ namespace SpotifyPlayback.Services
             AddTracksToQueue(tracks);
 
             return GetAndRemoveNextTrack();
-        }
-
-        private SpotifyTrackRepository CreateSpotifyTrackRepository()
-        {
-            var connectionString = _configuration.GetValue<string>("ConnectionStrings:ApplicationDb");
-            var spotifyTrackRepository = new SpotifyTrackRepository(PjfmContextFactory.Create(connectionString));
-            return spotifyTrackRepository;
         }
 
         private int GetSpotifyTracksAmount()
