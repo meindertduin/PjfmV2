@@ -4,6 +4,7 @@ using Domain.SpotifyTrack;
 using Domain.SpotifyUserData;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Scaffolding;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Infrastructure;
@@ -28,6 +29,7 @@ namespace Pjfm.Api
 
             services.AddDbContext<PjfmContext>(config =>
             {
+                config.UseOpenIddict();
                 config.UseSqlServer(new SqlConnection(connectionString), builder =>
                 {
                     builder.EnableRetryOnFailure();

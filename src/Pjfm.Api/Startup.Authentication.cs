@@ -16,17 +16,37 @@ namespace Pjfm.Api
         {
             services.AddHttpContextAccessor();
 
-            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-                {
-                    options.User.RequireUniqueEmail = true;
-                    options.Password.RequireUppercase = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequireDigit = false;
-                    options.Password.RequiredLength = 8;
-                    options.Password.RequireNonAlphanumeric = false;
-                })
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddSignInManager()
                 .AddEntityFrameworkStores<PjfmContext>()
                 .AddDefaultTokenProviders();
+
+            services.AddOpenIddict()
+                .AddCore(options =>
+                {
+                    options.UseEntityFrameworkCore()
+                        .UseDbContext<PjfmContext>();
+                })
+                .AddServer(options =>
+                {
+                    options.AllowClientCredentialsFlow();
+                    options.AllowAuthorizationCodeFlow()
+                        .RequireProofKeyForCodeExchange();
+                    
+                    options
+                        .SetTokenEndpointUris("/connect/authorize")
+                        .SetTokenEndpointUris("/connect/token");
+                    
+                    options
+                        .AddEphemeralEncryptionKey()
+                        .AddEphemeralSigningKey()
+                        .DisableAccessTokenEncryption();
+
+                    options.RegisterScopes("Api");
+
+                    options.UseAspNetCore()
+                        .EnableTokenEndpointPassthrough();
+                });
 
             services.ConfigureApplicationCookie(config =>
             {
@@ -50,6 +70,8 @@ namespace Pjfm.Api
                     builder.RequireClaim(PjfmClaimTypes.Role, UserRole.SpotifyAuth.ToString());
                 });
             });
+
+            services.AddHostedService<AuthorizationServer>();
         }
 
         private void InitializeDatabase(IApplicationBuilder app)

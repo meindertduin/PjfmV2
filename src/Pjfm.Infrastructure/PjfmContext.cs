@@ -4,13 +4,14 @@ using Domain;
 using Domain.ApplicationUser;
 using Domain.SpotifyTrack;
 using Domain.SpotifyUserData;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Pjfm.Infrastructure.TableMappings;
 
 namespace Pjfm.Infrastructure
 {
-    public class PjfmContext : DbContext, IPjfmContext
+    public class PjfmContext : IdentityDbContext, IPjfmContext
     {
         public DbSet<SpotifyTrack> SpotifyTracks { get; private set; } = null!;
         public DbSet<SpotifyUserData> SpotifyUserData { get; private set; } = null!;
