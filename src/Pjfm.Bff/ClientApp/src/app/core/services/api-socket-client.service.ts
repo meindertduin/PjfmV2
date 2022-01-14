@@ -19,7 +19,7 @@ export class ApiSocketClientService {
   private readonly _playbackData$: Observable<PlaybackUpdateMessageBody | null> = this._playbackData.asObservable();
 
   initializeConnection(): void {
-    this.socket = webSocket('/api/playback/ws');
+    this.socket = webSocket('wss://localhost:5005/api/playback/ws');
     this.socket.subscribe(
       (message) => {
         this.handleIncomingMessage(message as PlaybackMessage<unknown>);

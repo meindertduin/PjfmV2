@@ -31,8 +31,6 @@ namespace Pjfm.Api
             services.AddTransient<PjfmSignInManager>();
             services.AddHostedService<UpdateUserSpotifyTracksHostedService>();
 
-            services.AddApplicationInsightsTelemetry();
-
             services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
@@ -76,6 +74,8 @@ namespace Pjfm.Api
             app.UseAuthentication();
             app.UseIdentityServer();
             app.UseAuthorization();
+            
+            app.UseMiddleware<PlaybackWebsocketMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {
@@ -83,8 +83,6 @@ namespace Pjfm.Api
 
                 endpoints.MapRazorPages();
             });
-
-            app.UseMiddleware<PlaybackWebsocketMiddleware>();
         }
     }
 }
