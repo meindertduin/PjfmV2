@@ -54,6 +54,7 @@ namespace Pjfm.Application.GebruikerNummer
 
             foreach (var trackTerm in Enum.GetValues<TrackTerm>())
             {
+                if (trackTerm == TrackTerm.None) continue; 
                 var tracksResult = await GetTermTracks(trackTerm, TermSpotifyTracksAmount, userId);
                 spotifyTracks.AddRange(tracksResult.Select(s => new SpotifyTrack()
                 {
