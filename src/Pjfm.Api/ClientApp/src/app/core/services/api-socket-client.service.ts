@@ -5,6 +5,7 @@ import { MessageType } from '../models/api-socket-message';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ApiSocketRequest, RequestType } from '../models/api-socket-request';
 import { SpotifyTrackDto } from './api-client.service';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +20,7 @@ export class ApiSocketClientService {
   private readonly _playbackData$: Observable<PlaybackUpdateMessageBody | null> = this._playbackData.asObservable();
 
   initializeConnection(): void {
-    this.socket = webSocket('/api/playback/ws');
+    this.socket = webSocket(environment.websocketBaseUrl + '/api/playback/ws');
     this.socket.subscribe(
       (message) => {
         this.handleIncomingMessage(message as PlaybackMessage<unknown>);

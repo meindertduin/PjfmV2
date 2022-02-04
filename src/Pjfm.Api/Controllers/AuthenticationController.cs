@@ -12,26 +12,20 @@ namespace Pjfm.Api.Controllers
     public class AuthenticationController : PjfmController
     {
         private readonly PjfmSignInManager _signInManager;
-        private readonly IConfiguration _configuration;
-        private readonly IIdentityServerInteractionService _interactionService;
 
         public AuthenticationController(IPjfmControllerContext pjfmContext, PjfmSignInManager signInManager,
-            IConfiguration configuration, IIdentityServerInteractionService interactionService) : base(pjfmContext)
+            IConfiguration configuration) : base(pjfmContext)
         {
             _signInManager = signInManager;
-            _configuration = configuration;
-            _interactionService = interactionService;
         }
 
         [HttpGet("logout")]
         [ProducesResponseType(StatusCodes.Status302Found)]
         public async Task<IActionResult> Logout(string logoutId)
         {
-            var logoutContext = await _interactionService.GetLogoutContextAsync(logoutId);
-
             await _signInManager.SignOutAsync();
 
-            return Redirect(logoutContext.PostLogoutRedirectUri);
+            return Redirect("/");
         }
     }
 }

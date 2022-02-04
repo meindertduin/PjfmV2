@@ -4,6 +4,7 @@
 
 export const environment = {
   production: false,
+  websocketBaseUrl: 'wss://localhost:5004',
 };
 
 /*

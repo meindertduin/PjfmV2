@@ -54,11 +54,6 @@ namespace Pjfm.Api
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsProduction())
-            {
-                InitializeDatabase(app);
-            }
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -81,7 +76,6 @@ namespace Pjfm.Api
             });
 
             app.UseAuthentication();
-            app.UseIdentityServer();
             app.UseAuthorization();
             
             app.UseMiddleware<PlaybackWebsocketMiddleware>();
