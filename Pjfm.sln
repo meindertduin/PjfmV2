@@ -1,7 +1,5 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pjfm.Bff", "src\Pjfm.Bff\Pjfm.Bff.csproj", "{262C78E4-D0F3-4719-8D2A-CEADA1F45164}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Pjfm.Api", "src\Pjfm.Api\Pjfm.Api.csproj", "{15C71B33-2844-4D0B-8F73-15EF31F27127}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "src\Domain\Domain.csproj", "{49E2515E-39B9-415D-8427-A912C2864D28}"
@@ -24,10 +22,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{262C78E4-D0F3-4719-8D2A-CEADA1F45164}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{262C78E4-D0F3-4719-8D2A-CEADA1F45164}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{262C78E4-D0F3-4719-8D2A-CEADA1F45164}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{262C78E4-D0F3-4719-8D2A-CEADA1F45164}.Release|Any CPU.Build.0 = Release|Any CPU
 		{15C71B33-2844-4D0B-8F73-15EF31F27127}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{15C71B33-2844-4D0B-8F73-15EF31F27127}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{15C71B33-2844-4D0B-8F73-15EF31F27127}.Release|Any CPU.ActiveCfg = Release|Any CPU
