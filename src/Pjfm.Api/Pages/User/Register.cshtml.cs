@@ -38,6 +38,7 @@ namespace Pjfm.Api.Pages.User
                 {
                     new Claim(PjfmClaimTypes.Role, UserRole.User.ToString()),
                     new Claim(PjfmClaimTypes.UserId, newUser.Id),
+                    new Claim(PjfmClaimTypes.Name, newUser.UserName),
                 });
 
                 if (claimsAddResult.Succeeded)
