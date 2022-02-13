@@ -1,9 +1,9 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Pjfm.Infrastructure.Migrations.Application
+namespace Pjfm.Infrastructure.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -50,18 +50,45 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 });
 
             migrationBuilder.CreateTable(
-                name: "SpotifyAlbum",
+                name: "OpenIddictApplications",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    AlbumId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    ReleaseDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ClientId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    ClientSecret = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ConcurrencyToken = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    ConsentType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DisplayNames = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Permissions = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PostLogoutRedirectUris = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Properties = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RedirectUris = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Requirements = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SpotifyAlbum", x => x.Id);
+                    table.PrimaryKey("PK_OpenIddictApplications", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OpenIddictScopes",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ConcurrencyToken = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Descriptions = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DisplayNames = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Name = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Properties = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Resources = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenIddictScopes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -171,6 +198,31 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 });
 
             migrationBuilder.CreateTable(
+                name: "SpotifyTrack",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    SpotifyTrackId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Artists = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    TrackTerm = table.Column<int>(type: "int", nullable: false),
+                    TrackDurationMs = table.Column<int>(type: "int", nullable: false),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpotifyTrack", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SpotifyTrack_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SpotifyUserData",
                 columns: table => new
                 {
@@ -191,6 +243,88 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 });
 
             migrationBuilder.CreateTable(
+                name: "OpenIddictAuthorizations",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ApplicationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ConcurrencyToken = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Properties = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Scopes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Subject = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenIddictAuthorizations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OpenIddictAuthorizations_OpenIddictApplications_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalTable: "OpenIddictApplications",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SpotifyAlbum",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AlbumId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    ReleaseDate = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    SpotifyTrackId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpotifyAlbum", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SpotifyAlbum_SpotifyTrack_SpotifyTrackId",
+                        column: x => x.SpotifyTrackId,
+                        principalTable: "SpotifyTrack",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OpenIddictTokens",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ApplicationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    AuthorizationId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    ConcurrencyToken = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ExpirationDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Payload = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Properties = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    RedemptionDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ReferenceId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
+                    Subject = table.Column<string>(type: "nvarchar(400)", maxLength: 400, nullable: true),
+                    Type = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OpenIddictTokens", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OpenIddictTokens_OpenIddictApplications_ApplicationId",
+                        column: x => x.ApplicationId,
+                        principalTable: "OpenIddictApplications",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_OpenIddictTokens_OpenIddictAuthorizations_AuthorizationId",
+                        column: x => x.AuthorizationId,
+                        principalTable: "OpenIddictAuthorizations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "SpotifyAlbumImage",
                 columns: table => new
                 {
@@ -206,38 +340,6 @@ namespace Pjfm.Infrastructure.Migrations.Application
                     table.PrimaryKey("PK_SpotifyAlbumImage", x => x.Id);
                     table.ForeignKey(
                         name: "FK_SpotifyAlbumImage_SpotifyAlbum_SpotifyAlbumId",
-                        column: x => x.SpotifyAlbumId,
-                        principalTable: "SpotifyAlbum",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "SpotifyTrack",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    SpotifyAlbumId = table.Column<int>(type: "int", nullable: false),
-                    SpotifyTrackId = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    Artists = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    TrackTerm = table.Column<int>(type: "int", nullable: false),
-                    TrackDurationMs = table.Column<int>(type: "int", nullable: false),
-                    CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SpotifyTrack", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SpotifyTrack_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_SpotifyTrack_SpotifyAlbum_SpotifyAlbumId",
                         column: x => x.SpotifyAlbumId,
                         principalTable: "SpotifyAlbum",
                         principalColumn: "Id",
@@ -284,14 +386,50 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SpotifyAlbumImage_SpotifyAlbumId",
-                table: "SpotifyAlbumImage",
-                column: "SpotifyAlbumId",
+                name: "IX_OpenIddictApplications_ClientId",
+                table: "OpenIddictApplications",
+                column: "ClientId",
+                unique: true,
+                filter: "[ClientId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIddictAuthorizations_ApplicationId_Status_Subject_Type",
+                table: "OpenIddictAuthorizations",
+                columns: new[] { "ApplicationId", "Status", "Subject", "Type" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIddictScopes_Name",
+                table: "OpenIddictScopes",
+                column: "Name",
+                unique: true,
+                filter: "[Name] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIddictTokens_ApplicationId_Status_Subject_Type",
+                table: "OpenIddictTokens",
+                columns: new[] { "ApplicationId", "Status", "Subject", "Type" });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIddictTokens_AuthorizationId",
+                table: "OpenIddictTokens",
+                column: "AuthorizationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OpenIddictTokens_ReferenceId",
+                table: "OpenIddictTokens",
+                column: "ReferenceId",
+                unique: true,
+                filter: "[ReferenceId] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SpotifyAlbum_SpotifyTrackId",
+                table: "SpotifyAlbum",
+                column: "SpotifyTrackId",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_SpotifyTrack_SpotifyAlbumId",
-                table: "SpotifyTrack",
+                name: "IX_SpotifyAlbumImage_SpotifyAlbumId",
+                table: "SpotifyAlbumImage",
                 column: "SpotifyAlbumId",
                 unique: true);
 
@@ -325,10 +463,13 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "SpotifyAlbumImage");
+                name: "OpenIddictScopes");
 
             migrationBuilder.DropTable(
-                name: "SpotifyTrack");
+                name: "OpenIddictTokens");
+
+            migrationBuilder.DropTable(
+                name: "SpotifyAlbumImage");
 
             migrationBuilder.DropTable(
                 name: "SpotifyUserData");
@@ -337,7 +478,16 @@ namespace Pjfm.Infrastructure.Migrations.Application
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
+                name: "OpenIddictAuthorizations");
+
+            migrationBuilder.DropTable(
                 name: "SpotifyAlbum");
+
+            migrationBuilder.DropTable(
+                name: "OpenIddictApplications");
+
+            migrationBuilder.DropTable(
+                name: "SpotifyTrack");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
