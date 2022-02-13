@@ -1,5 +1,4 @@
 using System.Threading.Tasks;
-using IdentityServer4.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -21,7 +20,7 @@ namespace Pjfm.Api.Controllers
 
         [HttpGet("logout")]
         [ProducesResponseType(StatusCodes.Status302Found)]
-        public async Task<IActionResult> Logout(string logoutId)
+        public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
 
