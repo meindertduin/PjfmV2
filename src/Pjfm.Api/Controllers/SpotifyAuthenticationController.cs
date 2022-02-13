@@ -93,7 +93,7 @@ namespace Pjfm.Api.Controllers
                 await _spotifyTrackService.SetUserSpotifyTracks(PjfmPrincipal.Id);
             }
 
-            return Ok(code);
+            return Redirect("/");
         }
     }
 }
