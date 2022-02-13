@@ -26,6 +26,7 @@ namespace Pjfm.Api.Controllers
         private readonly IUserTokenService _userTokenService;
         private readonly IApplicationUserRepository _applicationUserRepository;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ISpotifyTrackService _spotifyTrackService;
         private readonly StateValidator _stateValidator;
 
@@ -35,6 +36,7 @@ namespace Pjfm.Api.Controllers
             IUserTokenService userTokenService,
             IApplicationUserRepository applicationUserRepository,
             UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager,
             ISpotifyTrackService spotifyTrackService) : base(pjfmContext)
         {
             _spotifyAuthenticationService = spotifyAuthenticationService;
@@ -42,6 +44,7 @@ namespace Pjfm.Api.Controllers
             _userTokenService = userTokenService;
             _applicationUserRepository = applicationUserRepository;
             _userManager = userManager;
+            _signInManager = signInManager;
             _spotifyTrackService = spotifyTrackService;
 
             _stateValidator = new StateValidator();
@@ -82,18 +85,25 @@ namespace Pjfm.Api.Controllers
                 await _applicationUserRepository.SetUserSpotifyAuthenticated(PjfmPrincipal.Id, true);
 
                 var user = await _userManager.GetUserAsync(HttpContext.User);
-                
-                await _userManager.AddClaimsAsync(user, new[]
+
+                var result = await _userManager.AddClaimsAsync(user, new[]
                 {
                     new Claim(PjfmClaimTypes.Role, UserRole.SpotifyAuth.ToString()),
                 });
-                
-                _userTokenService.StoreUserSpotifyAccessToken(PjfmPrincipal.Id, requestResult.Result.AccessToken,
-                    requestResult.Result.ExpiresIn);
-                await _spotifyTrackService.SetUserSpotifyTracks(PjfmPrincipal.Id);
-            }
 
-            return Redirect("/");
+                if (result.Succeeded)
+                {
+                    await _signInManager.SignInAsync(user, true);
+                    
+                    _userTokenService.StoreUserSpotifyAccessToken(PjfmPrincipal.Id, requestResult.Result.AccessToken,
+                        requestResult.Result.ExpiresIn);
+                    await _spotifyTrackService.SetUserSpotifyTracks(PjfmPrincipal.Id);
+                    
+                    return Redirect("/");
+                }
+            }
+            
+            return BadRequest();
         }
     }
 }
