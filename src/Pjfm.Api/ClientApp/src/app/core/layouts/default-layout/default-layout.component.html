@@ -7,9 +7,14 @@
   <ng-template #userAuthenticatedInfo>
     <div class="toolbar-right-info">
       <div class="user-info">
-        <span class="m-xs-r user-name">{{user!.userName}}</span>
+        <span class="m-m-r user-name">{{user!.userName}}</span>
       </div>
-      <a href="/authentication/logout" class="m-xs-l logout-link">[ logout ]</a>
+      <div class="toolbar-links">
+        <a class="toolbar-link" href="/api/spotify/authenticate" *ngIf="showAuthenticateSpotifyButton === false"
+          >[ Authenticate Spotify ]</a
+        >
+        <a href="/authentication/logout" class="m-xs-l toolbar-link toolbar-link__red">[ logout ]</a>
+      </div>
     </div>
   </ng-template>
 </nav>

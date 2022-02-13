@@ -44,7 +44,7 @@ namespace Pjfm.Api.Pages.User
                 if (claimsAddResult.Succeeded)
                 {
                     await signInManager.PasswordSignInAsync(newUser.UserName, Form.Password, false, false);
-                    return Redirect("/api/spotify/authenticate");
+                    return Redirect("/");
                 }
             }
 

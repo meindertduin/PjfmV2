@@ -3,7 +3,7 @@ import { RouteDataService } from '../../../shared/services/route-data.service';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { UserService } from '../../../shared/services/user.service';
-import { GetCurrentUserResponseModel } from '../../services/api-client.service';
+import { GetCurrentUserResponseModel, UserRole } from '../../services/api-client.service';
 
 @Component({
   selector: 'pjfm-default-layout',
@@ -15,6 +15,7 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
 
   isDetailPage = false;
   user?: GetCurrentUserResponseModel;
+  showAuthenticateSpotifyButton = false;
 
   constructor(private readonly _routeDataService: RouteDataService, private readonly _userService: UserService) {}
 
@@ -27,6 +28,7 @@ export class DefaultLayoutComponent implements OnInit, OnDestroy {
       });
 
     this.user = this._userService.getUser();
+    this.showAuthenticateSpotifyButton = this.user?.roles.includes(UserRole.SpotifyAuth) ?? false;
   }
 
   ngOnDestroy(): void {

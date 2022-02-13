@@ -56,7 +56,6 @@ $toolbar-height: 70px;
 
   .user-info {
     display: flex;
-    flex-direction: row;
     color: $color-yellow;
     align-items: center;
 
@@ -66,10 +65,30 @@ $toolbar-height: 70px;
     }
   }
 
-  .logout-link {
-    color: $color-red;
+  .toolbar-links {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: flex-end;
+
+    @media (min-width: $breakpoint-s) {
+      flex-direction: row;
+    }
+  }
+
+  .toolbar-link {
+    color: $color-yellow;
     cursor: pointer;
     font-size: 15px;
     text-decoration: none;
+    margin-top: 5px;
+
+    &:not(:last-child) {
+      margin-right: 5px;
+    }
+
+    &__red {
+      color: $color-red;
+    }
   }
 }
