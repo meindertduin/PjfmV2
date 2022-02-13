@@ -62,7 +62,7 @@ namespace Pjfm.Api.Controllers
                 .Append($"&state={state}")
                 .Append($@"&redirect_uri={Configuration.GetValue<string>("Spotify:RedirectUrl")}")
                 .Append(
-                    "&scope=user-top-read user-read-private streaming user-read-playback-state playlist-read-private playlist-read-collaborative")
+                    "&scope=user-top-read user-read-private user-read-email streaming user-read-playback-state playlist-read-private playlist-read-collaborative")
                 .ToString();
 
             return Redirect(authorizationUrl);
@@ -83,7 +83,7 @@ namespace Pjfm.Api.Controllers
                 await _spotifyUserDataRepository.SetUserRefreshToken(PjfmPrincipal.Id,
                     requestResult.Result.RefreshToken);
                 await _applicationUserRepository.SetUserSpotifyAuthenticated(PjfmPrincipal.Id, true);
-
+                
                 var user = await _userManager.GetUserAsync(HttpContext.User);
 
                 var result = await _userManager.AddClaimsAsync(user, new[]
@@ -104,6 +104,25 @@ namespace Pjfm.Api.Controllers
             }
             
             return BadRequest();
+        }
+        
+        [HttpGet("register")]
+        [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status302Found)]
+        public IActionResult Register()
+        {
+            var state = _stateValidator.GenerateNewState();
+
+            var authorizationUrl = new StringBuilder("https://accounts.spotify.com/authorize")
+                .Append($"?client_id={Configuration.GetValue<string>("Spotify:ClientId")}")
+                .Append("&response_type=code")
+                .Append($"&state={state}")
+                .Append($@"&redirect_uri={Configuration.GetValue<string>("Spotify:RegisterRedirectUrl")}")
+                .Append(
+                    "&scope=user-top-read user-read-private user-read-email streaming user-read-playback-state playlist-read-private playlist-read-collaborative")
+                .ToString();
+
+            return Redirect(authorizationUrl);
         }
     }
 }

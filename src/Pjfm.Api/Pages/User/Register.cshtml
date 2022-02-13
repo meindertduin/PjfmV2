@@ -16,6 +16,10 @@
             <div class="form-group">
                 <a asp-page="/user/login" asp-route-returnUrl="@Model.Form.ReturnUrl" class="form-btn-link">Already have an account? Click here to login.</a>
             </div>
+            
+            <div class="form-group">
+                <a asp-controller="SpotifyAuthentication" asp-action="Register" class="form-btn-link">Register with spotify!</a>
+            </div>
 
             <div class="form-group">
                 <label class="form-label" for="userNameForm">Email address</label>
