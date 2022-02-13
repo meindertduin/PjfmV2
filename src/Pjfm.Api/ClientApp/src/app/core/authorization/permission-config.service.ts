@@ -12,7 +12,7 @@ export class PermissionConfigService {
   initialize(roles: UserRole[]): void {
     const rolePermissions = [];
     for (const permission in PERMISSION_CONFIG) {
-      if (PERMISSION_CONFIG[permission].some((x) => roles.includes(x))) {
+      if (PERMISSION_CONFIG[permission].every((x) => roles.includes(x))) {
         rolePermissions.push(permission);
       }
     }
