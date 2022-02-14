@@ -12,6 +12,7 @@ namespace Pjfm.Api.Controllers
     {
         public UserController(IPjfmControllerContext pjfmContext) : base(pjfmContext)
         {
+            
         }
 
         [HttpGet("me")]
@@ -27,5 +28,6 @@ namespace Pjfm.Api.Controllers
 
             return Ok(responseModel);
         }
+
     }
 }

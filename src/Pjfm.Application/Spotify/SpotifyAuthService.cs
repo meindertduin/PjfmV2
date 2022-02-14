@@ -14,6 +14,7 @@ namespace Pjfm.Application.Spotify
     public interface ISpotifyAuthenticationService
     {
         Task<ServiceRequestResult<SpotifyAccessTokenRequestResult>> RequestAccessToken(string code);
+        Task<ServiceRequestResult<SpotifyAccessTokenRequestResult>> RequestRegisterAccessToken(string code);
         Task<ServiceRequestResult<SpotifyAccessTokenRefreshRequestResult>> RefreshAccessToken(string userId);
     }
 
@@ -34,6 +35,17 @@ namespace Pjfm.Application.Spotify
         public async Task<ServiceRequestResult<SpotifyAccessTokenRequestResult>> RequestAccessToken(string code)
         {
             var redirectUrl = _configuration["Spotify:RedirectUrl"];
+            return await GetAccessToken(code, redirectUrl);
+        }
+
+        public async Task<ServiceRequestResult<SpotifyAccessTokenRequestResult>> RequestRegisterAccessToken(string code)
+        {
+            var redirectUrl = _configuration["Spotify:LoginRedirectUrl"];
+            return await GetAccessToken(code, redirectUrl);
+        }
+        
+        private async Task<ServiceRequestResult<SpotifyAccessTokenRequestResult>> GetAccessToken(string code, string? redirectUrl)
+        {
             var requestMessage = GetBaseTokenRequestMessage();
 
             requestMessage.Content = new FormUrlEncodedContent(new[]
@@ -55,6 +67,7 @@ namespace Pjfm.Application.Spotify
 
             return ServiceRequestResult<SpotifyAccessTokenRequestResult>.Fail(null, response.StatusCode);
         }
+
 
         public async Task<ServiceRequestResult<SpotifyAccessTokenRefreshRequestResult>> RefreshAccessToken(
             string userId)

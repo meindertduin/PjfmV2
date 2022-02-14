@@ -14,9 +14,13 @@
         <form method="post">
             <input type="hidden" asp-for="Form.ReturnUrl" value="@Model.Form.ReturnUrl"/>
             <div class="form-group">
-                <a asp-page="/user/login" asp-route-returnUrl="@Model.Form.ReturnUrl" class="form-btn-link">Already have an account? Click here to login.</a>
+                <a asp-controller="SpotifyAuthentication" asp-action="Login" class="form-btn-link">Login with spotify</a>
             </div>
 
+            <div class="form-group">
+                <a asp-page="/user/login" asp-route-returnUrl="@Model.Form.ReturnUrl" class="form-btn-link">Already have an account? Click here to login.</a>
+            </div>
+            
             <div class="form-group">
                 <label class="form-label" for="userNameForm">Email address</label>
                 <span class="val-label" asp-validation-for="Form.Email"></span>
@@ -48,4 +52,4 @@
         </form>
     </div>
 </div>
-<div class="background"></div>
+<div class="background"></div>>

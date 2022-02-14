@@ -1,0 +1,23 @@
+<nav class="toolbar">
+  <button *ngIf="isDetailPage" class="back-button" [routerLink]="'../'"><--</button>
+  <div class="toolbar-right-info" *ngIf="user == null; else userAuthenticatedInfo">
+    <a href="/user/login" class="flat-button flat-button__round flat-button__green ripple m-xs-x">Login</a>
+    <a href="/user/register" class="flat-button flat-button__round flat-button__blue ripple m-xs-x">Register</a>
+  </div>
+  <ng-template #userAuthenticatedInfo>
+    <div class="toolbar-right-info">
+      <div class="user-info">
+        <span class="m-m-r user-name">{{user!.userName}}</span>
+      </div>
+      <div class="toolbar-links">
+        <a class="toolbar-link" href="/api/spotify/authenticate" *ngIf="showAuthenticateSpotifyButton === false"
+          >[ Authenticate Spotify ]</a
+        >
+        <a href="/authentication/logout" class="m-xs-l toolbar-link toolbar-link__red">[ logout ]</a>
+      </div>
+    </div>
+  </ng-template>
+</nav>
+<div class="view-container">
+  <router-outlet></router-outlet>
+</div>

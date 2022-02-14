@@ -1,0 +1,42 @@
+<div class="container">
+  <section class="playback">
+    <div class="playback-info" *ngIf="loadedPlaybackData != null">
+      <div class="image-container">
+        <img [src]="loadedPlaybackData.currentlyPlayingTrack.spotifyAlbum.albumImage.url" alt="album cover" />
+      </div>
+      <div class="track-info-container">
+        <div class="currently-playing-title">Now playing:</div>
+        <a class="track-title">[ <span class="ellipsis-title">{{loadedPlaybackData.currentlyPlayingTrack.title}}</span> ]</a>
+        <a class="artist-title">[ <span class="ellipsis-title">{{loadedPlaybackData.currentlyPlayingTrack.artists | artists}}</span> ]</a>
+      </div>
+    </div>
+    <div class="playback-controls-container" *ngIf="loadedPlaybackData != null">
+      <pjfm-track-progression-bar
+        [startTimeMs]="trackStartTimeMs"
+        [trackDurationMs]="loadedPlaybackData.currentlyPlayingTrack.trackDurationMs"
+      ></pjfm-track-progression-bar>
+      <div class="playback-buttons" *ngxPermissionsOnly="['spotifyAuthenticated']">
+        <button class="flat-button ripple control-button" (click)="openRequestDialog()">
+          <span class="icon" [inlineSVG]="'assets/icons/search.svg'"></span>
+        </button>
+        <button class="flat-button ripple control-button" (click)="playClicked()" *ngIf="!playbackIsActive; else pausePlaybackButton">
+          <span class="icon" [inlineSVG]="'assets/icons/play-arrow.svg'"></span>
+        </button>
+        <ng-template #pausePlaybackButton>
+          <button class="flat-button ripple control-button" (click)="pauseClicked()" *ngIf="playbackIsActive; else pausePlaybackButton">
+            <span class="icon" [inlineSVG]="'assets/icons/pause.svg'"></span>
+          </button>
+        </ng-template>
+        <button class="flat-button ripple control-button">
+          <span class="icon" [inlineSVG]="'assets/icons/skip.svg'"></span>
+        </button>
+      </div>
+    </div>
+  </section>
+  <section class="playback-queue">
+    <h4>Up next:</h4>
+    <div class="queue-container" *ngIf="loadedPlaybackData != null">
+      <pjfm-queued-track *ngFor="let queuedTrack of loadedPlaybackData.queuedTracks" [track]="queuedTrack"></pjfm-queued-track>
+    </div>
+  </section>
+</div>

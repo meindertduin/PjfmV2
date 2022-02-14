@@ -38,13 +38,13 @@ namespace Pjfm.Api.Pages.User
                 {
                     new Claim(PjfmClaimTypes.Role, UserRole.User.ToString()),
                     new Claim(PjfmClaimTypes.UserId, newUser.Id),
+                    new Claim(PjfmClaimTypes.Name, newUser.UserName),
                 });
 
                 if (claimsAddResult.Succeeded)
                 {
                     await signInManager.PasswordSignInAsync(newUser.UserName, Form.Password, false, false);
-                    var redirectUrl = configuration.GetValue<string>("ClientUrl"); 
-                    return Redirect(redirectUrl);
+                    return Redirect("/api/spotify/authenticate");
                 }
             }
 

@@ -1,16 +1,13 @@
-using System.Linq;
-using System.Security.Claims;
+using System;
 using System.Threading.Tasks;
 using Domain.ApplicationUser;
-using IdentityServer4.EntityFramework.DbContexts;
-using IdentityServer4.EntityFramework.Mappers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using OpenIddict.Abstractions;
 using Pjfm.Api.Authentication;
 using Pjfm.Common.Authentication;
 using Pjfm.Infrastructure;
@@ -37,47 +34,40 @@ namespace Pjfm.Api
 
             var connectionString = Configuration.GetConnectionString("ApplicationDb");
 
-            var identityServiceBuilder = services.AddIdentityServer();
+            services.AddOpenIddict()
+                .AddCore(options =>
+                {
+                    options.UseEntityFrameworkCore()
+                        .UseDbContext<PjfmContext>();
+                })
+                .AddServer(options =>
+                {
+                    options.AllowPasswordFlow();
+                    options.AllowRefreshTokenFlow();
 
-            identityServiceBuilder.AddAspNetIdentity<ApplicationUser>();
+                    options.SetTokenEndpointUris("/connect/token");
+                    options.SetUserinfoEndpointUris("/connect/userinfo");
 
-            if (WebHostEnvironment.IsProduction())
-            {
-                identityServiceBuilder.AddConfigurationStore(options =>
-                    {
-                        options.ConfigureDbContext = builder => builder.UseSqlServer(
-                            new SqlConnection(connectionString),
-                            sqlServerDbContextOptionsBuilder =>
-                            {
-                                sqlServerDbContextOptionsBuilder.EnableRetryOnFailure();
-                                sqlServerDbContextOptionsBuilder.MigrationsAssembly("Pjfm.Infrastructure");
-                            });
-                    })
-                    .AddOperationalStore(options =>
-                    {
-                        options.ConfigureDbContext = builder =>
-                            builder.UseSqlServer(new SqlConnection(connectionString),
-                                sqlServerDbContextOptionsBuilder =>
-                                {
-                                    sqlServerDbContextOptionsBuilder.EnableRetryOnFailure();
-                                    sqlServerDbContextOptionsBuilder.MigrationsAssembly("Pjfm.Infrastructure");
-                                });
-                        
-                        options.EnableTokenCleanup = true;
-                        options.TokenCleanupInterval = 3600;
-                    })
-                    .AddDeveloperSigningCredential();
-            }
-            else
-            {
-                identityServiceBuilder
-                    .AddInMemoryIdentityResources(ApiIdentityConfiguration.GetIdentityResources())
-                    .AddInMemoryClients(ApiIdentityConfiguration.GetClients())
-                    .AddInMemoryApiScopes(ApiIdentityConfiguration.GetApiScopes())
-                    .AddDeveloperSigningCredential();
-            }
+                    options.UseReferenceAccessTokens();
+                    options.UseReferenceRefreshTokens();
 
-            services.AddLocalApiAuthentication();
+                    options.RegisterScopes(OpenIddictConstants.Permissions.Scopes.Email,
+                        OpenIddictConstants.Permissions.Scopes.Profile, OpenIddictConstants.Permissions.Scopes.Roles,
+                        "api");
+
+                    options.SetAccessTokenLifetime(TimeSpan.FromMinutes(30));
+                    options.SetRefreshTokenLifetime(TimeSpan.FromDays(7));
+
+                    options.AddDevelopmentEncryptionCertificate()
+                        .AddDevelopmentSigningCertificate();
+
+                    options.UseAspNetCore()
+                        .EnableTokenEndpointPassthrough();
+                }).AddValidation(options =>
+                {
+                    options.UseLocalServer();
+                    options.UseAspNetCore();
+                });
 
             services.ConfigureApplicationCookie(config =>
             {
@@ -92,6 +82,12 @@ namespace Pjfm.Api
                 };
             });
 
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = OpenIddictConstants.Schemes.Bearer;
+                options.DefaultChallengeScheme = OpenIddictConstants.Schemes.Bearer;
+            });
+            
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(WellKnownPolicies.User, builder => { builder.RequireAuthenticatedUser(); });
@@ -101,55 +97,6 @@ namespace Pjfm.Api
                     builder.RequireClaim(PjfmClaimTypes.Role, UserRole.SpotifyAuth.ToString());
                 });
             });
-        }
-
-        private void InitializeDatabase(IApplicationBuilder app)
-        {
-            using var serviceScore = app.ApplicationServices.GetService<IServiceScopeFactory>()?.CreateScope();
-
-            if (serviceScore == null)
-            {
-                return;
-            }
-            
-            var identityContext = serviceScore.ServiceProvider.GetRequiredService<ConfigurationDbContext>();
-            identityContext.Database.Migrate();
-
-            var persistedGrantsContext = serviceScore.ServiceProvider.GetRequiredService<PersistedGrantDbContext>();
-            persistedGrantsContext.Database.Migrate();
-
-            var pjfmContext = serviceScore.ServiceProvider.GetRequiredService<PjfmContext>();
-            pjfmContext.Database.Migrate();
-            
-            if (!identityContext.Clients.Any())
-            {
-                foreach (var client in ApiIdentityConfiguration.GetClients())
-                {
-                    identityContext.Clients.Add(client.ToEntity());
-                }
-
-                identityContext.SaveChanges();
-            }
-
-            if (!identityContext.IdentityResources.Any())
-            {
-                foreach (var resource in ApiIdentityConfiguration.GetIdentityResources())
-                {
-                    identityContext.IdentityResources.Add(resource.ToEntity());
-                }
-
-                identityContext.SaveChanges();
-            }
-
-            if (!identityContext.ApiScopes.Any())
-            {
-                foreach (var resource in ApiIdentityConfiguration.GetApiScopes())
-                {
-                    identityContext.ApiScopes.Add(resource.ToEntity());
-                }
-
-                identityContext.SaveChanges();
-            }
         }
     }
 }

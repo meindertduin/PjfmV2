@@ -33,6 +33,8 @@ namespace Pjfm.Api
                     builder.EnableRetryOnFailure();
                     builder.MigrationsAssembly("Pjfm.Infrastructure");
                 });
+
+                config.UseOpenIddict();
             });
         }
     }

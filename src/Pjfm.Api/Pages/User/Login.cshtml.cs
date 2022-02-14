@@ -15,7 +15,7 @@ namespace Pjfm.Api.Pages.Gebruiker
 
         public void OnGet(string returnUrl)
         {
-            Form = new LoginForm {ReturnUrl = returnUrl};
+            Form = new LoginForm { ReturnUrl = returnUrl ?? "/" };
         }
 
         public async Task<IActionResult> OnPost([FromServices] IConfiguration configuration,

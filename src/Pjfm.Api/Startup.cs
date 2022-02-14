@@ -1,11 +1,15 @@
 using System;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pjfm.Api.Authentication;
 using Pjfm.Api.HostedServices;
+using ProxyKit;
 using SpotifyPlayback;
 
 namespace Pjfm.Api
@@ -42,15 +46,14 @@ namespace Pjfm.Api
             services.AddControllers();
             services.AddRazorPages();
             services.AddSwaggerDocument(options => options.Title = "Pjfm.Api");
+            
+            // Setup spa application
+            services.AddProxy();
+            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsProduction())
-            {
-                InitializeDatabase(app);
-            }
-
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -65,6 +68,7 @@ namespace Pjfm.Api
             app.UseCors();
             
             app.UseStaticFiles();
+            app.UseSpaStaticFiles();
 
             app.UseWebSockets(new WebSocketOptions()
             {
@@ -72,7 +76,6 @@ namespace Pjfm.Api
             });
 
             app.UseAuthentication();
-            app.UseIdentityServer();
             app.UseAuthorization();
             
             app.UseMiddleware<PlaybackWebsocketMiddleware>();
@@ -83,6 +86,55 @@ namespace Pjfm.Api
 
                 endpoints.MapRazorPages();
             });
+            
+            if (env.IsDevelopment())
+            {
+                app.Use(async (context, next) =>
+                {
+                    try
+                    {
+                        await next();
+                    }
+                    catch (Exception spaException)
+                    {
+                        await context.Response.WriteAsync(spaException.Message);
+                    }
+                });
+            }
+            
+            if (env.IsDevelopment())
+            {
+                app.MapWhen(p => p.Request.Path.StartsWithSegments("/sockjs-node"),
+                    config =>
+                    {
+                        config.UseSpa(spa => { spa.UseProxyToSpaDevelopmentServer("http://localhost:4200"); });
+                    });
+            }
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "ClientApp";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                }
+                else
+                {
+                    spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
+                    {
+                        OnPrepareResponse = DoNotCache
+                    };
+                }
+            });
+        }
+        
+        private static void DoNotCache(StaticFileResponseContext context)
+        {
+            context.Context.Request.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate");
+            context.Context.Response.Headers.Add("Pragma", "no-cache");
+            context.Context.Request.Headers.Add("Expires", "-1");
         }
     }
+    
 }
