@@ -14,25 +14,12 @@ namespace Pjfm.Api.Pages.User
 {
     public class SpotifyRegisterCallback : PageModel
     {
-        private readonly ISpotifyAuthenticationService _spotifyAuthenticationService;
-        private readonly ISpotifyUserDataRepository _spotifyUserDataRepository;
 
         [BindProperty] public RegisterForm Form { get; set; } = null!;
 
-        public SpotifyRegisterCallback(ISpotifyAuthenticationService spotifyAuthenticationService, ISpotifyUserDataRepository spotifyUserDataRepository)
+        public void OnGet([FromQuery] string accessToken)
         {
-            _spotifyAuthenticationService = spotifyAuthenticationService;
-            _spotifyUserDataRepository = spotifyUserDataRepository;
-        }
-        
-        public async Task OnGet([FromQuery] string state, [FromQuery] string code)
-        {
-            // TODO add validator for the state
-            var requestResult = await _spotifyAuthenticationService.RequestRegisterAccessToken(code);
-            if (requestResult.IsSuccessful)
-            {
-                Form = new RegisterForm() {SpotifyAccessToken = requestResult.Result.AccessToken};
-            }
+            Form = new RegisterForm() { SpotifyAccessToken =  accessToken };
         }
         
         public async Task<IActionResult> OnPost([FromServices] UserManager<ApplicationUser> userManager,

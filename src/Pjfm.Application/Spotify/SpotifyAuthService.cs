@@ -40,7 +40,7 @@ namespace Pjfm.Application.Spotify
 
         public async Task<ServiceRequestResult<SpotifyAccessTokenRequestResult>> RequestRegisterAccessToken(string code)
         {
-            var redirectUrl = _configuration["Spotify:RegisterRedirectUrl"];
+            var redirectUrl = _configuration["Spotify:LoginRedirectUrl"];
             return await GetAccessToken(code, redirectUrl);
         }
         

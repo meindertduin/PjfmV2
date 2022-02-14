@@ -9,10 +9,12 @@
 <div class="login-container">
     <div class="login-form">
         <div class="form-header">
-            <h2>Login</h2>
+            <h2>Register account with Spotify</h2>
         </div>
         <form method="post">
             <input type="hidden" asp-for="Form.SpotifyAccessToken" value="@Model.Form.SpotifyAccessToken"/>
+            
+            <p>Your registration with spotify is almost complete. Now give us a name you want to register under!</p>
             
             <div class="form-group">
                 <label class="form-label" for="emailForm">Username</label>

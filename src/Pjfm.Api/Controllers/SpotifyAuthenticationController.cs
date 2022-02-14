@@ -28,6 +28,7 @@ namespace Pjfm.Api.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ISpotifyTrackService _spotifyTrackService;
+        private readonly ISpotifyUserService _spotifyUserService;
         private readonly StateValidator _stateValidator;
 
         public SpotifyAuthenticationController(IPjfmControllerContext pjfmContext,
@@ -37,7 +38,8 @@ namespace Pjfm.Api.Controllers
             IApplicationUserRepository applicationUserRepository,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ISpotifyTrackService spotifyTrackService) : base(pjfmContext)
+            ISpotifyTrackService spotifyTrackService,
+            ISpotifyUserService spotifyUserService) : base(pjfmContext)
         {
             _spotifyAuthenticationService = spotifyAuthenticationService;
             _spotifyUserDataRepository = spotifyUserDataRepository;
@@ -46,6 +48,7 @@ namespace Pjfm.Api.Controllers
             _userManager = userManager;
             _signInManager = signInManager;
             _spotifyTrackService = spotifyTrackService;
+            _spotifyUserService = spotifyUserService;
 
             _stateValidator = new StateValidator();
         }
@@ -54,17 +57,8 @@ namespace Pjfm.Api.Controllers
         [ProducesResponseType(StatusCodes.Status302Found)]
         public IActionResult Authenticate()
         {
-            var state = _stateValidator.GenerateNewState();
-
-            var authorizationUrl = new StringBuilder("https://accounts.spotify.com/authorize")
-                .Append($"?client_id={Configuration.GetValue<string>("Spotify:ClientId")}")
-                .Append("&response_type=code")
-                .Append($"&state={state}")
-                .Append($@"&redirect_uri={Configuration.GetValue<string>("Spotify:RedirectUrl")}")
-                .Append(
-                    "&scope=user-top-read user-read-private user-read-email streaming user-read-playback-state playlist-read-private playlist-read-collaborative")
-                .ToString();
-
+            var authorizationUrl = GetAuthorizationUrl("Spotify:RedirectUrl");
+            
             return Redirect(authorizationUrl);
         }
 
@@ -106,10 +100,43 @@ namespace Pjfm.Api.Controllers
             return BadRequest();
         }
         
-        [HttpGet("register")]
+        [HttpGet("login")]
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status302Found)]
-        public IActionResult Register()
+        public IActionResult Login()
+        {
+            var authorizationUrl = GetAuthorizationUrl("Spotify:LoginRedirectUrl");
+
+            return Redirect(authorizationUrl);
+        }
+        
+        [HttpGet("logincallback")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SpotifyLoginCallback(string code)
+        {
+            var requestResult = await _spotifyAuthenticationService.RequestRegisterAccessToken(code);
+            if (requestResult.IsSuccessful)
+            {
+                var userData = await _spotifyUserService.GetSpotifyUserData(requestResult.Result.AccessToken);
+
+                if (userData != null)
+                {
+                    var user = await _userManager.FindByEmailAsync(userData.Email);
+                    if (user == null)
+                    {
+                        return Redirect($"/User/SpotifyRegisterCallback?accessToken={requestResult.Result.AccessToken}");
+                    }
+
+                    await _signInManager.SignInAsync(user, false);
+                }
+
+                return Redirect("/");
+            }
+
+            return BadRequest("Invalid code");
+        }
+
+        private string? GetAuthorizationUrl(string urlKey)
         {
             var state = _stateValidator.GenerateNewState();
 
@@ -117,12 +144,11 @@ namespace Pjfm.Api.Controllers
                 .Append($"?client_id={Configuration.GetValue<string>("Spotify:ClientId")}")
                 .Append("&response_type=code")
                 .Append($"&state={state}")
-                .Append($@"&redirect_uri={Configuration.GetValue<string>("Spotify:RegisterRedirectUrl")}")
+                .Append($@"&redirect_uri={Configuration.GetValue<string>(urlKey)}")
                 .Append(
                     "&scope=user-top-read user-read-private user-read-email streaming user-read-playback-state playlist-read-private playlist-read-collaborative")
                 .ToString();
-
-            return Redirect(authorizationUrl);
+            return authorizationUrl;
         }
     }
 }

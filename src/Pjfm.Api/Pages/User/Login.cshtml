@@ -14,10 +14,14 @@
         <form method="post">
             <input type="hidden" asp-for="Form.ReturnUrl" value="@Model.Form.ReturnUrl"/>
             <div class="form-group">
+                <a asp-controller="SpotifyAuthentication" asp-action="Login" class="form-btn-link">Login with spotify</a>
+            </div>
+            
+            <div class="form-group">
                 <a asp-page="/user/register" asp-route-returnUrl="@Model.Form.ReturnUrl" class="form-btn-link">No account? Click here to sign up!</a>
             </div>
-
-            <div class="form-group">
+            
+           <div class="form-group">
                 <label class="form-label" for="emailForm">E-mailaddress</label>
                 <span class="val-label" asp-validation-for="Form.EmailAddress"></span>
                 <input type="email" class="form-input" id="emailForm" placeholder="Email address ..." asp-for="Form.EmailAddress"/>
