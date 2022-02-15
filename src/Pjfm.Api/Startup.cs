@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Serialization;
 using Pjfm.Api.Authentication;
 using Pjfm.Api.HostedServices;
 using ProxyKit;
@@ -131,9 +132,14 @@ namespace Pjfm.Api
         
         private static void DoNotCache(StaticFileResponseContext context)
         {
-            context.Context.Request.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate");
-            context.Context.Response.Headers.Add("Pragma", "no-cache");
-            context.Context.Request.Headers.Add("Expires", "-1");
+            if (!context.Context.Request.Headers.ContainsKey("Cache-Control"))
+                context.Context.Request.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate");
+            
+            if (!context.Context.Request.Headers.ContainsKey("Pragma"))
+                context.Context.Response.Headers.Add("Pragma", "no-cache");
+            
+            if (!context.Context.Request.Headers.ContainsKey("Expires"))
+                context.Context.Request.Headers.Add("Expires", "-1");
         }
     }
     
