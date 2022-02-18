@@ -96,6 +96,32 @@ namespace Pjfm.Api.Controllers
             return Ok();
         }
 
+        [HttpPut("skip")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult SkipTrack()
+        {
+            if (!_socketConnectionCollection.TryGetUserSocketConnection(PjfmPrincipal.Id, out var socketConnection))
+            {
+                return Conflict();
+            }
+
+            var groupId = socketConnection.GetJoinedPlaybackGroupId();
+
+            if (groupId == null)
+            {
+                return NotFound();
+            }
+
+            _playbackRequestDispatcher.HandlePlaybackRequest(new SkipTrackRequest()
+            {
+                GroupId = groupId.Value,
+            });
+
+            return Ok();
+        }
+        
         [HttpPut("track-request")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]

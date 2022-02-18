@@ -24,6 +24,7 @@ namespace Pjfm.Api
             services.AddSingleton<ISocketConnectionCollection, SocketConnectionCollection>();
             
             services.AddHostedService<SpotifyPlaybackHostedService>();
+            services.AddHostedService<ConnectionWatcherHostedService>();
 
             services.Scan(a =>
             {

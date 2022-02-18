@@ -165,6 +165,11 @@ namespace SpotifyPlayback.Services
             _nextTrack = _playbackQueue.AddRequestsToQueue(tracks, _nextTrack, userId);
         }
 
+        public IPlaybackQueue GetPlaybackQueue()
+        {
+            return _playbackQueue;
+        }
+
         private List<SpotifyTrackDto> GetQueuedTracks()
         {
             var queuedTracks = new List<SpotifyTrackDto>();

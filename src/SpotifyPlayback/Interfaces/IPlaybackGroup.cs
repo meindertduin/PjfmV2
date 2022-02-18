@@ -23,5 +23,6 @@ namespace SpotifyPlayback.Interfaces
         bool HasListeners();
         PlaybackGroupDto GetPlaybackGroupInfo();
         void AddRequestsToQueue(IEnumerable<SpotifyTrackDto> tracks, string userId);
+        IPlaybackQueue GetPlaybackQueue();
     }
 }
