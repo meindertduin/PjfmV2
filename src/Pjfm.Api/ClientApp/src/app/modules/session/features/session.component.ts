@@ -128,4 +128,10 @@ export class SessionComponent implements OnInit, OnDestroy {
 
     this._dialogService.openDialog(SelectTrackDialogComponent, dialogData);
   }
+
+  skipClicked(): void {
+    this._playbackClient.skip().subscribe(() => {
+      console.log('skipped');
+    });
+  }
 }

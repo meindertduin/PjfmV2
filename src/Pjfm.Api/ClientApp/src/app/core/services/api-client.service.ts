@@ -26,10 +26,8 @@ export class AuthenticationClient {
     this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "https://localhost:5004";
   }
 
-  logout(logoutId: string | null | undefined): Observable<void> {
-    let url_ = this.baseUrl + "/authentication/logout?";
-    if (logoutId !== undefined && logoutId !== null)
-      url_ += "logoutId=" + encodeURIComponent("" + logoutId) + "&";
+  logout(): Observable<void> {
+    let url_ = this.baseUrl + "/authentication/logout";
     url_ = url_.replace(/[?&]$/, "");
 
     let options_ : any = {
@@ -236,6 +234,62 @@ export class PlaybackClient {
     return _observableOf<void>(null as any);
   }
 
+  skip(): Observable<void> {
+    let url_ = this.baseUrl + "/api/playback/skip";
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_ : any = {
+      observe: "response",
+      responseType: "blob",
+      headers: new HttpHeaders({
+      })
+    };
+
+    return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+      return this.processSkip(response_);
+    })).pipe(_observableCatch((response_: any) => {
+      if (response_ instanceof HttpResponseBase) {
+        try {
+          return this.processSkip(response_ as any);
+        } catch (e) {
+          return _observableThrow(e) as any as Observable<void>;
+        }
+      } else
+        return _observableThrow(response_) as any as Observable<void>;
+    }));
+  }
+
+  protected processSkip(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse ? response.body :
+        (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+    let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+    if (status === 200) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        return _observableOf<void>(null as any);
+      }));
+    } else if (status === 409) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        let result409: any = null;
+        result409 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+        return throwException("A server side error occurred.", status, _responseText, _headers, result409);
+      }));
+    } else if (status === 404) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        let result404: any = null;
+        result404 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver) as ProblemDetails;
+        return throwException("A server side error occurred.", status, _responseText, _headers, result404);
+      }));
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+      }));
+    }
+    return _observableOf<void>(null as any);
+  }
+
   trackRequest(trackRequest: PlaybackTrackRequest): Observable<void> {
     let url_ = this.baseUrl + "/api/playback/track-request";
     url_ = url_.replace(/[?&]$/, "");
@@ -395,6 +449,98 @@ export class SpotifyAuthenticationClient {
       }));
     }
     return _observableOf<string>(null as any);
+  }
+
+  login(): Observable<void> {
+    let url_ = this.baseUrl + "/api/spotify/authenticate/login";
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_ : any = {
+      observe: "response",
+      responseType: "blob",
+      headers: new HttpHeaders({
+      })
+    };
+
+    return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+      return this.processLogin(response_);
+    })).pipe(_observableCatch((response_: any) => {
+      if (response_ instanceof HttpResponseBase) {
+        try {
+          return this.processLogin(response_ as any);
+        } catch (e) {
+          return _observableThrow(e) as any as Observable<void>;
+        }
+      } else
+        return _observableThrow(response_) as any as Observable<void>;
+    }));
+  }
+
+  protected processLogin(response: HttpResponseBase): Observable<void> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse ? response.body :
+        (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+    let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+    if (status === 302) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        return throwException("A server side error occurred.", status, _responseText, _headers);
+      }));
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+      }));
+    }
+    return _observableOf<void>(null as any);
+  }
+
+  logincallback(code: string | null | undefined): Observable<FileResponse | null> {
+    let url_ = this.baseUrl + "/api/spotify/authenticate/logincallback?";
+    if (code !== undefined && code !== null)
+      url_ += "code=" + encodeURIComponent("" + code) + "&";
+    url_ = url_.replace(/[?&]$/, "");
+
+    let options_ : any = {
+      observe: "response",
+      responseType: "blob",
+      headers: new HttpHeaders({
+        "Accept": "application/octet-stream"
+      })
+    };
+
+    return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+      return this.processLogincallback(response_);
+    })).pipe(_observableCatch((response_: any) => {
+      if (response_ instanceof HttpResponseBase) {
+        try {
+          return this.processLogincallback(response_ as any);
+        } catch (e) {
+          return _observableThrow(e) as any as Observable<FileResponse | null>;
+        }
+      } else
+        return _observableThrow(response_) as any as Observable<FileResponse | null>;
+    }));
+  }
+
+  protected processLogincallback(response: HttpResponseBase): Observable<FileResponse | null> {
+    const status = response.status;
+    const responseBlob =
+      response instanceof HttpResponse ? response.body :
+        (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+    let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+    if (status === 200 || status === 206) {
+      const contentDisposition = response.headers ? response.headers.get("content-disposition") : undefined;
+      const fileNameMatch = contentDisposition ? /filename[^;=\n]*=(?:(\\?['"])(.*?)\1|(?:[^\s]+'.*?')?([^;\n]*))/g.exec(contentDisposition) : undefined;
+      const fileName = fileNameMatch && fileNameMatch.length > 1 ? decodeURIComponent(fileNameMatch[fileNameMatch.length - 1]) : undefined;
+      return _observableOf({ fileName: fileName, data: responseBlob as any, status: status, headers: _headers });
+    } else if (status !== 200 && status !== 204) {
+      return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+        return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+      }));
+    }
+    return _observableOf<FileResponse | null>(null as any);
   }
 }
 
@@ -664,6 +810,13 @@ export enum UserRole {
   User = 0,
   SpotifyAuth = 1,
   Dj = 2,
+}
+
+export interface FileResponse {
+  data: Blob;
+  status: number;
+  fileName?: string;
+  headers?: { [name: string]: any };
 }
 
 export class ApiException extends Error {
