@@ -130,8 +130,6 @@ export class SessionComponent implements OnInit, OnDestroy {
   }
 
   skipClicked(): void {
-    this._playbackClient.skip().subscribe(() => {
-      console.log('skipped');
-    });
+    this._playbackClient.skip();
   }
 }

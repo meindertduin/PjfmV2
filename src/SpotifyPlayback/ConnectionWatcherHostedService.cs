@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,19 +21,13 @@ namespace SpotifyPlayback
     {
         private readonly IServiceProvider _serviceProvider;
         private Timer _watchTimer = null!;
-        private ISocketConnectionCollection _socketConnectionCollection = null!;
-        private IPlaybackRequestDispatcher _playbackRequestDispatcher;
-
         public ConnectionWatcherHostedService(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
         }
-        
+
         public Task StartAsync(CancellationToken cancellationToken)
         {
-            using var scope = _serviceProvider.CreateScope();
-            _socketConnectionCollection = scope.ServiceProvider.GetRequiredService<ISocketConnectionCollection>();
-            _playbackRequestDispatcher = scope.ServiceProvider.GetRequiredService<IPlaybackRequestDispatcher>();
             _watchTimer = new Timer(ExecuteAsync, null, TimeSpan.Zero, TimeSpan.FromSeconds(10));
 
             return Task.CompletedTask;
@@ -42,7 +37,17 @@ namespace SpotifyPlayback
         {
             Task.Run(async () =>
             {
-                var socketConnections = _socketConnectionCollection.GetSocketConnections();
+                using var scope = _serviceProvider.CreateScope();
+
+                var socketConnectionCollection = scope.ServiceProvider.GetRequiredService<ISocketConnectionCollection>();
+                var socketConnections = socketConnectionCollection.GetSocketConnections().ToArray();
+
+                if (socketConnections.All(c => c.IsConnected))
+                {
+                    return;
+                }
+
+                var playbackRequestDispatcher = scope.ServiceProvider.GetRequiredService<IPlaybackRequestDispatcher>();
 
                 foreach (var connection in socketConnections)
                 {
@@ -51,21 +56,21 @@ namespace SpotifyPlayback
                     {
                         if (socketConnection.Principal.IsAuthenticated())
                         {
-                            await _playbackRequestDispatcher.HandlePlaybackSocketRequest(
+                            await playbackRequestDispatcher.HandlePlaybackSocketRequest(
                                 new DisconnectPlaybackGroupRequest(), socketConnection);
                         }
 
-                        _socketConnectionCollection.RemoveUserFromConnectionIdMap(socketConnection);
-                        _socketConnectionCollection.RemoveSocket(socketConnection.ConnectionId);
+                        socketConnectionCollection.RemoveUserFromConnectionIdMap(socketConnection);
+                        socketConnectionCollection.RemoveSocket(socketConnection.ConnectionId);
                     }
                 }
             });
         }
-        
+
         public Task StopAsync(CancellationToken cancellationToken)
         {
             _watchTimer.Change(Timeout.Infinite, 0);
-            
+
             return Task.CompletedTask;
         }
 
