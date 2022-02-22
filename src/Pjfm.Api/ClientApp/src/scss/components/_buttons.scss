@@ -208,3 +208,23 @@
     opacity: 0;
   }
 }
+
+.text-button {
+  background: none;
+  color: $white;
+  border: 0;
+  cursor: pointer;
+  font-size: 18px;
+
+  &:hover {
+    color: $color-blue;
+  }
+
+  &__blue {
+    color: $color-blue;
+
+    &:hover {
+     color: $white;
+    }
+  }
+}
