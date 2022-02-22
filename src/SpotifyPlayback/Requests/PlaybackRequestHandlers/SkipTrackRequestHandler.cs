@@ -27,6 +27,7 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 
             var nextTrack = _playbackScheduledTrackQueue.GetScheduledTracks()
                 .FirstOrDefault(t => t.GroupId == request.GroupId);
+            
             if (nextTrack != null)
             {
                 groupNewTrack.DueTime =
@@ -39,7 +40,7 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
                 return PlaybackRequestResult.Success(new SkipTrackRequestResult(), "Track successfully skipped.");
             }
 
-            return PlaybackRequestResult.Success(new SkipTrackRequestResult(), "Track successfully skipped.");
+            return PlaybackRequestResult.Fail<SkipTrackRequestResult>("Couldn't get new tracks to play.");
         }
     }
 
