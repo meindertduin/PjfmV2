@@ -70,23 +70,6 @@ namespace SpotifyPlayback.Services
             return AddTracksToQueue(tracks, scheduledTrack);
         }
 
-        public void SkipNextTrack()
-        {
-            if (_requestQueue.Any())
-            {
-                _requestQueue.RemoveFirst();
-                return;
-            }
-
-            if (_fillerQueue.Any())
-            {
-                _fillerQueue.RemoveFirst();
-                return;
-            }
-
-            return;
-        }
-
         private int CalculateUserRequestedTracks(SpotifyTrackDto? scheduledTrack, string userId)
         {
             var userRequestedTracks = _requestQueue.Count(r => r.User?.UserId == userId);

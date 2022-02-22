@@ -13,6 +13,5 @@ namespace SpotifyPlayback.Interfaces
         void SetTermijn(TrackTerm term);
         SpotifyTrackDto? AddRequestsToQueue(IEnumerable<SpotifyTrackDto> tracks, SpotifyTrackDto? scheduledTrack,
             string userId);
-        void SkipNextTrack();
     }
 }
