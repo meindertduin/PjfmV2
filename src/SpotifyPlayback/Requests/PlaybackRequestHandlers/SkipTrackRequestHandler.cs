@@ -5,8 +5,7 @@ using SpotifyPlayback.Interfaces;
 
 namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 {
-    public class
-        SkipTrackRequestHandler : IPlaybackRequestHandler<SkipTrackRequest,
+    public class SkipTrackRequestHandler : IPlaybackRequestHandler<SkipTrackRequest,
             PlaybackRequestResult<SkipTrackRequestResult>>
     {
         private readonly IPlaybackGroupCollection _playbackGroupCollection;

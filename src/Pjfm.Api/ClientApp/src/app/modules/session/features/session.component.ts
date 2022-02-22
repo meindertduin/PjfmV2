@@ -23,6 +23,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   playbackIsActive!: boolean;
 
   private _playDialogOpen = false;
+  private _isRequestingSkip = false;
 
   constructor(
     private readonly _apiSocketClient: ApiSocketClientService,
@@ -130,6 +131,11 @@ export class SessionComponent implements OnInit, OnDestroy {
   }
 
   skipClicked(): void {
-    this._playbackClient.skip();
+    if (this._isRequestingSkip) return;
+
+    this._isRequestingSkip = true;
+    this._playbackClient.skip().subscribe(() => {
+      this._isRequestingSkip = false;
+    });
   }
 }
