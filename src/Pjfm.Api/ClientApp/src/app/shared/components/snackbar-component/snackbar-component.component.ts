@@ -12,9 +12,11 @@ export class SnackbarComponentComponent {
     @Inject(PJFM_SNACKBAR_REF) private readonly _snackBarRef: SnackBarRef,
   ) {}
 
-  onOkButtonClicked(): void {}
+  onOkButtonClicked(): void {
+    this._snackBarRef.closeSnackBar();
+  }
 }
 
 export interface SnackBarData {
-  text: string;
+  message: string;
 }

@@ -1,10 +1,11 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewContainerRef } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { RouteData } from './shared/models/route-data';
 import { RouteDataService } from './shared/services/route-data.service';
 import { ApiSocketClientService } from './core/services/api-socket-client.service';
+import { SnackbarService } from './shared/services/snackbar.service';
 
 @Component({
   selector: 'pjfm-root',
@@ -19,6 +20,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private readonly _activatedRoute: ActivatedRoute,
     private readonly _routeDataService: RouteDataService,
     private readonly _apiSocketClient: ApiSocketClientService,
+    private readonly _snackBarService: SnackbarService,
+    private readonly _viewContainerRef: ViewContainerRef,
   ) {}
 
   ngOnInit(): void {
@@ -34,6 +37,8 @@ export class AppComponent implements OnInit, OnDestroy {
         const isDetailPage = (currentRoute.snapshot.data as RouteData).isDetailPage ?? false;
         this._routeDataService.setIsDetailPage(isDetailPage);
       });
+
+    this._snackBarService.setRootViewContainer(this._viewContainerRef);
   }
 
   private getChild(activatedRoute: ActivatedRoute): ActivatedRoute {

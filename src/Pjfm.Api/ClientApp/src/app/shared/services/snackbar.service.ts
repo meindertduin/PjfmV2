@@ -1,7 +1,6 @@
 import { ComponentFactoryResolver, ComponentRef, Injectable, InjectionToken, Injector, ViewContainerRef } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { SnackbarComponentComponent, SnackBarData } from '../components/snackbar-component/snackbar-component.component';
-import { PJFM_DIALOG_REF } from './dialog.service';
 
 export const PJFM_SNACKBAR_REF = new InjectionToken<SnackBarRef>('');
 export const PJFM_SNACKBAR_DATA = new InjectionToken<SnackBarData>('');
@@ -29,7 +28,7 @@ export class SnackbarService {
           useValue: dialogData,
         },
         {
-          provide: PJFM_DIALOG_REF,
+          provide: PJFM_SNACKBAR_REF,
           useValue: snackBarRef,
         },
       ],
