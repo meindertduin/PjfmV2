@@ -56,7 +56,7 @@ namespace SpotifyPlayback.Services
                 GroupId = groupId,
             };
         }
-
+        
         public IEnumerable<ListenerDto> GetGroupListeners(Guid groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);

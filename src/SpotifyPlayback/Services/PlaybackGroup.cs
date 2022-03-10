@@ -33,13 +33,23 @@ namespace SpotifyPlayback.Services
         public async Task<SpotifyTrackDto> GetNextTrack()
         {
             var newTrack = await _playbackQueue.GetNextSpotifyTrack();
-            
             Guard.NotNull(newTrack, nameof(newTrack));
             
             SetCurrentAndNextTrack(newTrack);
             SetCurrentlyPlayingTrackStartTime();
 
             return newTrack;
+        }
+
+        public async Task<SpotifyTrackDto> SkipTrack()
+        {
+            var newTrack = await _playbackQueue.GetNextSpotifyTrack();
+            Guard.NotNull(newTrack, nameof(newTrack));
+            
+            SetCurrentAndNextTrack(newTrack);
+            SetCurrentlyPlayingTrackStartTime();
+
+            return _currentlyPlayingTrack;
         }
 
         private void SetCurrentAndNextTrack(SpotifyTrackDto? newTrack)

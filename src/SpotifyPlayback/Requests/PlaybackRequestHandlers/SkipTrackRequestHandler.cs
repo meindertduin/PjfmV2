@@ -2,11 +2,12 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using SpotifyPlayback.Interfaces;
+using SpotifyPlayback.Models;
 
 namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 {
     public class SkipTrackRequestHandler : IPlaybackRequestHandler<SkipTrackRequest,
-            PlaybackRequestResult<SkipTrackRequestResult>>
+        PlaybackRequestResult<SkipTrackRequestResult>>
     {
         private readonly IPlaybackGroupCollection _playbackGroupCollection;
         private readonly IPlaybackScheduledTrackQueue _playbackScheduledTrackQueue;
@@ -23,24 +24,24 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 
         public async Task<PlaybackRequestResult<SkipTrackRequestResult>> HandleAsync(SkipTrackRequest request)
         {
-            var groupNewTrack = await _playbackGroupCollection.GetGroupNewTrack(request.GroupId);
+            var playbackGroup = _playbackGroupCollection.GetPlaybackGroup(request.GroupId);
 
-            var nextTrack = _playbackScheduledTrackQueue.GetScheduledTracks()
-                .FirstOrDefault(t => t.GroupId == request.GroupId);
-            
-            if (nextTrack != null)
+            var groupTrack = await playbackGroup.SkipTrack();
+
+            var groupNewTrack = new PlaybackScheduledTrack()
             {
-                groupNewTrack.DueTime =
-                    DateTime.Now + TimeSpan.FromMilliseconds(nextTrack.SpotifyTrack.TrackDurationMs);
-                _playbackScheduledTrackQueue.RemovePlaybackScheduledTrack(request.GroupId);
-                _playbackScheduledTrackQueue.AddPlaybackScheduledTrack(groupNewTrack);
+                SpotifyTrack = groupTrack,
+                GroupId = request.GroupId,
+            };
 
-                await _spotifyPlaybackController.PlaySpotifyTrackForUsers(nextTrack);
+            groupNewTrack.DueTime =
+                DateTime.Now + TimeSpan.FromMilliseconds(groupNewTrack.SpotifyTrack.TrackDurationMs);
+            _playbackScheduledTrackQueue.RemovePlaybackScheduledTrack(request.GroupId);
+            _playbackScheduledTrackQueue.AddPlaybackScheduledTrack(groupNewTrack);
 
-                return PlaybackRequestResult.Success(new SkipTrackRequestResult(), "Track successfully skipped.");
-            }
+            await _spotifyPlaybackController.PlaySpotifyTrackForUsers(groupNewTrack);
 
-            return PlaybackRequestResult.Fail<SkipTrackRequestResult>("Couldn't get new tracks to play.");
+            return PlaybackRequestResult.Success(new SkipTrackRequestResult(), "Track successfully skipped.");
         }
     }
 
