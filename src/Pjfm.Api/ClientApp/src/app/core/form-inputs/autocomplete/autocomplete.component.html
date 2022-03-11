@@ -18,7 +18,15 @@
     [ngClass]="{ 'show-at-top': showAutoCompleteOnTop }"
   >
     <ul class="auto-complete-values">
-      <li class="value" *ngFor="let value of autoCompleteValues" (mousedown)="onAutoCompleteValueClick(value)">{{value.text}}</li>
+      <li
+        class="value"
+        [ngClass]="{'value__selected': cursorSelectedAutocompleteIndex === i }"
+        *ngFor="let value of autoCompleteValues; let i = index;"
+        (mousedown)="selectAutocompleteValue(value)"
+        (mouseover)="cursorSelectValue(i)"
+      >
+        {{value.text}}
+      </li>
     </ul>
   </div>
 </div>

@@ -9,6 +9,8 @@ import {
   ViewChild,
   ElementRef,
   AfterViewInit,
+  OnChanges,
+  SimpleChanges,
 } from '@angular/core';
 import { ControlValueAccessor, FormControl } from '@angular/forms';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -22,7 +24,7 @@ import { generateRandomString } from '../../utils/random-string';
 })
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-explicit-any, @typescript-eslint/no-empty-function, @typescript-eslint/explicit-module-boundary-types */
-export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAccessor, AfterViewInit {
+export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAccessor, AfterViewInit, OnChanges {
   @Input() autoCompleteValues: AutoCompleteValue[] = [];
   @Input() inputId = generateRandomString(10);
   @Input() placeHolder = '';
@@ -32,11 +34,13 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
 
   readonly autoCompleteQueryLengthTrigger = 2;
 
+  cursorSelectedAutocompleteIndex = 0;
   query = new FormControl('');
   showAutoCompleteValues = false;
   value: any;
   autoCompleteWidth = 0;
   showAutoCompleteOnTop = false;
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onChange = (_: any) => {};
   onTouched = () => {};
@@ -82,9 +86,9 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
     this._destroyed$.next();
   }
 
-  onAutoCompleteValueClick(autoCompleteValue: AutoCompleteValue): void {
+  selectAutocompleteValue(autoCompleteValue: AutoCompleteValue): void {
     this.setValue(autoCompleteValue.value);
-    this.query.setValue(autoCompleteValue.text, { emitEvent: false });
+    this.query.setValue('', { emitEvent: false });
     this.showAutoCompleteValues = false;
     this.valueSelect.next(autoCompleteValue.value);
   }
@@ -121,6 +125,40 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
     this.autoCompleteWidth = this.inputComponent.nativeElement.offsetWidth;
+  }
+
+  cursorSelectValue(index: number): void {
+    this.cursorSelectedAutocompleteIndex = index;
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeypress(event: KeyboardEvent): void {
+    switch (event.key) {
+      case 'ArrowUp':
+        event.preventDefault();
+        if (this.cursorSelectedAutocompleteIndex > 0) {
+          this.cursorSelectedAutocompleteIndex--;
+        }
+        break;
+      case 'ArrowDown':
+        event.preventDefault();
+        if (this.cursorSelectedAutocompleteIndex < this.autoCompleteValues.length - 1) {
+          this.cursorSelectedAutocompleteIndex++;
+        }
+        break;
+      case 'Enter':
+        event.preventDefault();
+        this.selectAutocompleteValue(this.autoCompleteValues[this.cursorSelectedAutocompleteIndex]);
+        break;
+      default:
+        break;
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.autoCompleteValues && !changes.autoCompleteValues.firstChange) {
+      this.cursorSelectedAutocompleteIndex = 0;
+    }
   }
 }
 

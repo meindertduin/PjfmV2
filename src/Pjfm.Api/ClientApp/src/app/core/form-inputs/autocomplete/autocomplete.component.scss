@@ -43,7 +43,7 @@
         padding: 5px 10px;
         cursor: pointer;
 
-        &:hover {
+        &__selected {
           background: lighten($color-dark, 6);
           color: $color-yellow;
         }
