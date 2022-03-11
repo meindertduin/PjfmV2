@@ -25,4 +25,8 @@ export class BaseBottomSheetComponent implements OnInit, OnDestroy {
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     window.onscroll = () => {};
   }
+
+  onClickOutside(): void {
+    this.closeDialog.emit();
+  }
 }
