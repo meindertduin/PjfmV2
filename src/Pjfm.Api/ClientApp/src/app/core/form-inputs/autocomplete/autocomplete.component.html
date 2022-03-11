@@ -1,6 +1,8 @@
 <div class="container">
   <div class="input-container" #input>
     <input
+      pjfmAutofocus
+      [enabled]="autoFocus"
       [id]=""
       type="text"
       [formControl]="query"

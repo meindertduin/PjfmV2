@@ -26,6 +26,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
   @Input() autoCompleteValues: AutoCompleteValue[] = [];
   @Input() inputId = generateRandomString(10);
   @Input() placeHolder = '';
+  @Input() autoFocus = false;
   @Output() queryChanges = new EventEmitter<string>();
   @Output() valueSelect = new EventEmitter<unknown>();
 
