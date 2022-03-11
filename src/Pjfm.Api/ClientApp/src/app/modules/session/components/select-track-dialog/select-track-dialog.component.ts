@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, HostListener, Inject } from '@angular/core';
 import { DialogRef, PJFM_DIALOG_DATA, PJFM_DIALOG_REF } from '../../../../shared/services/dialog.service';
 import { PlaybackClient, PlaybackTrackRequest, SpotifyTrackClient } from '../../../../core/services/api-client.service';
 import { AutoCompleteValue } from '../../../../core/form-inputs/autocomplete/autocomplete.component';
@@ -52,7 +52,7 @@ export class SelectTrackDialogComponent {
   }
 
   confirmClicked(): void {
-    if (this._isRequesting) {
+    if (this._isRequesting || this.selectedTracks.length <= 0) {
       return;
     }
     this._isRequesting = true;
@@ -68,6 +68,20 @@ export class SelectTrackDialogComponent {
       .subscribe(() => {
         this.closeDialog();
       });
+  }
+
+  @HostListener('document:keydown', ['$event'])
+  onKeypress(event: KeyboardEvent): void {
+    switch (event.key) {
+      case 'Escape':
+        this.closeDialog();
+        break;
+      case 'Enter':
+        this.confirmClicked();
+        break;
+      default:
+        break;
+    }
   }
 }
 
