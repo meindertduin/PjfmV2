@@ -9,6 +9,7 @@ import { DialogService } from '../../../shared/services/dialog.service';
 import { StartListenDialogComponent, StartListenDialogData } from '../components/start-listen-dialog/start-listen-dialog.component';
 import { SelectTrackDialogComponent, SelectTrackDialogData } from '../components/select-track-dialog/select-track-dialog.component';
 import { UserService } from '../../../shared/services/user.service';
+import { SettingsDialogComponent } from '../components/settings-dialog/settings-dialog.component';
 
 @Component({
   selector: 'pjfm-session',
@@ -22,7 +23,7 @@ export class SessionComponent implements OnInit, OnDestroy {
   showStartListenDialog = false;
   playbackIsActive!: boolean;
 
-  private _playDialogOpen = false;
+  private _sessionPageDialogOpen = false;
   private _isRequestingSkip = false;
 
   constructor(
@@ -85,11 +86,11 @@ export class SessionComponent implements OnInit, OnDestroy {
   }
 
   playClicked(): void {
-    if (this.loadedPlaybackData?.groupId == null || this._playDialogOpen) {
+    if (this.loadedPlaybackData?.groupId == null || this._sessionPageDialogOpen) {
       return;
     }
 
-    this._playDialogOpen = true;
+    this._sessionPageDialogOpen = true;
     this.showStartListenDialog = true;
     this.openDialog({ groupId: this.loadedPlaybackData.groupId });
   }
@@ -99,7 +100,7 @@ export class SessionComponent implements OnInit, OnDestroy {
       .openDialog(StartListenDialogComponent, dialogData)
       .pipe(takeUntil(this._destroyed$))
       .subscribe(() => {
-        this._playDialogOpen = false;
+        this._sessionPageDialogOpen = false;
       });
   }
 
@@ -137,5 +138,14 @@ export class SessionComponent implements OnInit, OnDestroy {
     this._playbackClient.skip().subscribe(() => {
       this._isRequestingSkip = false;
     });
+  }
+
+  settingsClicked(): void {
+    this._dialogService
+      .openDialog(SettingsDialogComponent, null)
+      .pipe(takeUntil(this._destroyed$))
+      .subscribe(() => {
+        this._sessionPageDialogOpen = false;
+      });
   }
 }

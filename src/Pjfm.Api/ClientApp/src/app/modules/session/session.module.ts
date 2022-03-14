@@ -14,6 +14,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { FormInputsModule } from '../../core/form-inputs/form-inputs.module';
 import { NgxPermissionsModule } from 'ngx-permissions';
 import { SelectTrackDialogComponent } from './components/select-track-dialog/select-track-dialog.component';
+import { SettingsDialogComponent } from './components/settings-dialog/settings-dialog.component';
 
 const COMPONENTS = [
   SessionComponent,
@@ -26,7 +27,7 @@ const COMPONENTS = [
 const PIPES = [ConvertMsToTimePipe];
 
 @NgModule({
-  declarations: [COMPONENTS, PIPES],
+  declarations: [COMPONENTS, PIPES, SettingsDialogComponent],
   imports: [
     CommonModule,
     SessionRoutingModule,
