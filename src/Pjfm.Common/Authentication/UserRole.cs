@@ -4,6 +4,6 @@ namespace Pjfm.Common.Authentication
     {
         User,
         SpotifyAuth,
-        Dj,
+        Mod,
     }
 }

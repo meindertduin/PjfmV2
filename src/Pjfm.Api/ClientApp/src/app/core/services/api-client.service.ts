@@ -809,7 +809,7 @@ export interface GetCurrentUserResponseModel {
 export enum UserRole {
   User = 0,
   SpotifyAuth = 1,
-  Dj = 2,
+  Mod = 2,
 }
 
 export interface FileResponse {
