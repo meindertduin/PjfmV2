@@ -5,7 +5,6 @@ import { MessageType } from '../models/api-socket-message';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { ApiSocketRequest, RequestType } from '../models/api-socket-request';
 import { SpotifyTrackDto } from './api-client.service';
-import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',

@@ -52,6 +52,13 @@ namespace SpotifyPlayback.Services
             return _currentlyPlayingTrack;
         }
 
+        public void ResetTracks()
+        {
+            _playbackQueue.ResetQueue();
+            _currentlyPlayingTrack = null;
+            _nextTrack = null;
+        }
+
         private void SetCurrentAndNextTrack(SpotifyTrackDto? newTrack)
         {
             if (_currentlyPlayingTrack == null)
