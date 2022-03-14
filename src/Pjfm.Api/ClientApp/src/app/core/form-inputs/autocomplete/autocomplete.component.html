@@ -9,11 +9,12 @@
       (focusin)="onInputFocusChange(true)"
       (blur)="onInputFocusChange(false)"
       [placeholder]="placeHolder"
+      #input
     />
   </div>
   <div
     class="auto-complete-values-container"
-    *ngIf="showAutoCompleteValues && queryValue.length > autoCompleteQueryLengthTrigger"
+    *ngIf="showAutoCompleteValues && queryValue.length > 2"
     [ngStyle]="{ 'width.px': autoCompleteWidth }"
     [ngClass]="{ 'show-at-top': showAutoCompleteOnTop }"
   >

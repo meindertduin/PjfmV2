@@ -13,6 +13,7 @@ export class SelectTrackDialogComponent {
   autoCompleteValues: AutoCompleteValue[] = [];
   selectedTracks: SelectedTrack[] = [];
 
+  private _autoCompleteQuery = '';
   readonly selectTrackLimit = 3;
 
   private _isRequesting = false;
@@ -29,14 +30,17 @@ export class SelectTrackDialogComponent {
   }
 
   onQueryChange(query: string): void {
-    this._spotifyTrackClient.search(query).subscribe((result) => {
-      this.autoCompleteValues = result.tracks.map<AutoCompleteValue>((s) => {
-        return {
-          value: s.spotifyTrackId,
-          text: `${s.title} - ${s.artists.join(', ')}`,
-        };
+    this._autoCompleteQuery = query;
+    if (query.length > 2) {
+      this._spotifyTrackClient.search(query).subscribe((result) => {
+        this.autoCompleteValues = result.tracks.map<AutoCompleteValue>((s) => {
+          return {
+            value: s.spotifyTrackId,
+            text: `${s.title} - ${s.artists.join(', ')}`,
+          };
+        });
       });
-    });
+    }
   }
 
   onSearchValueSelect(value: unknown): void {
@@ -77,7 +81,10 @@ export class SelectTrackDialogComponent {
         this.closeDialog();
         break;
       case 'Enter':
-        this.confirmClicked();
+        console.log(this._autoCompleteQuery);
+        if (this._autoCompleteQuery.length < 1) {
+          this.confirmClicked();
+        }
         break;
       default:
         break;

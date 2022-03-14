@@ -32,7 +32,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
   @Output() queryChanges = new EventEmitter<string>();
   @Output() valueSelect = new EventEmitter<unknown>();
 
-  readonly autoCompleteQueryLengthTrigger = 2;
+  @ViewChild('input') input!: ElementRef;
 
   cursorSelectedAutocompleteIndex = 0;
   query = new FormControl('');
@@ -74,9 +74,7 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
   private setupOnQueryChanges() {
     this.query.valueChanges.pipe(debounceTime(500), takeUntil(this._destroyed$)).subscribe((value) => {
       if (value != null) {
-        if (this.queryValue.length > this.autoCompleteQueryLengthTrigger) {
-          this.queryChanges.next(this.queryValue);
-        }
+        this.queryChanges.next(this.queryValue);
       }
     });
   }
@@ -86,9 +84,14 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
     this._destroyed$.next();
   }
 
-  selectAutocompleteValue(autoCompleteValue: AutoCompleteValue): void {
+  selectAutocompleteValue(autoCompleteValue: AutoCompleteValue | null): void {
+    if (autoCompleteValue == null) {
+      return;
+    }
+
     this.setValue(autoCompleteValue.value);
     this.query.setValue('', { emitEvent: false });
+    this.queryChanges.next(this.queryValue);
     this.showAutoCompleteValues = false;
     this.valueSelect.next(autoCompleteValue.value);
   }
@@ -147,8 +150,10 @@ export class AutocompleteComponent implements OnInit, OnDestroy, ControlValueAcc
         }
         break;
       case 'Enter':
-        event.preventDefault();
-        this.selectAutocompleteValue(this.autoCompleteValues[this.cursorSelectedAutocompleteIndex]);
+        if (this.queryValue.length > 0) {
+          this.selectAutocompleteValue(this.autoCompleteValues[this.cursorSelectedAutocompleteIndex]);
+          this.showAutoCompleteValues = true;
+        }
         break;
       default:
         break;
