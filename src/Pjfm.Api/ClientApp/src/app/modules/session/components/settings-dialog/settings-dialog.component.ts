@@ -15,7 +15,7 @@ export class SettingsDialogComponent implements OnInit {
   selectedUsers: ApplicationUserDto[] = [];
 
   constructor(
-    @Inject(PJFM_DIALOG_DATA) readonly dialogData: SessionSettingsDialogData,
+    @Inject(PJFM_DIALOG_DATA) readonly _dialogData: SessionSettingsDialogData,
     @Inject(PJFM_DIALOG_REF) private readonly _dialogRef: DialogRef,
     private readonly _playbackClient: PlaybackClient,
     private readonly _userClient: UserClient,
@@ -23,7 +23,7 @@ export class SettingsDialogComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this._sessionGroupClient.getParticipants(this.dialogData.groupId).subscribe((result) => {
+    this._sessionGroupClient.getParticipants(this._dialogData.groupId).subscribe((result) => {
       this.selectedUsers = result;
     });
   }
@@ -44,9 +44,7 @@ export class SettingsDialogComponent implements OnInit {
           this._isRequesting = false;
         }),
       )
-      .subscribe(() => {
-        this.closeDialog();
-      });
+      .subscribe();
   }
 
   onQueryChange(query: string): void {
@@ -77,6 +75,26 @@ export class SettingsDialogComponent implements OnInit {
 
   removeSelectedUser(index: number): void {
     this.selectedUsers.splice(index, 1);
+  }
+
+  onSaveChangesClicked(): void {
+    if (this._isRequesting) {
+      return;
+    }
+
+    this._isRequesting = true;
+
+    this._sessionGroupClient
+      .setFillerQueueParticipants(
+        this.selectedUsers.map((s) => s.userId),
+        this._dialogData.groupId,
+      )
+      .pipe(
+        finalize(() => {
+          this._isRequesting = false;
+        }),
+      )
+      .subscribe();
   }
 }
 
