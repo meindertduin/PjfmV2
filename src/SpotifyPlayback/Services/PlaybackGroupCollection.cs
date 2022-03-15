@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Domain.SessionGroup;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +29,8 @@ namespace SpotifyPlayback.Services
             var playbackQueue = GetNewPlaybackQueue();
             var groupId = Guid.NewGuid();
 
+            playbackQueue.SetFillerQueueParticipantIds(sessionGroup.FillerQueueParticipants.Select(p => p.Id).ToArray());
+            
             CreateAndAddPlaybackGroup(sessionGroup.GroupName, playbackQueue, groupId);
             PlaybackGroupCreatedEvent.Invoke(this, new PlaybackGroupCreatedEventArgs() { GroupId = groupId });
             return groupId;

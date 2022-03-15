@@ -18,7 +18,7 @@ namespace SpotifyPlayback.Services
         private readonly LinkedList<SpotifyTrackDto> _fillerQueue = new();
         private readonly LinkedList<SpotifyTrackDto> _requestQueue = new();
         
-        private readonly IEnumerable<string> _userIds = new List<string>();
+        private string[] _fillerQueueParticipantIds = new string[0];
         
         private TrackTerm _term = TrackTerm.Long;
         private const int MaxRequestsPerUser = 3;
@@ -32,7 +32,7 @@ namespace SpotifyPlayback.Services
             var getSpotifyTracksAmount = GetSpotifyTracksAmount();
             var spotifyTrackRepository = CreateSpotifyTrackRepository();
 
-            var spotifyTracks = await spotifyTrackRepository.GetRandomUserSpotifyTracks(_userIds, new []{ _term }, getSpotifyTracksAmount);
+            var spotifyTracks = await spotifyTrackRepository.GetRandomUserSpotifyTracks(_fillerQueueParticipantIds, new []{ _term }, getSpotifyTracksAmount);
             
             AddSpotifyTracksToQueue(spotifyTracks);
 
@@ -47,6 +47,12 @@ namespace SpotifyPlayback.Services
             
             return queuedTracks;
         }
+
+        public void SetFillerQueueParticipantIds(string[] ids)
+        {
+            _fillerQueueParticipantIds = ids;
+        }
+
         public void ResetQueue()
         {
             _fillerQueue.Clear();

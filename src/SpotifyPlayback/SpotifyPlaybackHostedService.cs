@@ -47,7 +47,7 @@ namespace SpotifyPlayback
             var sessionGroups = sessionGroupRepository.GetAllSessionGroups();
             foreach (var sessionGroup in sessionGroups)
             {
-                _playbackGroupCollection.CreateNewPlaybackGroup(sessionGroup.GroupName);
+                _playbackGroupCollection.CreateNewPlaybackGroup(sessionGroup);
             }
 
             _playbackTimer = new Timer(ExecuteAsync, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));

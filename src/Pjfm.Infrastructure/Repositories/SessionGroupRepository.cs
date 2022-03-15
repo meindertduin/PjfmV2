@@ -42,7 +42,10 @@ namespace Pjfm.Infrastructure.Repositories
 
         public IEnumerable<SessionGroup> GetAllSessionGroups()
         {
-            return _pjfmContext.SessionGroups.AsNoTracking().ToList();
+            return _pjfmContext.SessionGroups
+                .Include(s => s.FillerQueueParticipants)
+                .AsNoTracking()
+                .ToList();
         }
         
         public Task AddFillerQueueParticipant(string groupId, ApplicationUser user)
