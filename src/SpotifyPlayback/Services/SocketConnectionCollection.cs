@@ -66,7 +66,7 @@ namespace SpotifyPlayback.Services
             return hasFoundSocketConnection;
         }
         
-        public bool SetSocketConnectedGroupId(Guid connectionId, Guid groupId)
+        public bool SetSocketConnectedGroupId(Guid connectionId, string groupId)
         {
             if (Connections.TryGetValue(connectionId, out var socketConnection))
             {

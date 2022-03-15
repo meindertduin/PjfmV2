@@ -9,6 +9,7 @@ namespace SpotifyPlayback.Interfaces
     {
         Task<SpotifyTrackDto?> GetNextSpotifyTrack();
         IEnumerable<SpotifyTrackDto> GetQueuedTracks(int amount);
+        public void SetFillerQueueParticipantIds(string[] ids);
         void ResetQueue();
         void SetTermijn(TrackTerm term);
         SpotifyTrackDto? AddRequestsToQueue(IEnumerable<SpotifyTrackDto> tracks, SpotifyTrackDto? scheduledTrack,

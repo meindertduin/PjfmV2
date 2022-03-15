@@ -1,15 +1,28 @@
-import { Directive, EventEmitter, ElementRef, Output, HostListener } from '@angular/core';
+import { Directive, EventEmitter, ElementRef, Output, HostListener, AfterViewInit } from '@angular/core';
 
 @Directive({
   selector: '[pjfmClickOutside]',
 })
-export class ClickOutsideDirective {
+export class ClickOutsideDirective implements AfterViewInit {
   @Output() pjfmClickOutside = new EventEmitter();
+
+  private _viewInitialized = false;
+
   constructor(private readonly _elementRef: ElementRef) {}
+
+  ngAfterViewInit(): void {
+    setTimeout(() => {
+      // Give the view some time to initialize before handling clicks outside. This prevents the clickOutside being
+      // fired instantly when you open a container with a click event.
+      this._viewInitialized = true;
+    }, 500);
+  }
 
   @HostListener('document:click', ['$event'])
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   onClick(event: MouseEvent) {
+    if (!this._viewInitialized) return;
+
     const targetElement = this._elementRef.nativeElement as HTMLElement;
     const width = targetElement.offsetWidth;
     const height = targetElement.offsetHeight;

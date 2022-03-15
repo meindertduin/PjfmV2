@@ -59,7 +59,7 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 
     public class UserRequestTracksToPlaybackRequest : IPlaybackRequest<PlaybackRequestResult<UserRequestTracksToPlaybackRequestResult>>
     {
-        public Guid GroupId { get; set; }
+        public string GroupId { get; set; }
         public string UserId { get; set; } = null!;
         public IEnumerable<SpotifyTrackDto> RequestedTracks { get; set; } = null!;
     }

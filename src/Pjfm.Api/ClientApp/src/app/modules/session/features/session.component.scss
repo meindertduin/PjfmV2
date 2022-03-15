@@ -94,16 +94,14 @@
   }
 
   .control-button {
+    margin: 0 10px;
+
     &:nth-child(1) {
-      margin-right: 10px;
+      margin: 0 10px 0 0;
     }
 
-    &:nth-child(2) {
-      margin: 0 10px;
-    }
-
-    &:nth-child(3) {
-      margin-left: 10px;
+    &:last-child {
+      margin: 0 0 0 10px;
     }
   }
 }

@@ -42,7 +42,7 @@ namespace SpotifyPlayback
             }
         }
 
-        public bool RemovePlaybackScheduledTrack(Guid groupId)
+        public bool RemovePlaybackScheduledTrack(string groupId)
         {
             lock (_queueLock)
             {

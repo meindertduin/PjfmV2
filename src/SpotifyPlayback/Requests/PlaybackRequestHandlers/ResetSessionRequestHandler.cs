@@ -5,26 +5,25 @@ using SpotifyPlayback.Models;
 
 namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 {
-    public class SkipTrackRequestHandler : IPlaybackRequestHandler<SkipTrackRequest,
-        PlaybackRequestResult<SkipTrackRequestResult>>
+    public class ResetSessionRequestHandler : IPlaybackRequestHandler<ResetSessionRequest, PlaybackRequestResult<ResetSessionRequestResult>>
     {
         private readonly IPlaybackGroupCollection _playbackGroupCollection;
         private readonly IPlaybackScheduledTrackQueue _playbackScheduledTrackQueue;
         private readonly ISpotifyPlaybackController _spotifyPlaybackController;
 
-        public SkipTrackRequestHandler(IPlaybackGroupCollection playbackGroupCollection,
-            IPlaybackScheduledTrackQueue playbackScheduledTrackQueue,
-            ISpotifyPlaybackController spotifyPlaybackController)
+        public ResetSessionRequestHandler(IPlaybackGroupCollection playbackGroupCollection, IPlaybackScheduledTrackQueue playbackScheduledTrackQueue, ISpotifyPlaybackController spotifyPlaybackController)
         {
             _playbackGroupCollection = playbackGroupCollection;
             _playbackScheduledTrackQueue = playbackScheduledTrackQueue;
             _spotifyPlaybackController = spotifyPlaybackController;
         }
-
-        public async Task<PlaybackRequestResult<SkipTrackRequestResult>> HandleAsync(SkipTrackRequest request)
+        
+        public async Task<PlaybackRequestResult<ResetSessionRequestResult>> HandleAsync(ResetSessionRequest request)
         {
             var playbackGroup = _playbackGroupCollection.GetPlaybackGroup(request.GroupId);
+            playbackGroup.ResetTracks();
 
+            await playbackGroup.SkipTrack();
             var groupTrack = await playbackGroup.SkipTrack();
 
             var groupNewTrack = new PlaybackScheduledTrack()
@@ -40,16 +39,16 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 
             await _spotifyPlaybackController.PlaySpotifyTrackForUsers(groupNewTrack);
 
-            return PlaybackRequestResult.Success(new SkipTrackRequestResult(), "Track successfully skipped.");
+            return PlaybackRequestResult.Success(new ResetSessionRequestResult(), "Track successfully skipped.");
         }
     }
-
-    public class SkipTrackRequest : IPlaybackRequest<PlaybackRequestResult<SkipTrackRequestResult>>
+    
+    public class ResetSessionRequest : IPlaybackRequest<PlaybackRequestResult<ResetSessionRequestResult>>
     {
         public string GroupId { get; set; }
     }
 
-    public class SkipTrackRequestResult
+    public class ResetSessionRequestResult
     {
     }
 }

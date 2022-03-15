@@ -28,7 +28,7 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
                     return Task.CompletedTask;
                 }
                 
-                _playbackGroupCollection.RemoveJoinedConnectionFromGroup(socketConnection.ConnectionId, socketConnectedGroupId.Value);
+                _playbackGroupCollection.RemoveJoinedConnectionFromGroup(socketConnection.ConnectionId, socketConnectedGroupId);
             }
 
             var playbackGroup = _playbackGroupCollection.GetPlaybackGroup(request.GroupId);
@@ -60,6 +60,6 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
 
     public class JoinPlaybackGroupSocketRequest : IPlaybackRequest
     {
-        public Guid GroupId { get; set; }
+        public string GroupId { get; set; } = null!;
     }
 }

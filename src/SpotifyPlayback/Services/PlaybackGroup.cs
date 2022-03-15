@@ -20,10 +20,10 @@ namespace SpotifyPlayback.Services
         private readonly object listenerLock = new();
         private readonly object joinedConnectionsLock = new();
 
-        public Guid GroupId { get; private set; }
+        public string GroupId { get; private set; }
         public string GroupName { get; private set; }
 
-        public PlaybackGroup(IPlaybackQueue playbackQueue, Guid groupId, string groupName)
+        public PlaybackGroup(IPlaybackQueue playbackQueue, string groupId, string groupName)
         {
             _playbackQueue = playbackQueue;
             GroupName = groupName;
@@ -50,6 +50,13 @@ namespace SpotifyPlayback.Services
             SetCurrentlyPlayingTrackStartTime();
 
             return _currentlyPlayingTrack;
+        }
+
+        public void ResetTracks()
+        {
+            _playbackQueue.ResetQueue();
+            _currentlyPlayingTrack = null;
+            _nextTrack = null;
         }
 
         private void SetCurrentAndNextTrack(SpotifyTrackDto? newTrack)

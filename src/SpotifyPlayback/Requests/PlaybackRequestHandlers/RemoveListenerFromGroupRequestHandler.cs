@@ -41,7 +41,7 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
         RemoveListenerFromGroupRequest : IPlaybackRequest<PlaybackRequestResult<RemoveListenerFromGroupRequestResult>>
     {
         public string UserId { get; set; } = null!;
-        public Guid UserGroupId { get; set; } = default!;
+        public string UserGroupId { get; set; } = default!;
         public Guid ConnectionId { get; set; } = default!;
     }
 

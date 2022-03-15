@@ -43,10 +43,10 @@ namespace Pjfm.Api.Controllers
             return Ok(playbackGroupsInfo.PlaybackGroups);
         }
 
-        [HttpPut("{groupId:guid}/play")]
+        [HttpPut("{groupId}/play")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public async Task<IActionResult> Play(string deviceId, Guid groupId)
+        public async Task<IActionResult> Play(string deviceId, string groupId)
         {
             if (!_socketConnectionCollection.TryGetUserSocketConnection(PjfmPrincipal.Id, out var socketConnection))
             {
@@ -88,7 +88,7 @@ namespace Pjfm.Api.Controllers
             
             await _playbackRequestDispatcher.HandlePlaybackRequest(new RemoveListenerFromGroupRequest()
             {
-                UserGroupId = connectionPlaybackGroupId.Value,
+                UserGroupId = connectionPlaybackGroupId,
                 UserId = PjfmPrincipal.Id,
                 ConnectionId = socketConnection.ConnectionId,
             });
@@ -116,12 +116,38 @@ namespace Pjfm.Api.Controllers
 
             _playbackRequestDispatcher.HandlePlaybackRequest(new SkipTrackRequest()
             {
-                GroupId = groupId.Value,
+                GroupId = groupId,
             });
 
             return Ok();
         }
         
+        [HttpPut("reset")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public IActionResult ResetSession() 
+        {
+            if (!_socketConnectionCollection.TryGetUserSocketConnection(PjfmPrincipal.Id, out var socketConnection))
+            {
+                return Conflict();
+            }
+            
+            var groupId = socketConnection.GetJoinedPlaybackGroupId();
+
+            if (groupId == null)
+            {
+                return NotFound();
+            }
+            
+            _playbackRequestDispatcher.HandlePlaybackRequest(new ResetSessionRequest()
+            {
+                GroupId = groupId,
+            });
+
+            return Ok();
+        }
+
         [HttpPut("track-request")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -157,7 +183,7 @@ namespace Pjfm.Api.Controllers
 
             var result = await _playbackRequestDispatcher.HandlePlaybackRequest(new UserRequestTracksToPlaybackRequest()
             {
-                GroupId = joinedPlaybackGroupId.Value,
+                GroupId = joinedPlaybackGroupId,
                 RequestedTracks = tracks,
                 UserId = PjfmPrincipal.Id,
             });

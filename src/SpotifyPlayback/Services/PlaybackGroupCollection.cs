@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using Domain.SessionGroup;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Common;
 using SpotifyPlayback.Interfaces;
@@ -13,7 +15,7 @@ namespace SpotifyPlayback.Services
     public class PlaybackGroupCollection : IPlaybackGroupCollection
     {
         private readonly IServiceProvider _serviceProvider;
-        private ConcurrentDictionary<Guid, IPlaybackGroup> _playbackGroups = new();
+        private ConcurrentDictionary<string, IPlaybackGroup> _playbackGroups = new();
 
         public event PlaybackGroupCreatedEvent PlaybackGroupCreatedEvent = null!;
 
@@ -22,13 +24,17 @@ namespace SpotifyPlayback.Services
             _serviceProvider = serviceProvider;
         }
 
-        public Guid CreateNewPlaybackGroup(string groupName)
+        public string CreateNewPlaybackGroup(SessionGroup sessionGroup)
         {
             var playbackQueue = GetNewPlaybackQueue();
-            var groupId = Guid.NewGuid();
+            var groupId = sessionGroup.Id;
 
-            CreateAndAddPlaybackGroup(groupName, playbackQueue, groupId);
+            playbackQueue.SetFillerQueueParticipantIds(sessionGroup.FillerQueueParticipants.Select(p => p.Id).ToArray());
+            
+            CreateAndAddPlaybackGroup(sessionGroup.GroupName, playbackQueue, groupId);
+            
             PlaybackGroupCreatedEvent.Invoke(this, new PlaybackGroupCreatedEventArgs() { GroupId = groupId });
+            
             return groupId;
         }
 
@@ -39,13 +45,13 @@ namespace SpotifyPlayback.Services
             return playbackQueue;
         }
         
-        private void CreateAndAddPlaybackGroup(string groupName, IPlaybackQueue playbackQueue, Guid groupId)
+        private void CreateAndAddPlaybackGroup(string groupName, IPlaybackQueue playbackQueue, string groupId)
         {
             var playbackGroup = new PlaybackGroup(playbackQueue, groupId, groupName);
             _playbackGroups.TryAdd(groupId, playbackGroup);
         }
 
-        public async Task<PlaybackScheduledTrack> GetGroupNewTrack(Guid groupId)
+        public async Task<PlaybackScheduledTrack> GetGroupNewTrack(string groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);
             var groupTrack = await playbackGroup.GetNextTrack();
@@ -57,19 +63,19 @@ namespace SpotifyPlayback.Services
             };
         }
         
-        public IEnumerable<ListenerDto> GetGroupListeners(Guid groupId)
+        public IEnumerable<ListenerDto> GetGroupListeners(string groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);
             return playbackGroup.GetGroupListeners();
         }
 
-        public IEnumerable<Guid> GetGroupJoinedConnectionIds(Guid groupId)
+        public IEnumerable<Guid> GetGroupJoinedConnectionIds(string groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);
             return playbackGroup.GetJoinedConnectionIds();
         }
 
-        public PlaybackGroupDto GetPlaybackGroupInfo(Guid groupId)
+        public PlaybackGroupDto GetPlaybackGroupInfo(string groupId)
         {
             var playbackGroup = GetPlaybackGroup(groupId);
             Guard.NotNull(playbackGroup, nameof(playbackGroup));
@@ -89,7 +95,7 @@ namespace SpotifyPlayback.Services
             return groupsData;
         }
 
-        public bool RemoveJoinedConnectionFromGroup(Guid connectionId, Guid groupId)
+        public bool RemoveJoinedConnectionFromGroup(Guid connectionId, string groupId)
         {
             if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
             {
@@ -98,7 +104,7 @@ namespace SpotifyPlayback.Services
             
             return false;
         }
-        public IPlaybackGroup GetPlaybackGroup(Guid groupId)
+        public IPlaybackGroup GetPlaybackGroup(string groupId)
         {
             if (_playbackGroups.TryGetValue(groupId, out var playbackGroup))
             {
@@ -113,6 +119,6 @@ namespace SpotifyPlayback.Services
 
     public class PlaybackGroupCreatedEventArgs
     {
-        public Guid GroupId { get; set; }
+        public string GroupId { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace Pjfm.SpotifyPlayback.Test
         public void AddPlaybackScheduledTrack_Should_InsertTrackAtRightIndex()
         {
             // Arrange
-            var groupId = Guid.NewGuid();
+            var groupId = "0312";
             var tracksToSchedule = GetAddPlaybackScheduledTracksTestCaseTracks(groupId);
 
             var expectedScheduledTrackTitlesOrder = new[] {"0", "3", "2", "1"};
@@ -44,7 +44,7 @@ namespace Pjfm.SpotifyPlayback.Test
         public void GetDueTracks_Should_ReturnOnlyDueTracks()
         {
             // Arrange
-            var groupId = Guid.NewGuid();
+            var groupId = "0321";
             var testTracks = GetGetDueTracksTestTracks(groupId);
 
             for (int i = 0; i < 4; i++)
@@ -63,7 +63,7 @@ namespace Pjfm.SpotifyPlayback.Test
             Assert.DoesNotContain(dueTracks, x => x.SpotifyTrack.Title == "2");
         }
 
-        private static PlaybackScheduledTrack[] GetGetDueTracksTestTracks(Guid groupId)
+        private static PlaybackScheduledTrack[] GetGetDueTracksTestTracks(string groupId)
         {
             var testTracks = new[]
             {
@@ -95,7 +95,7 @@ namespace Pjfm.SpotifyPlayback.Test
             return testTracks;
         }
 
-        private static PlaybackScheduledTrack[] GetAddPlaybackScheduledTracksTestCaseTracks(Guid groupId)
+        private static PlaybackScheduledTrack[] GetAddPlaybackScheduledTracksTestCaseTracks(string groupId)
         {
             var tracksToSchedule = new[]
             {

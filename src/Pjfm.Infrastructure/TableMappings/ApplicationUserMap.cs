@@ -20,6 +20,9 @@ namespace Pjfm.Infrastructure.TableMappings
                 .WithOne(x => x.ApplicationUser)
                 .HasForeignKey<SpotifyUserData>(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+            
+            builder.HasMany(x => x.FillerQueueParticipantGroups)
+                .WithMany(x => x.FillerQueueParticipants);
         }
     }
 }

@@ -40,7 +40,7 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 
     public class AddListenerToGroupRequest : IPlaybackRequest<PlaybackRequestResult<AddListenerToGroupRequestResult>>
     {
-        public Guid GroupId { get; set; } = default!;
+        public string GroupId { get; set; } = default!;
         public ListenerDto NewListener { get; set; } = null!;
     }
 
