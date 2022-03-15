@@ -15,5 +15,6 @@ namespace Domain.ApplicationUser
         public int SpotifyUserDataId { get; set; }
         public SpotifyUserData.SpotifyUserData SpotifyUserData { get; set; } = null!;
         public bool SpotifyAuthenticated { get; set; }
+        public ICollection<SessionGroup.SessionGroup> FillerQueueParticipantGroups { get; set; } = null!;
     }
 }
