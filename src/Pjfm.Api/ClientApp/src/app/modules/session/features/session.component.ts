@@ -141,6 +141,12 @@ export class SessionComponent implements OnInit, OnDestroy {
   }
 
   settingsClicked(): void {
+    if (this._sessionPageDialogOpen) {
+      return;
+    }
+
+    this._sessionPageDialogOpen = true;
+
     this._dialogService
       .openDialog(SettingsDialogComponent, null)
       .pipe(takeUntil(this._destroyed$))
