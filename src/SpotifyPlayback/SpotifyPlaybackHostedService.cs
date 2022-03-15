@@ -1,6 +1,8 @@
 using System;
+using System.Data;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain.SessionGroup;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using SpotifyPlayback.Interfaces;
@@ -27,11 +29,26 @@ namespace SpotifyPlayback
             
             _playbackGroupCollection = scope.ServiceProvider.GetRequiredService<IPlaybackGroupCollection>();
             _playbackScheduledTrackQueue = scope.ServiceProvider.GetRequiredService<IPlaybackScheduledTrackQueue>();
-            
+
+            var sessionGroupRepository = scope.ServiceProvider.GetRequiredService<ISessionGroupRepository>();
+
+            try
+            {
+                // TODO: For now we create one at the start. In later versions more groups should be able to be created
+                sessionGroupRepository.CreateSessionGroup("Pjfm").GetAwaiter().GetResult();
+            }
+            catch (DuplicateNameException _)
+            {
+                // Catch if Pjfm already exists
+            }
+
             _playbackGroupCollection.PlaybackGroupCreatedEvent += AddNewGroupToScheduler;
             
-            // TODO: For now we create one at the start. In later versions more groups should be able to be created
-            _playbackGroupCollection.CreateNewPlaybackGroup("Pjfm");
+            var sessionGroups = sessionGroupRepository.GetAllSessionGroups();
+            foreach (var sessionGroup in sessionGroups)
+            {
+                _playbackGroupCollection.CreateNewPlaybackGroup(sessionGroup.GroupName);
+            }
 
             _playbackTimer = new Timer(ExecuteAsync, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(500));
             

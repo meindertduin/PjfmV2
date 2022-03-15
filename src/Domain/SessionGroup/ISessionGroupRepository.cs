@@ -13,7 +13,7 @@ namespace Domain.SessionGroup
         /// <exception cref="DuplicateNameException">
         ///     A SessionGroup with the given groupName already exists.
         /// </exception>
-        Task CreateSessionGroup(string groupName);
+        Task<string> CreateSessionGroup(string groupName);
         IEnumerable<SessionGroup> GetAllSessionGroups();
         Task AddFillerQueueParticipant(string groupId, ApplicationUser.ApplicationUser user);
         Task RemoveFillerQueueParticipant(string groupId, ApplicationUser.ApplicationUser user);

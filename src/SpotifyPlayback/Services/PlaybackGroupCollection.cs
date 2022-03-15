@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Domain.SessionGroup;
 using Microsoft.Extensions.DependencyInjection;
 using Pjfm.Common;
 using SpotifyPlayback.Interfaces;
@@ -22,12 +23,12 @@ namespace SpotifyPlayback.Services
             _serviceProvider = serviceProvider;
         }
 
-        public Guid CreateNewPlaybackGroup(string groupName)
+        public Guid CreateNewPlaybackGroup(SessionGroup sessionGroup)
         {
             var playbackQueue = GetNewPlaybackQueue();
             var groupId = Guid.NewGuid();
 
-            CreateAndAddPlaybackGroup(groupName, playbackQueue, groupId);
+            CreateAndAddPlaybackGroup(sessionGroup.GroupName, playbackQueue, groupId);
             PlaybackGroupCreatedEvent.Invoke(this, new PlaybackGroupCreatedEventArgs() { GroupId = groupId });
             return groupId;
         }

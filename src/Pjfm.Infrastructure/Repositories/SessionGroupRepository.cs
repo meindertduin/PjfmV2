@@ -19,23 +19,25 @@ namespace Pjfm.Infrastructure.Repositories
             _pjfmContext = pjfmContext;
         }
 
-        public Task CreateSessionGroup(string groupName)
+        public async Task<string> CreateSessionGroup(string groupName)
         {
             var group = _pjfmContext.SessionGroups.FirstOrDefault(s => s.GroupName == groupName);
 
-            if (group == null)
+            if (group != null)
             {
                 throw new DuplicateNameException($"A SessionGroup with name: {groupName} already exists.");
             }
 
+            var id = Guid.NewGuid().ToString();
             _pjfmContext.SessionGroups.Add(new SessionGroup()
             {
                 GroupName = groupName,
-                Id = Guid.NewGuid().ToString(),
+                Id = id,
                 FillerQueueParticipants = new List<ApplicationUser>(),
             });
 
-            return _pjfmContext.SaveChangesAsync();
+            await _pjfmContext.SaveChangesAsync();
+            return id;
         }
 
         public IEnumerable<SessionGroup> GetAllSessionGroups()
