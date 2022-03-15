@@ -47,18 +47,11 @@ namespace Pjfm.Api.Controllers
             return Ok(participants);
         }
 
-        [HttpPut("AddFillerQueueParticipant/{groupId}")]
+        [HttpPut("SetFillerQueueParticipants/{groupId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> AddFillerQueueParticipant(string userId, string groupId)
+        public async Task<IActionResult> SetFillerQueueParticipants(string[] userIds, string groupId)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-
-            if (user == null)
-            {
-                return NotFound();
-            }
-            
             var group = await _sessionGroupRepository.FindSessionGroupById(groupId);
 
             if (group == null)
@@ -67,34 +60,17 @@ namespace Pjfm.Api.Controllers
             }
             
             // TODO check if user is allowed to add other user to session
-
-            await _sessionGroupRepository.AddFillerQueueParticipant(groupId, user);
             
-            return Ok();
-        }
-        
-        [HttpPut("RemoveFillerQueueParticipant/{groupId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> RemoveFillerQueueParticipant(string userId, string groupId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
+            List<Task<ApplicationUser>> findUserTasks = new ();
 
-            if (user == null)
+            foreach (var userId in userIds)
             {
-                return NotFound();
+                findUserTasks.Add(_userManager.FindByIdAsync(userId));
             }
-            
-            var group = await _sessionGroupRepository.FindSessionGroupById(groupId);
 
-            if (group == null)
-            {
-                return NotFound();
-            }
-            
-            // TODO check if user is allowed to add other user to session
+            var users = await Task.WhenAll(findUserTasks);
 
-            await _sessionGroupRepository.RemoveFillerQueueParticipant(groupId, user);
+            await _sessionGroupRepository.SetFillerQueueParticipants(groupId, users.ToList());
             
             return Ok();
         }

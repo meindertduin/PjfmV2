@@ -54,21 +54,14 @@ namespace Pjfm.Infrastructure.Repositories
                 .FirstOrDefaultAsync(s => s.Id == groupId)!;
         }
         
-        public async Task AddFillerQueueParticipant(string groupId, ApplicationUser user)
+        public async Task SetFillerQueueParticipants(string groupId, List<ApplicationUser> users)
         {
-            var group = await _pjfmContext.SessionGroups.AsNoTracking().FirstOrDefaultAsync(g => g.Id == groupId);
+            var group = await _pjfmContext.SessionGroups
+                .Include(s => s.FillerQueueParticipants)
+                .FirstOrDefaultAsync(g => g.Id == groupId);
             Guard.NotNull(group, nameof(group));
 
-            group!.FillerQueueParticipants.Add(user);
-            await _pjfmContext.SaveChangesAsync();
-        }
-
-        public async Task RemoveFillerQueueParticipant(string groupId, ApplicationUser user)
-        {
-            var group = await _pjfmContext.SessionGroups.AsNoTracking().FirstOrDefaultAsync(g => g.Id == groupId);
-            Guard.NotNull(group, nameof(group));
-
-            group!.FillerQueueParticipants.Remove(user);
+            group!.FillerQueueParticipants = users;
             await _pjfmContext.SaveChangesAsync();
         }
     }

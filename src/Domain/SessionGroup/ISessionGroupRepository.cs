@@ -16,7 +16,6 @@ namespace Domain.SessionGroup
         Task<string> CreateSessionGroup(string groupName);
         Task<List<SessionGroup>> GetAllSessionGroups();
         Task<SessionGroup?> FindSessionGroupById(string groupId);
-        Task AddFillerQueueParticipant(string groupId, ApplicationUser.ApplicationUser user);
-        Task RemoveFillerQueueParticipant(string groupId, ApplicationUser.ApplicationUser user);
+        Task SetFillerQueueParticipants(string groupId, List<ApplicationUser.ApplicationUser>users);
     }
 }
