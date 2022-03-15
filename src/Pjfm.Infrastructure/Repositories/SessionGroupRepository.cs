@@ -47,6 +47,13 @@ namespace Pjfm.Infrastructure.Repositories
                 .AsNoTracking()
                 .ToList();
         }
+
+        public SessionGroup? FindSessionGroupById(string groupId)
+        {
+            return _pjfmContext.SessionGroups
+                .Include(s => s.FillerQueueParticipants)
+                .FirstOrDefault(s => s.Id == groupId);
+        }
         
         public Task AddFillerQueueParticipant(string groupId, ApplicationUser user)
         {

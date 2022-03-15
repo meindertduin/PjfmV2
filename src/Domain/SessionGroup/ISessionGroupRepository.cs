@@ -15,6 +15,7 @@ namespace Domain.SessionGroup
         /// </exception>
         Task<string> CreateSessionGroup(string groupName);
         IEnumerable<SessionGroup> GetAllSessionGroups();
+        SessionGroup? FindSessionGroupById(string groupId);
         Task AddFillerQueueParticipant(string groupId, ApplicationUser.ApplicationUser user);
         Task RemoveFillerQueueParticipant(string groupId, ApplicationUser.ApplicationUser user);
     }
