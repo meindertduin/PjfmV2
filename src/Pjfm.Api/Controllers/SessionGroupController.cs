@@ -29,9 +29,9 @@ namespace Pjfm.Api.Controllers
         [HttpGet("GetParticipants/{groupId}")]
         [ProducesResponseType(typeof(IEnumerable<ApplicationUserDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult GetParticipants(string groupId)
+        public async Task<IActionResult> GetParticipants(string groupId)
         {
-            var group = _sessionGroupRepository.FindSessionGroupById(groupId);
+            var group = await _sessionGroupRepository.FindSessionGroupById(groupId);
 
             if (group == null)
             {
@@ -59,7 +59,7 @@ namespace Pjfm.Api.Controllers
                 return NotFound();
             }
             
-            var group = _sessionGroupRepository.FindSessionGroupById(groupId);
+            var group = await _sessionGroupRepository.FindSessionGroupById(groupId);
 
             if (group == null)
             {
@@ -85,7 +85,7 @@ namespace Pjfm.Api.Controllers
                 return NotFound();
             }
             
-            var group = _sessionGroupRepository.FindSessionGroupById(groupId);
+            var group = await _sessionGroupRepository.FindSessionGroupById(groupId);
 
             if (group == null)
             {

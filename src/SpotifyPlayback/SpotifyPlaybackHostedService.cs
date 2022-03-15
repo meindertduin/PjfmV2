@@ -44,7 +44,7 @@ namespace SpotifyPlayback
 
             _playbackGroupCollection.PlaybackGroupCreatedEvent += AddNewGroupToScheduler;
             
-            var sessionGroups = sessionGroupRepository.GetAllSessionGroups();
+            var sessionGroups = sessionGroupRepository.GetAllSessionGroups().GetAwaiter().GetResult();
             foreach (var sessionGroup in sessionGroups)
             {
                 _playbackGroupCollection.CreateNewPlaybackGroup(sessionGroup);

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using Domain.ApplicationUser;
 using Domain.SessionGroup;
@@ -21,7 +20,7 @@ namespace Pjfm.Infrastructure.Repositories
 
         public async Task<string> CreateSessionGroup(string groupName)
         {
-            var group = _pjfmContext.SessionGroups.FirstOrDefault(s => s.GroupName == groupName);
+            var group = await _pjfmContext.SessionGroups.FirstOrDefaultAsync(s => s.GroupName == groupName);
 
             if (group != null)
             {
@@ -40,37 +39,37 @@ namespace Pjfm.Infrastructure.Repositories
             return id;
         }
 
-        public IEnumerable<SessionGroup> GetAllSessionGroups()
+        public Task<List<SessionGroup>> GetAllSessionGroups()
         {
             return _pjfmContext.SessionGroups
                 .Include(s => s.FillerQueueParticipants)
                 .AsNoTracking()
-                .ToList();
+                .ToListAsync();
         }
 
-        public SessionGroup? FindSessionGroupById(string groupId)
+        public Task<SessionGroup?> FindSessionGroupById(string groupId)
         {
             return _pjfmContext.SessionGroups
                 .Include(s => s.FillerQueueParticipants)
-                .FirstOrDefault(s => s.Id == groupId);
+                .FirstOrDefaultAsync(s => s.Id == groupId)!;
         }
         
-        public Task AddFillerQueueParticipant(string groupId, ApplicationUser user)
+        public async Task AddFillerQueueParticipant(string groupId, ApplicationUser user)
         {
-            var group = _pjfmContext.SessionGroups.AsNoTracking().FirstOrDefault(g => g.Id == groupId);
+            var group = await _pjfmContext.SessionGroups.AsNoTracking().FirstOrDefaultAsync(g => g.Id == groupId);
             Guard.NotNull(group, nameof(group));
 
             group!.FillerQueueParticipants.Add(user);
-            return _pjfmContext.SaveChangesAsync();
+            await _pjfmContext.SaveChangesAsync();
         }
 
-        public Task RemoveFillerQueueParticipant(string groupId, ApplicationUser user)
+        public async Task RemoveFillerQueueParticipant(string groupId, ApplicationUser user)
         {
-            var group = _pjfmContext.SessionGroups.AsNoTracking().FirstOrDefault(g => g.Id == groupId);
+            var group = await _pjfmContext.SessionGroups.AsNoTracking().FirstOrDefaultAsync(g => g.Id == groupId);
             Guard.NotNull(group, nameof(group));
 
             group!.FillerQueueParticipants.Remove(user);
-            return _pjfmContext.SaveChangesAsync();
+            await _pjfmContext.SaveChangesAsync();
         }
     }
 }

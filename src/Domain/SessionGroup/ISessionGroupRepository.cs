@@ -14,8 +14,8 @@ namespace Domain.SessionGroup
         ///     A SessionGroup with the given groupName already exists.
         /// </exception>
         Task<string> CreateSessionGroup(string groupName);
-        IEnumerable<SessionGroup> GetAllSessionGroups();
-        SessionGroup? FindSessionGroupById(string groupId);
+        Task<List<SessionGroup>> GetAllSessionGroups();
+        Task<SessionGroup?> FindSessionGroupById(string groupId);
         Task AddFillerQueueParticipant(string groupId, ApplicationUser.ApplicationUser user);
         Task RemoveFillerQueueParticipant(string groupId, ApplicationUser.ApplicationUser user);
     }
