@@ -4,10 +4,29 @@
   </ng-container>
   <ng-container content>
     <div class="container">
-      <button class="raised-button raised-button__yellow" (click)="onResetSessionClicked()">
+      <section class="add-user-filler-queue">
+        <div class="selected-tracks m-s-b">
+          <span class="selected-track" (click)="removeSelectedUser(i)" *ngFor="let selectedUser of selectedUsers; let i = index"
+            >[ {{selectedUser.userName}} ]</span
+          >
+        </div>
+        <label for="user-autocomplete">Search for a user</label>
+        <pjfm-autocomplete
+          [autoFocus]="true"
+          [inputId]="'user-autocomplete'"
+          (queryChanges)="onQueryChange($event)"
+          [autoCompleteValues]="autoCompleteValues"
+          placeHolder="Search by name"
+          (valueSelect)="onSearchValueSelect($event)"
+        ></pjfm-autocomplete>
+      </section>
+    </div>
+  </ng-container>
+  <ng-container footer>
+    <div class="button-container">
+      <button class="raised-button" (click)="onResetSessionClicked()">
         <span>RESET SESSION</span>
       </button>
     </div>
   </ng-container>
-  <ng-container footer> </ng-container>
 </pjfm-base-bottom-sheet>

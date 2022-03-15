@@ -1,3 +1,50 @@
-.container {
+@import "variables";
 
+.container {
+  padding: 10px 15px 30px 15px;
+  display: flex;
+  justify-content: center;
+
+  .selected-tracks {
+    color: $color-yellow;
+
+    .selected-track {
+      margin-right: 5px;
+      cursor: pointer;
+      font-size: 12px;
+
+      &:hover {
+        color: $color-warning;
+      }
+    }
+  }
+
+  .add-user-filler-queue {
+    width: 80%;
+
+    label {
+      color: $color-blue;
+    }
+
+    pjfm-autocomplete {
+      margin-top: 10px;
+      width: 100%;
+      display: block;
+    }
+  }
+}
+
+.button-container {
+  padding: 0 15px;
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+
+  button {
+    width: 40%;
+
+    &:first-child {
+      margin-right: 10px;
+    }
+  }
 }
