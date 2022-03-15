@@ -5,10 +5,14 @@
   display: flex;
   justify-content: center;
 
+  .setting-title {
+    margin: 0 0 10px 0;
+  }
+
   .selected-tracks {
     color: $color-yellow;
 
-    .selected-track {
+    .selected-names {
       margin-right: 5px;
       cursor: pointer;
       font-size: 12px;

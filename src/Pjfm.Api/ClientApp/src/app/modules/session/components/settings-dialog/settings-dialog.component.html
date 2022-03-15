@@ -5,7 +5,8 @@
   <ng-container content>
     <div class="container">
       <section class="add-user-filler-queue">
-        <div class="selected-tracks m-s-b">
+        <h5 class="setting-title">Set filler queue participants</h5>
+        <div class="selected-names m-s-b">
           <span class="selected-track" (click)="removeSelectedUser(i)" *ngFor="let selectedUser of selectedUsers; let i = index"
             >[ {{selectedUser.userName}} ]</span
           >
