@@ -9,7 +9,7 @@ namespace SpotifyPlayback.Interfaces
 {
     public interface IPlaybackGroup
     {
-        Guid GroupId { get; }
+        string GroupId { get; }
         string GroupName { get; }
         Task<SpotifyTrackDto> GetNextTrack();
         Task<SpotifyTrackDto> SkipTrack();

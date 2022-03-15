@@ -9,7 +9,7 @@ import { DialogService } from '../../../shared/services/dialog.service';
 import { StartListenDialogComponent, StartListenDialogData } from '../components/start-listen-dialog/start-listen-dialog.component';
 import { SelectTrackDialogComponent, SelectTrackDialogData } from '../components/select-track-dialog/select-track-dialog.component';
 import { UserService } from '../../../shared/services/user.service';
-import { SettingsDialogComponent } from '../components/settings-dialog/settings-dialog.component';
+import { SessionSettingsDialogData, SettingsDialogComponent } from '../components/settings-dialog/settings-dialog.component';
 
 @Component({
   selector: 'pjfm-session',
@@ -148,7 +148,7 @@ export class SessionComponent implements OnInit, OnDestroy {
     this._sessionPageDialogOpen = true;
 
     this._dialogService
-      .openDialog(SettingsDialogComponent, null)
+      .openDialog(SettingsDialogComponent, { groupId: this.loadedPlaybackData?.groupId } as SessionSettingsDialogData)
       .pipe(takeUntil(this._destroyed$))
       .subscribe(() => {
         this._sessionPageDialogOpen = false;

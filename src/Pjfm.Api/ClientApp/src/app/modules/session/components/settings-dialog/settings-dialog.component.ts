@@ -1,7 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { DialogRef, PJFM_DIALOG_DATA, PJFM_DIALOG_REF } from '../../../../shared/services/dialog.service';
-import { SelectTrackDialogData } from '../select-track-dialog/select-track-dialog.component';
-import { ApplicationUserDto, PlaybackClient, UserClient } from '../../../../core/services/api-client.service';
+import { ApplicationUserDto, PlaybackClient, SessionGroupClient, UserClient } from '../../../../core/services/api-client.service';
 import { finalize } from 'rxjs/operators';
 import { AutoCompleteValue } from '../../../../core/form-inputs/autocomplete/autocomplete.component';
 
@@ -16,13 +15,18 @@ export class SettingsDialogComponent implements OnInit {
   selectedUsers: ApplicationUserDto[] = [];
 
   constructor(
-    @Inject(PJFM_DIALOG_DATA) readonly dialogData: SelectTrackDialogData,
+    @Inject(PJFM_DIALOG_DATA) readonly dialogData: SessionSettingsDialogData,
     @Inject(PJFM_DIALOG_REF) private readonly _dialogRef: DialogRef,
     private readonly _playbackClient: PlaybackClient,
     private readonly _userClient: UserClient,
+    private readonly _sessionGroupClient: SessionGroupClient,
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this._sessionGroupClient.getParticipants(this.dialogData.groupId).subscribe((result) => {
+      this.selectedUsers = result;
+    });
+  }
 
   closeDialog(): void {
     this._dialogRef.closeDialog(undefined);
@@ -74,4 +78,8 @@ export class SettingsDialogComponent implements OnInit {
   removeSelectedUser(index: number): void {
     this.selectedUsers.splice(index, 1);
   }
+}
+
+export interface SessionSettingsDialogData {
+  groupId: string;
 }

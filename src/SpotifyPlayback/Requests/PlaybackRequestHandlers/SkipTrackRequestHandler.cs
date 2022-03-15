@@ -46,7 +46,7 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
 
     public class SkipTrackRequest : IPlaybackRequest<PlaybackRequestResult<SkipTrackRequestResult>>
     {
-        public Guid GroupId { get; set; }
+        public string GroupId { get; set; }
     }
 
     public class SkipTrackRequestResult

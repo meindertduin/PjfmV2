@@ -45,7 +45,7 @@ namespace SpotifyPlayback.Requests.PlaybackRequestHandlers
     
     public class ResetSessionRequest : IPlaybackRequest<PlaybackRequestResult<ResetSessionRequestResult>>
     {
-        public Guid GroupId { get; set; }
+        public string GroupId { get; set; }
     }
 
     public class ResetSessionRequestResult

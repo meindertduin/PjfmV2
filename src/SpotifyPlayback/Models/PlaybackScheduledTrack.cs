@@ -5,7 +5,7 @@ namespace SpotifyPlayback.Models
 {
     public class PlaybackScheduledTrack
     {
-        public Guid GroupId { get; set; }
+        public string GroupId { get; set; }
         public SpotifyTrackDto SpotifyTrack { get; set; } = null!;
         public DateTime DueTime { get; set; }
     }

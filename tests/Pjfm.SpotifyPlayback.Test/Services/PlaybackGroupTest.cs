@@ -47,7 +47,7 @@ namespace Pjfm.SpotifyPlayback.Test.Services
         }
         private PlaybackGroup CreatePlaybackGroup()
         {
-            var playbackGroup = new PlaybackGroup(_mockPlaybackQueue.Object, Guid.NewGuid(), "test");
+            var playbackGroup = new PlaybackGroup(_mockPlaybackQueue.Object, "0321", "test");
             return playbackGroup;
         }
     }

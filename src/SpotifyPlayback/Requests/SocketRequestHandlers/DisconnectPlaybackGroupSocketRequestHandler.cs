@@ -22,17 +22,17 @@ namespace SpotifyPlayback.Requests.SocketRequestHandlers
             using var scope = _serviceProvider.CreateScope();
 
             var groupId = socketConnection.GetListeningPlaybackGroupId();
-            if (!groupId.HasValue)
+            if (string.IsNullOrEmpty(groupId))
             {
                 return Task.CompletedTask;
             }
             
             var spotifyPlaybackService = scope.ServiceProvider.GetRequiredService<ISpotifyPlaybackService>();
 
-            var playbackGroup = _playbackGroupCollection.GetPlaybackGroup(groupId.Value);
+            var playbackGroup = _playbackGroupCollection.GetPlaybackGroup(groupId);
             var userWasListener = playbackGroup.RemoveListener(socketConnection.ConnectionId);
             
-            _playbackGroupCollection.RemoveJoinedConnectionFromGroup(socketConnection.ConnectionId, groupId.Value);
+            _playbackGroupCollection.RemoveJoinedConnectionFromGroup(socketConnection.ConnectionId, groupId);
 
             if (userWasListener)
             {

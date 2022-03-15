@@ -1,3 +1,4 @@
+using Domain.SessionGroup;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using SpotifyPlayback.Interfaces;
@@ -25,8 +26,8 @@ namespace Pjfm.SpotifyPlayback.Test.Services
             playbackGroupCollection.PlaybackGroupCreatedEvent += (sender, args) => { };
 
             // Act
-            playbackGroupCollection.CreateNewPlaybackGroup(groupName1);
-            playbackGroupCollection.CreateNewPlaybackGroup(groupName2);
+            playbackGroupCollection.CreateNewPlaybackGroup(new SessionGroup() { GroupName = groupName1 });
+            playbackGroupCollection.CreateNewPlaybackGroup(new SessionGroup() { GroupName = groupName2 });
 
             var playbackGroups = playbackGroupCollection.GetPlaybackGroupsInfo();
             
