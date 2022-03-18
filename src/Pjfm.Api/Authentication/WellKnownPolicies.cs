@@ -4,5 +4,6 @@ namespace Pjfm.Api.Authentication
     {
         public const string User = nameof(User);
         public const string SpotifyAuthenticatedUser = nameof(SpotifyAuthenticatedUser);
+        public const string Mod = nameof(Mod);
     }
 }

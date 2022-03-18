@@ -88,10 +88,17 @@ namespace Pjfm.Api
             services.AddAuthorization(options =>
             {
                 options.AddPolicy(WellKnownPolicies.User, builder => { builder.RequireAuthenticatedUser(); });
+                
                 options.AddPolicy(WellKnownPolicies.SpotifyAuthenticatedUser, builder =>
                 {
                     builder.RequireAuthenticatedUser();
                     builder.RequireClaim(PjfmClaimTypes.Role, UserRole.SpotifyAuth.ToString());
+                });
+                
+                options.AddPolicy(WellKnownPolicies.Mod, builder =>
+                {
+                    builder.RequireAuthenticatedUser();
+                    builder.RequireClaim(PjfmClaimTypes.Role, UserRole.Mod.ToString());
                 });
             });
         }

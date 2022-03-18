@@ -9,8 +9,8 @@ using Pjfm.Application.GebruikerNummer;
 
 namespace Pjfm.Api.Controllers
 {
-    [Authorize(WellKnownPolicies.SpotifyAuthenticatedUser)]
     [Route("api/spotify/tracks")]
+    [Authorize(WellKnownPolicies.SpotifyAuthenticatedUser)]
     public class SpotifyTrackController : PjfmController
     {
         private readonly ISpotifyTrackClient _spotifyTrackClient;

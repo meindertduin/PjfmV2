@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Pjfm.Api.Authentication;
 using Pjfm.Api.Controllers.Base;
 using Pjfm.Application.ApplicationUser;
 
@@ -14,6 +15,7 @@ namespace Pjfm.Api.Controllers
 {
     [Authorize]
     [Route("api/session")]
+    [Authorize(WellKnownPolicies.Mod)]
     public class SessionGroupController : PjfmController
     {
         private readonly ISessionGroupRepository _sessionGroupRepository;

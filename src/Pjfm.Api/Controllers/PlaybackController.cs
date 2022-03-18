@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Pjfm.Api.Authentication;
 using Pjfm.Api.Controllers.Base;
 using Pjfm.Api.Models.Playback;
 using Pjfm.Application.ApplicationUser;
@@ -16,8 +17,8 @@ using SpotifyPlayback.Requests.PlaybackRequestHandlers;
 
 namespace Pjfm.Api.Controllers
 {
-    [AllowAnonymous]
     [Route("api/playback")]
+    [Authorize(WellKnownPolicies.SpotifyAuthenticatedUser)]
     public class PlaybackController : PjfmController
     {
         private readonly IPlaybackRequestDispatcher _playbackRequestDispatcher;
@@ -34,6 +35,7 @@ namespace Pjfm.Api.Controllers
         }
 
         [HttpGet("groups")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<PlaybackGroupDto>), StatusCodes.Status200OK)]
         public async Task<IActionResult> GetPlaybackGroups()
         {

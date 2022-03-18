@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Pjfm.Api.Authentication;
 using Pjfm.Api.Controllers.Base;
 using Pjfm.Api.Models.Spotify;
 using SpotifyPlayback.Interfaces;
@@ -11,6 +12,7 @@ namespace Pjfm.Api.Controllers
 {
     [Authorize]
     [Route("api/spotify")]
+    [Authorize(WellKnownPolicies.SpotifyAuthenticatedUser)]
     public class SpotifyPlayerController : PjfmController
     {
         private readonly ISpotifyPlaybackService _spotifyPlaybackService;
