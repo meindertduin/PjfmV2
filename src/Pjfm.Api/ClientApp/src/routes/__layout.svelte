@@ -1,20 +1,17 @@
 <script lang="ts">
     import {goto} from "$app/navigation";
 
-    import type {GetCurrentUserResponseModel} from "../services/apiClient";
     import {UserRole} from "../services/apiClient";
     import {onMount} from "svelte";
-    import {loadUser} from "../store/userStore";
+    import {loadUser, user} from "../store/userStore";
     import {isOnDetailPage} from "../store/store.js";
     
-    let user: GetCurrentUserResponseModel | null = $user;
     let showAuthenticateSpotifyButton = false;
     
     onMount(() => {
         loadUser().then(result => {
-            user = result;
-            if (user != null) {
-                showAuthenticateSpotifyButton = !user.roles.includes(UserRole.SpotifyAuth);
+            if ($user != null) {
+                showAuthenticateSpotifyButton = !$user.roles.includes(UserRole.SpotifyAuth);
             }
         })
     })
@@ -27,7 +24,7 @@
     {#if $isOnDetailPage}
         <button class="back-button" on:click={onBackClick}>{ '<--' }</button>
     {/if}
-    {#if user == null}
+    {#if $user === null}
         <div class="toolbar-right-info">
             <a href="/user/login" class="flat-button flat-button__round flat-button__green ripple m-xs-x">Login</a>
             <a href="/user/register" class="flat-button flat-button__round flat-button__blue ripple m-xs-x">Register</a>
@@ -35,7 +32,7 @@
     {:else}
         <div class="toolbar-right-info">
             <div class="user-info">
-                <span class="m-m-r user-name">{user.userName}</span>
+                <span class="m-m-r user-name">{$user.userName}</span>
             </div>
             <div class="toolbar-links">
                 {#if showAuthenticateSpotifyButton}
