@@ -3,6 +3,9 @@
     import {onMount} from "svelte";
     import {PlaybackClient} from "../services/apiClient";
     import type { PlaybackGroupDto } from '../services/apiClient';
+    import {isOnDetailPage} from "../store/store";
+
+    isOnDetailPage.update(() => false);
 
     let playbackGroups: PlaybackGroupDto[] = [];
     
