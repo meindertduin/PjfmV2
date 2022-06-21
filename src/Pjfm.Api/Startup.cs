@@ -1,5 +1,4 @@
 using System;
-using IdentityModel.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -7,10 +6,8 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Newtonsoft.Json.Serialization;
 using Pjfm.Api.Authentication;
 using Pjfm.Api.HostedServices;
-using ProxyKit;
 using SpotifyPlayback;
 
 namespace Pjfm.Api
@@ -49,7 +46,6 @@ namespace Pjfm.Api
             services.AddSwaggerDocument(options => options.Title = "Pjfm.Api");
             
             // Setup spa application
-            services.AddProxy();
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/dist"; });
         }
 
@@ -105,41 +101,20 @@ namespace Pjfm.Api
             
             if (env.IsDevelopment())
             {
-                app.MapWhen(p => p.Request.Path.StartsWithSegments("/sockjs-node"),
-                    config =>
+                app.UseSpa(spa =>
+                {
+                    spa.ApplicationBuilder.Use(async (context, next) =>
                     {
-                        config.UseSpa(spa => { spa.UseProxyToSpaDevelopmentServer("http://localhost:4200"); });
+                        context.Response.OnStarting(() => System.Threading.Tasks.Task.FromResult(0));
+
+                        await next();
                     });
+
+                    spa.Options.SourcePath = "./ClientApp";
+                    spa.UseProxyToSpaDevelopmentServer("http://127.0.0.1:3000/");
+                });
             }
 
-            app.UseSpa(spa =>
-            {
-                spa.Options.SourcePath = "ClientApp";
-
-                if (env.IsDevelopment())
-                {
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
-                }
-                else
-                {
-                    spa.Options.DefaultPageStaticFileOptions = new StaticFileOptions
-                    {
-                        OnPrepareResponse = DoNotCache
-                    };
-                }
-            });
-        }
-        
-        private static void DoNotCache(StaticFileResponseContext context)
-        {
-            if (!context.Context.Request.Headers.ContainsKey("Cache-Control"))
-                context.Context.Request.Headers.Add("Cache-Control", "no-cache, no-store, must-revalidate");
-            
-            if (!context.Context.Request.Headers.ContainsKey("Pragma"))
-                context.Context.Response.Headers.Add("Pragma", "no-cache");
-            
-            if (!context.Context.Request.Headers.ContainsKey("Expires"))
-                context.Context.Request.Headers.Add("Expires", "-1");
         }
     }
     

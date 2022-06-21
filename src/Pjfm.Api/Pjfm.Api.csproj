@@ -22,7 +22,6 @@
         <PackageReference Include="OpenIddict.AspNetCore" Version="3.1.1" />
         <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="3.1.1" />
         <PackageReference Include="Scrutor" Version="3.3.0" />
-        <PackageReference Include="ProxyKit" Version="2.3.4" />
         <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.7" />
     </ItemGroup>
 
@@ -46,12 +45,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Folder Include="ClientApp\src\app\core\interceptors" />
-        <Folder Include="ClientApp\src\app\modules" />
-        <Folder Include="ClientApp\src\app\modules\session\components" />
-        <Folder Include="ClientApp\src\app\shared\components" />
-        <Folder Include="ClientApp\src\app\shared\directives" />
-        <Folder Include="ClientApp\src\app\shared\services" />
+        <Folder Include="OldClient\src\app\core\interceptors" />
+        <Folder Include="OldClient\src\app\modules" />
+        <Folder Include="OldClient\src\app\modules\session\components" />
+        <Folder Include="OldClient\src\app\shared\components" />
+        <Folder Include="OldClient\src\app\shared\directives" />
+        <Folder Include="OldClient\src\app\shared\services" />
     </ItemGroup>
 
     <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
