@@ -1,14 +1,15 @@
 <script lang="ts">
+    import {goto} from "$app/navigation";
+
     import {UserRole} from "../services/apiClient";
     import {onMount} from "svelte";
     import {loadUser, user} from "../store/userStore";
     import {isOnDetailPage} from "../store/store.js";
-    import {navigate} from "svelte-routing";
     
     let showAuthenticateSpotifyButton = false;
     
     onMount(() => {
-        loadUser().then(result => {
+        loadUser().then(() => {
             if ($user != null) {
                 showAuthenticateSpotifyButton = !$user.roles.includes(UserRole.SpotifyAuth);
             }
@@ -16,7 +17,7 @@
     })
     
     function onBackClick(): void {
-        navigate('../', { replace: true });
+        goto('../');
     }
 </script>
 <nav class="toolbar">
@@ -51,6 +52,10 @@
 </div>
 
 <style lang="scss">
+  :global {
+    @import "../../scss/styles";
+  }
+
   @import "scss/variables";
 
   $toolbar-height: 70px;

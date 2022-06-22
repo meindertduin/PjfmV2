@@ -1,11 +1,12 @@
+
 <script lang="ts">
     import type { PlaybackGroupDto } from '../../services/apiClient';
-    import {navigate} from "svelte-routing";
-
+    import {goto} from "$app/navigation";
+    
     export let playbackGroup: PlaybackGroupDto;
 
     function onPlaybackGroupClick(): void {
-        navigate(`/session/` + playbackGroup.groupId, {replace: true});
+        goto(`/session/` + playbackGroup.groupId);
     }
 </script>
 
@@ -35,7 +36,7 @@
 
 
 <style lang="scss">
-  @import "scss/variables";
+  @import "../../scss/variables";
 
   .container {
     padding: 10px;
