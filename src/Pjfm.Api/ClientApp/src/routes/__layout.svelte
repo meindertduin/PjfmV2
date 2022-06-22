@@ -8,12 +8,11 @@
     
     let showAuthenticateSpotifyButton = false;
     
-    onMount(() => {
-        loadUser().then(() => {
-            if ($user != null) {
-                showAuthenticateSpotifyButton = !$user.roles.includes(UserRole.SpotifyAuth);
-            }
-        })
+    onMount(async () => {
+        const user = await loadUser();
+        if (user != null) {
+            showAuthenticateSpotifyButton = !user.roles.includes(UserRole.SpotifyAuth);
+        }
     })
     
     function onBackClick(): void {
