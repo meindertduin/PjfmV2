@@ -13,7 +13,7 @@
 
 <div class="container" on:click={onPlaybackGroupClick} >
     <div class="title-container">
-        <h3 class="title">Test</h3>
+        <h3 class="title">{playbackGroup.groupName}</h3>
         <span class="listeners-text">{playbackGroup.listenersCount} {playbackGroup.listenersCount === 1 ? 'listener' : 'listeners'}</span>
     </div>
     <div class="content">

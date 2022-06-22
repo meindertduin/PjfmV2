@@ -1,10 +1,9 @@
 <script lang="ts">
-    import {goto} from "$app/navigation";
-
     import {UserRole} from "../services/apiClient";
     import {onMount} from "svelte";
     import {loadUser, user} from "../store/userStore";
     import {isOnDetailPage} from "../store/store.js";
+    import {navigate} from "svelte-routing";
     
     let showAuthenticateSpotifyButton = false;
     
@@ -17,7 +16,7 @@
     })
     
     function onBackClick(): void {
-        goto('../');
+        navigate('../', { replace: true });
     }
 </script>
 <nav class="toolbar">
@@ -52,10 +51,6 @@
 </div>
 
 <style lang="scss">
-  :global {
-    @import "../../scss/styles";
-  }
-
   @import "scss/variables";
 
   $toolbar-height: 70px;
