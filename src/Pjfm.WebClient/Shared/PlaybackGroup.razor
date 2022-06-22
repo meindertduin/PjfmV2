@@ -1,0 +1,36 @@
+@using SpotifyPlayback.Models.DataTransferObjects
+@inject NavigationManager NavigationManager
+
+<div class="container" @onclick="OnPlaybackGroupClicked">
+    <div class="title-container">
+        <h3 class="title">@Group.GroupName </h3>
+        <span class="listeners-text">@Group.ListenersCount @(Group.ListenersCount == 1 ? "listener" : "listeners")</span>
+    </div>
+    <div class="content">
+        @if (Group.CurrentlyPlayingTrack != null)
+        {
+            <div class="image-container">
+                <img src="@Group.CurrentlyPlayingTrack.SpotifyAlbum.AlbumImage.Url" alt="album cover"/>
+            </div>
+            <div class="group-info-container">
+                <div class="currently-playing-title">Now playing:</div>
+                <a class="track-title">[ @Group.CurrentlyPlayingTrack.Title ]</a>
+                <a class="artist-title">[ @String.Join(",", Group.CurrentlyPlayingTrack.Artists) ]</a>
+            </div>
+        }
+        else
+        {
+            <div class="currently-offline-title">Playback group is currently offline</div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public PlaybackGroupDto Group { get; set; } = null!;
+
+    private void OnPlaybackGroupClicked()
+    {
+        NavigationManager.NavigateTo("/Session/" + Group.GroupId);
+    }
+}

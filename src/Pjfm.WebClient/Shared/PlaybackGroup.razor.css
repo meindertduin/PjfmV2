@@ -1,0 +1,68 @@
+.container {
+  padding: 10px;
+  background: #00303e;
+  border-radius: 20px;
+}
+
+.container:hover {
+  background: #002834;
+  cursor: pointer;
+}
+
+.container .title-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.container .title-container .title {
+  text-transform: uppercase;
+  margin: 0 5px 0 10px;
+  font-weight: lighter;
+  color: #66d9ef;
+}
+
+.container .title-container .listeners-text {
+  color: #bb0a6f;
+}
+
+.container .content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-left: 10px;
+}
+
+.container .content .image-container {
+  margin: 10px 10px 10px 0;
+}
+
+.container .content .image-container img {
+  width: 60px;
+  height: 60px;
+}
+
+.container .content .group-info-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.container .content .group-info-container .currently-playing-title {
+  margin-bottom: 10px;
+  text-decoration: underline;
+}
+
+.container .content .group-info-container .track-title {
+  color: #46f127;
+  margin-bottom: 4px;
+}
+
+.container .content .group-info-container .artist-title {
+  font-size: 12px;
+  color: red;
+}
+
+.container .content .currently-offline-title {
+  margin: 10px 0;
+}

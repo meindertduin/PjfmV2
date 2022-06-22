@@ -1,3 +1,26 @@
 ﻿@page "/"
+@using Pjfm.WebClient.Services
+@using SpotifyPlayback.Models.DataTransferObjects
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Home</PageTitle>
+
+<div class="container">
+    <div class="playgroup-container">
+        @foreach (var playbackGroup in playbackGroups)
+        {
+            <PlaybackGroup  Group="playbackGroup" />
+        }
+    </div>
+</div>
+
+@code {
+    private PlaybackService playbackService = new();
+
+    private List<PlaybackGroupDto> playbackGroups = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        playbackGroups = await playbackService.GetPlaybackGroups();
+    }
+
+}

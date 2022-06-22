@@ -1,0 +1,10 @@
+@page "/Session/{GroupId}"
+
+<h3>Session @GroupId</h3>
+
+@code {
+
+    [Parameter]
+    public string GroupId { get; set; } = null!;
+
+}
