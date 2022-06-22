@@ -1,0 +1,92 @@
+.toolbar {
+  height: 70px;
+  background: midnightblue;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  width: 100%;
+  z-index: 100;
+  top: 0;
+}
+
+.toolbar .back-button {
+  position: absolute;
+  left: 20px;
+  border-radius: 50%;
+  border: 0;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  color: #fff;
+  background: inherit;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.toolbar .back-button:hover, .toolbar .back-button:focus {
+  background: #15155f;
+}
+
+.toolbar .title {
+  color: #fff;
+  font-size: 30px;
+}
+
+.view-container {
+  margin: calc(70px + 20px) 5px 10px 5px;
+}
+
+.toolbar-right-info {
+  right: 20px;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.toolbar-right-info .user-info {
+  display: flex;
+  color: #46f127;
+  align-items: center;
+}
+
+.toolbar-right-info .user-info .user-name {
+  font-size: 20px;
+  text-transform: capitalize;
+}
+
+.toolbar-right-info .toolbar-links {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+@media (min-width: 550px) {
+  .toolbar-right-info .toolbar-links {
+    flex-direction: row;
+  }
+}
+
+.toolbar-right-info .toolbar-link {
+  color: #46f127;
+  cursor: pointer;
+  font-size: 15px;
+  text-decoration: none;
+  margin-top: 5px;
+}
+
+.toolbar-right-info .toolbar-link:not(:last-child) {
+  margin-right: 5px;
+}
+
+.toolbar-right-info .toolbar-link__red {
+  color: red;
+}

@@ -19,6 +19,7 @@
         goto('../');
     }
 </script>
+
 <nav class="toolbar">
     {#if $isOnDetailPage}
         <button class="back-button" on:click={onBackClick}>{ '<--' }</button>
