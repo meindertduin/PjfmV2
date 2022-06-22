@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager NavigationManager
 
 <PageTitle>Pjfm.WebClient</PageTitle>
 
@@ -40,11 +41,30 @@
 
 @code
 {
-    private bool isDetailPage = false;
+    private bool isDetailPage;
     private bool hasUser = false;
     private bool showAuthenticationButton = false;
 
     private void GoBack()
     {
+        NavigationManager.NavigateTo("../");
+    }
+
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += NavigationManagerOnLocationChanged;
+        isDetailPage = !IsHomeRoute();
+        base.OnInitialized();
+    }
+
+    private void NavigationManagerOnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        isDetailPage = !IsHomeRoute();
+        StateHasChanged();
+    }
+
+    private bool IsHomeRoute()
+    {
+        return NavigationManager.ToBaseRelativePath(NavigationManager.Uri) == String.Empty;
     }
 }
