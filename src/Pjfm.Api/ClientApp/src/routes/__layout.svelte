@@ -43,10 +43,10 @@
                         <a class="toolbar-link" href="/api/spotify/authenticate">
                             [ Authenticate Spotify ]
                         </a>
-                        <a href="/authentication/logout" class="m-xs-l toolbar-link toolbar-link__red">
-                            [ logout ]
-                        </a>
                     {/if}
+                    <a href="/authentication/logout" class="m-xs-l toolbar-link toolbar-link__red">
+                        [ logout ]
+                    </a>
                 </div>
             </div>
         {/if}
