@@ -8,11 +8,13 @@
     
     let showAuthenticateSpotifyButton = false;
     
-    onMount(async () => {
-        const user = await loadUser();
+    $: loadUserPromise = loadUser().then((user) => {
         if (user != null) {
             showAuthenticateSpotifyButton = !user.roles.includes(UserRole.SpotifyAuth);
         }
+    });
+    
+    onMount(async () => {
     })
     
     function onBackClick(): void {
@@ -24,28 +26,31 @@
     {#if $isOnDetailPage}
         <button class="back-button" on:click={onBackClick}>{ '<--' }</button>
     {/if}
-    {#if $user === null}
-        <div class="toolbar-right-info">
-            <a href="/user/login" class="flat-button flat-button__round flat-button__green ripple m-xs-x">Login</a>
-            <a href="/user/register" class="flat-button flat-button__round flat-button__blue ripple m-xs-x">Register</a>
-        </div>
-    {:else}
-        <div class="toolbar-right-info">
-            <div class="user-info">
-                <span class="m-m-r user-name">{$user.userName}</span>
+    {#await loadUserPromise}
+    {:then _}
+        {#if $user === null}
+            <div class="toolbar-right-info">
+                <a href="/user/login" class="flat-button flat-button__round flat-button__green ripple m-xs-x">Login</a>
+                <a href="/user/register" class="flat-button flat-button__round flat-button__blue ripple m-xs-x">Register</a>
             </div>
-            <div class="toolbar-links">
-                {#if showAuthenticateSpotifyButton}
-                    <a class="toolbar-link" href="/api/spotify/authenticate">
-                        [ Authenticate Spotify ]
-                    </a>
-                    <a href="/authentication/logout" class="m-xs-l toolbar-link toolbar-link__red">
-                        [ logout ]
-                    </a>
-                {/if}
+        {:else}
+            <div class="toolbar-right-info">
+                <div class="user-info">
+                    <span class="m-m-r user-name">{$user.userName}</span>
+                </div>
+                <div class="toolbar-links">
+                    {#if showAuthenticateSpotifyButton}
+                        <a class="toolbar-link" href="/api/spotify/authenticate">
+                            [ Authenticate Spotify ]
+                        </a>
+                        <a href="/authentication/logout" class="m-xs-l toolbar-link toolbar-link__red">
+                            [ logout ]
+                        </a>
+                    {/if}
+                </div>
             </div>
-        </div>
-    {/if}
+        {/if}
+    {/await}
 </nav>
 <div class="view-container">
     <slot></slot>

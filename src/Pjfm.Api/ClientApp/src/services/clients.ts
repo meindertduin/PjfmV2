@@ -1,7 +1,4 @@
-import {UserClient} from "./apiClient";
+import {PlaybackClient, UserClient} from "./apiClient";
 
-export let userClient: UserClient;
-
-export function loadClients(): void {
-    userClient = new UserClient();
-}
+export let userClient = new UserClient(undefined, { fetch });
+export let playbackClient = new PlaybackClient(undefined, { fetch });
