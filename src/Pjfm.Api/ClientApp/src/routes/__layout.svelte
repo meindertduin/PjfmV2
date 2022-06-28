@@ -5,6 +5,7 @@
     import {onMount} from "svelte";
     import {loadUser, user} from "../store/userStore";
     import {isOnDetailPage} from "../store/store.js";
+    import {playbackSocketClient} from "../store/playbackSocketClientStore";
     
     let showAuthenticateSpotifyButton = false;
     
@@ -15,6 +16,7 @@
     });
     
     onMount(async () => {
+        $playbackSocketClient.initializeConnection();
     })
     
     function onBackClick(): void {
