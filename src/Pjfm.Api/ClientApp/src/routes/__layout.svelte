@@ -5,8 +5,7 @@
     import {onMount} from "svelte";
     import {loadUser, user} from "../store/userStore";
     import {isOnDetailPage} from "../store/store.js";
-    import {playbackSocketClient} from "../store/playbackSocketClientStore";
-    
+    import {initializeWebsocket} from "../store/playbackSocketClientStore";
     let showAuthenticateSpotifyButton = false;
     
     $: loadUserPromise = loadUser().then((user) => {
@@ -14,9 +13,9 @@
             showAuthenticateSpotifyButton = !user.roles.includes(UserRole.SpotifyAuth);
         }
     });
-    
+
     onMount(async () => {
-        $playbackSocketClient.initializeConnection();
+        initializeWebsocket();
     })
     
     function onBackClick(): void {

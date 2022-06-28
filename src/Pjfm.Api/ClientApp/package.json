@@ -2,7 +2,7 @@
 	"name": "clientapp",
 	"version": "0.0.1",
 	"scripts": {
-		"dev": "svelte-kit dev",
+		"dev": "svelte-kit dev --https",
 		"build": "svelte-kit build",
 		"package": "svelte-kit package",
 		"preview": "svelte-kit preview",
@@ -27,5 +27,10 @@
 		"tslib": "^2.3.1",
 		"typescript": "^4.7.2"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@sveltejs/adapter-node": "^1.0.0-next.78",
+		"socket.io": "^4.5.1",
+		"socket.io-client": "^4.5.1"
+	}
 }
