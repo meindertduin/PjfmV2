@@ -8,6 +8,7 @@
 
     import QueuedTrack from "../../components/session/queuedTrack.svelte";
     import TrackProgressionBar from "../../components/session/trackProgressionBar.svelte";
+    import StartListenDialog from "../../components/session/StartListenDialog.svelte";
     
     let connected = false;
     let sessionPageDialogOpen = false;
@@ -37,15 +38,15 @@
         if ($playbackData?.groupId == null || sessionPageDialogOpen) {
             return;
         }
+
         
         sessionPageDialogOpen = true;
         showStartListenDialog = true;
-        
-        openDialog();
     }
     
-    function openDialog() {
-        
+    function closePlayDialog(): void {
+        sessionPageDialogOpen = false;
+        showStartListenDialog = false;
     }
     
     function pause(): void {
@@ -90,7 +91,18 @@
         {/if}
         {#if $playbackData != null}
             <div class="playback-controls-container">
-               <TrackProgressionBar startTimeMs="{trackStartTimeMs}" trackDurationMs="{$playbackData.currentlyPlayingTrack.trackDurationMs}"></TrackProgressionBar> 
+               <TrackProgressionBar startTimeMs="{trackStartTimeMs}" trackDurationMs="{$playbackData.currentlyPlayingTrack.trackDurationMs}"></TrackProgressionBar>
+                <div class="playback-buttons">
+                    {#if $playbackIsActive}
+                        <button class="flat-button ripple control-button" on:click="{pause}">
+                            Pause
+                        </button>
+                    {:else}
+                        <button class="flat-button ripple control-button" on:click="{play}">
+                            play
+                        </button>
+                    {/if}
+                </div>
             </div>
         {/if}
     </section>
@@ -107,6 +119,10 @@
         {/if}
     </section>
 </div>
+
+{#if showStartListenDialog}
+    <StartListenDialog on:closeDialog={closePlayDialog}></StartListenDialog>
+{/if}
 
 <style lang="scss">
   @import "scss/variables";
