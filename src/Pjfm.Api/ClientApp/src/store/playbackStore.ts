@@ -4,6 +4,7 @@ import type {SpotifyTrackDto} from "../services/apiClient";
 
 export let isConnected: Writable<boolean> = writable(false);
 export let playbackData: Writable<PlaybackUpdateMessageBody | null> = writable(null);
+export let playbackIsActive: Writable<boolean> = writable(false);
 
 let ws: WebSocket;
 
@@ -28,10 +29,15 @@ export function initializeWebsocket() {
                 isConnected.update(() => true);
                 break;
             case MessageType.playbackInfo:
-                console.log(playbackMessage.body);
+                handlePlaybackInfoUpdate(playbackMessage);
                 break;
         }
     }
+}
+
+function handlePlaybackInfoUpdate(message: PlaybackMessage<unknown>) {
+    const typedMessage = message as PlaybackMessage<PlaybackUpdateMessageBody>;
+    playbackData.update(() => typedMessage.body);
 }
 
 export function connectToGroup(groupId: string): void {
@@ -45,7 +51,6 @@ export function connectToGroup(groupId: string): void {
     ws.send(JSON.stringify(groupConnectionRequest));
     console.log('connecting...');
 }
-
 
 export interface ApiSocketRequest<T> {
     requestType: RequestType;

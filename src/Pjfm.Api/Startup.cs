@@ -98,21 +98,21 @@ namespace Pjfm.Api
                 });
             }
             
-            if (env.IsDevelopment())
-            {
-                app.UseSpa(spa =>
-                {
-                    spa.ApplicationBuilder.Use(async (context, next) =>
-                    {
-                        context.Response.OnStarting(() => System.Threading.Tasks.Task.FromResult(0));
+            // if (env.IsDevelopment())
+            // {
+            //     app.UseSpa(spa =>
+            //     {
+            //         spa.ApplicationBuilder.Use(async (context, next) =>
+            //         {
+            //             context.Response.OnStarting(() => System.Threading.Tasks.Task.FromResult(0));
 
-                        await next();
-                    });
+            //             await next();
+            //         });
 
-                    spa.Options.SourcePath = "./ClientApp";
-                    spa.UseProxyToSpaDevelopmentServer("http://127.0.0.1:3000/");
-                });
-            }
+            //         spa.Options.SourcePath = "./ClientApp";
+            //         spa.UseProxyToSpaDevelopmentServer("http://127.0.0.1:3000/");
+            //     });
+            // }
 
         }
     }

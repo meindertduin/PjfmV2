@@ -5,7 +5,7 @@
     import {onMount} from "svelte";
     import {loadUser, user} from "../store/userStore";
     import {isOnDetailPage} from "../store/store.js";
-    import {initializeWebsocket} from "../store/playbackSocketClientStore";
+    import {initializeWebsocket} from "../store/playbackStore";
     let showAuthenticateSpotifyButton = false;
     
     $: loadUserPromise = loadUser().then((user) => {
