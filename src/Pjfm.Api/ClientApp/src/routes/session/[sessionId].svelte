@@ -7,6 +7,7 @@
     isOnDetailPage.update(() => true);
 
     import QueuedTrack from "../../components/session/queuedTrack.svelte";
+    import TrackProgressionBar from "../../components/session/trackProgressionBar.svelte";
     
     let connected = false;
     let sessionPageDialogOpen = false;
@@ -89,7 +90,7 @@
         {/if}
         {#if $playbackData != null}
             <div class="playback-controls-container">
-                
+               <TrackProgressionBar startTimeMs="{trackStartTimeMs}" trackDurationMs="{$playbackData.currentlyPlayingTrack.trackDurationMs}"></TrackProgressionBar> 
             </div>
         {/if}
     </section>
