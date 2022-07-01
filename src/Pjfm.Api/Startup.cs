@@ -83,20 +83,20 @@ namespace Pjfm.Api
                 endpoints.MapRazorPages();
             });
             
-            if (env.IsDevelopment())
-            {
-                app.Use(async (context, next) =>
-                {
-                    try
-                    {
-                        await next();
-                    }
-                    catch (Exception spaException)
-                    {
-                        await context.Response.WriteAsync(spaException.Message);
-                    }
-                });
-            }
+            // if (env.IsDevelopment())
+            // {
+            //     app.Use(async (context, next) =>
+            //     {
+            //         try
+            //         {
+            //             await next();
+            //         }
+            //         catch (Exception spaException)
+            //         {
+            //             await context.Response.WriteAsync(spaException.Message);
+            //         }
+            //     });
+            // }
             
             // if (env.IsDevelopment())
             // {

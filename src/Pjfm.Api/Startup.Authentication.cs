@@ -16,6 +16,7 @@ namespace Pjfm.Api
         private void ConfigureAuthentication(IServiceCollection services)
         {
             services.AddHttpContextAccessor();
+            services.AddHostedService<AuthenticationClientsService>();
 
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
                 {
@@ -48,9 +49,7 @@ namespace Pjfm.Api
                     options.UseReferenceAccessTokens();
                     options.UseReferenceRefreshTokens();
 
-                    options.RegisterScopes(OpenIddictConstants.Permissions.Scopes.Email,
-                        OpenIddictConstants.Permissions.Scopes.Profile, OpenIddictConstants.Permissions.Scopes.Roles,
-                        "api");
+                    options.RegisterScopes(OpenIddictConstants.Permissions.Scopes.Email, OpenIddictConstants.Permissions.Scopes.Profile, OpenIddictConstants.Permissions.Scopes.Roles, "api");
 
                     options.SetAccessTokenLifetime(TimeSpan.FromMinutes(30));
                     options.SetRefreshTokenLifetime(TimeSpan.FromDays(7));
